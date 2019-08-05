@@ -8,6 +8,9 @@
   hwi = pkgs.callPackage ./hwi { };
   pylightning = pkgs.python3Packages.callPackage ./pylightning { };
   liquid-swap = pkgs.python3Packages.callPackage ./liquid-swap { };
+  joinmarket = pkgs.callPackage ./joinmarket {
+    nixpkgsUnstablePath = (import ./nixpkgs-pinned.nix).nixpkgs-unstable;
+  };
   generate-secrets = pkgs.callPackage ./generate-secrets { };
   nixops19_09 = pkgs.callPackage ./nixops { };
 
