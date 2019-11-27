@@ -3,7 +3,7 @@
 with lib;
 
 let
-  nix-bitcoin-services = pkgs.callPackage ./nix-bitcoin-services.nix { };
+  inherit (config) nix-bitcoin-services;
   cfg = config.services.nanopos;
   defaultItemsFile = pkgs.writeText "items.yaml" ''
     tea:

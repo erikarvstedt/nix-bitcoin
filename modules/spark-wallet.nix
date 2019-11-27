@@ -3,7 +3,7 @@
 with lib;
 
 let
-  nix-bitcoin-services = pkgs.callPackage ./nix-bitcoin-services.nix { };
+  inherit (config) nix-bitcoin-services;
   cfg = config.services.spark-wallet;
   dataDir = "/var/lib/spark-wallet/";
   onion-chef-service = (if cfg.onion-service then [ "onion-chef.service" ] else []);
