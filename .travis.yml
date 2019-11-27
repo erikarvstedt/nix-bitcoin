@@ -1,3 +1,4 @@
+dist: bionic # needed for KVM
 sudo: true
 language: minimal
 
@@ -19,7 +20,7 @@ env:
     # CACHIX_SIGNING_KEY
   - secure: "BPboHoJrLm0vXXRyyFdw91AT9kc0wQQ0sZjhBbLKD7mh1WbjBRt4sqYkF5UpbGsj4piVdEAh7Hgaa8FdYcxqv6adr7pa/VK+AKOOahFxr4XKnbt82kW5GmEc/bh+LZfh9v/zPH0rZ/ck5yNyHBSwWRw4gpUhwtZ3kw0yOzJrXC8nbv+I53z2mlMqvHmqcza5XL4j1jKR1iypLbLLNSyn5QR1kpMBgtD/NyIACwQtV1kr52EKeRtgZFfqJs46FEZZLuB568a5dWPUAUILcxuz7hhpIXkK6WWOHIAHwrWrrYtIIDMQKkLe/EWhBK8NJC7YTQwGPKjLxoGA4mfTJhgOPAhEZnmLHo9UpiJahzm9NV/MR/9vNwq46O8oiIJfwrUPECRcK4rKV0T1VZZqB7cXu3yp4nCNP5iZie3TE/nWZrRpU5rdnwEEkGkFhmbZT68DwYLD1hxheYecOMqU0Ml2n0K1QQu44xHtLOcnXUFslUGmfc14G/mLkngzws/5xk5wGeQAmMbtrSC7B13SGuHD1FUcYwNi2Q8x2n6VYJ0evJEN+IhozmbMOkwM0as0QQiQALBduesQcQfnTyIvSFv62nJD8w24Z7x7yW2WE1U6b0dEoexM58wxiEareG0g9cBqdCwBDd2N5upHCa/bt0M0f5YDigrUJAhjlICXiNKmAWQ="
   matrix:
-  - PKG=nodeinfo STABLE=1
+  - TestModules=1 STABLE=1
   - PKG=hwi STABLE=1
   - PKG=lightning-charge STABLE=1
   - PKG=lightning-charge STABLE=0
@@ -34,7 +35,21 @@ env:
   - PKG=liquid-swap STABLE=1
 script:
   - printf '%s (%s)\n' "$NIX_PATH" "$VER"
-  - time nix-instantiate -A $PKG --add-root ./drv --indirect
+  - |
+    getBuildExpr() {
+        if [[ $TestModules ]]; then
+            if [[ ! -e /dev/kvm ]]; then
+                >&2 echo "No KVM available on VM Host."
+                exit 1
+            fi
+            sudo chmod go+rw /dev/kvm
+            test/run-tests.sh exprForCI
+        else
+            echo "(import ./. {}).$PKG"
+        fi
+    }
+  - buildExpr=$(getBuildExpr)
+  - time nix-instantiate -E "$buildExpr" --add-root ./drv --indirect
   - outPath=$(nix-store --query ./drv)
   - |
     if nix path-info --store https://nix-bitcoin-ci-ea.cachix.org $outPath &>/dev/null; then
