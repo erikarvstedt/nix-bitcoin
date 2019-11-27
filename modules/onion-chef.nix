@@ -8,7 +8,7 @@
 with lib;
 
 let
-  nix-bitcoin-services = pkgs.callPackage ./nix-bitcoin-services.nix { };
+  inherit (config) nix-bitcoin-services;
   cfg = config.services.onion-chef;
   dataDir = "/var/lib/onion-chef/";
   onion-chef-script = pkgs.writeScript "onion-chef.sh" ''
