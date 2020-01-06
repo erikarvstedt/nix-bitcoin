@@ -61,7 +61,7 @@ script:
   - |
     if [[ $CACHIX_SIGNING_KEY ]]; then
       cachix push nix-bitcoin-ci-ea --watch-store &
-      watchStorePid=$!
+      cachixPid=$!
     fi
   - nix-build ./drv
   - |
@@ -69,5 +69,5 @@ script:
       # Wait until cachix has finished uploading
       # Run as root because yama/ptrace_scope != 0
       ruby=$(nix-build '<nixpkgs>' -A ruby)/bin/ruby
-      time sudo $ruby helper/wait-for-network-idle.rb $watchStorePid
+      time sudo $ruby helper/wait-for-network-idle.rb $cachixPid
     fi
