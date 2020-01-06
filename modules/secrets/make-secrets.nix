@@ -36,21 +36,21 @@ in rec {
       user = "clightning";
     };
     nginx_key = secret {
-      keyFile = toString ../secrets/nginx.key;
+      keyFile = toString ../../secrets/nginx.key;
       user = "nginx";
       group = "root";
     };
     nginx_cert = secret {
-      keyFile = toString ../secrets/nginx.cert;
+      keyFile = toString ../../secrets/nginx.cert;
       user = "nginx";
       group = "root";
     };
     lnd_key = secret {
-      keyFile = toString ../secrets/lnd.key;
+      keyFile = toString ../../secrets/lnd.key;
       user = "lnd";
     };
     lnd_cert = secret {
-      keyFile = toString ../secrets/lnd.cert;
+      keyFile = toString ../../secrets/lnd.cert;
       user = "lnd";
     };
   };
