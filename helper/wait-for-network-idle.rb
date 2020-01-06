@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 require 'open3'
 
+# Wait until the given PID has used no network-related system calls
+# for `Timeout` seconds, then exit.
+
 pid = ARGV.first
 Timeout = 2
 
