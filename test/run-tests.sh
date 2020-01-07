@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Modules integration test runner.
+# The test (./test.nix) uses the NixOS testing framework and is executed in a VM.
+#
+# Usage:
+#   ./run-tests.sh
+
 set -eo pipefail
 
 scriptDir=$(cd "${BASH_SOURCE[0]%/*}" && pwd)
@@ -10,6 +16,7 @@ numCPUs=${numCPUs:-$(nproc)}
 # Min. 800 MiB needed to avoid 'out of memory' errors
 memoryMiB=${memoryMiB:-2048}
 
+# Run the test. No temporary files are left on the host system.
 run() {
     # TMPDIR is also used by the driver for VM tmp files
     export TMPDIR=$(mktemp -d -p /tmp)
@@ -24,6 +31,7 @@ run() {
     $TMPDIR/driver/bin/nixos-test-driver
 }
 
+# Run the test in a nix derivation
 runWithNixBuild() {
     nix-build --no-out-link -E "$vmTestNixExpr"
 }
