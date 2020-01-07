@@ -33,7 +33,7 @@ run() {
 
 # Run the test in a nix derivation
 runWithNixBuild() {
-    nix-build --no-out-link -E "$vmTestNixExpr"
+    vmTestNixExpr | nix-build --no-out-link -
 }
 
 exprForCI() {
