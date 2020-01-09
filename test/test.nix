@@ -1,6 +1,6 @@
 # Integration test, can be run without internet access.
 
-import <nixpkgs/nixos/tests/make-test.nix> ({ lib, ... } : rec {
+import ./make-test.nix rec {
   name = "nix-bitcoin";
 
   hardened = {
@@ -8,7 +8,7 @@ import <nixpkgs/nixos/tests/make-test.nix> ({ lib, ... } : rec {
     security.allowUserNamespaces = true; # reenable disabled option
   };
 
-  machine = { pkgs, ... }: with lib; {
+  machine = { pkgs, lib, ... }: with lib; {
     imports = [
       ../modules/nix-bitcoin.nix
       ../modules/secrets/generate-secrets.nix
@@ -48,5 +48,5 @@ import <nixpkgs/nixos/tests/make-test.nix> ({ lib, ... } : rec {
     '';
   };
 
-  testScript = builtins.readFile ./test-script.pl;
-})
+  testScript = builtins.readFile ./test-script.py;
+}
