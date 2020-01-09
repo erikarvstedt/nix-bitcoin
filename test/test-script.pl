@@ -47,7 +47,7 @@ assertMatches("curl ${a}\@localhost:9737", "Spark");
 
 assertRunning("lightning-charge");
 # Get auth secret
-$a = getOutput(q{cat /secrets/lightning-charge-api-token | grep -ohP '(?<=API_TOKEN=).*'});
+$a = getOutput(q{cat /secrets/lightning-charge-env | grep -ohP '(?<=API_TOKEN=).*'});
 $machine->waitForOpenPort(9112);
 assertMatches("curl api-token:${a}\@localhost:9112/info | jq", '"id"');
 
