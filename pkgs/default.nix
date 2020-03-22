@@ -11,6 +11,7 @@
   liquid-swap = pkgs.python3Packages.callPackage ./liquid-swap { };
   generate-secrets = pkgs.callPackage ./generate-secrets { };
   nixops19_09 = pkgs.callPackage ./nixops { };
+  nix-bitcoin-release = pkgs.callPackage ./nix-bitcoin-release { };
 
   pinned = import ./pinned.nix;
 }
