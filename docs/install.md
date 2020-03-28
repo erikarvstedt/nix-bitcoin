@@ -229,7 +229,7 @@ This is borrowed from the [NixOS manual](https://nixos.org/nixos/manual/index.ht
 2. Write NixOS iso to install media (USB/CD). For example:
 
     ```
-    dd if=nixos-minimal-19.09.2284.bf7c0f0461e-x86_64-linux.iso of=/dev/sdX
+    cp nixos-minimal-19.09.2284.bf7c0f0461e-x86_64-linux.iso /dev/sdX
     ```
 
     Replace /dev/sdX with the correct device name. You can find this using `sudo fdisk -l`
