@@ -5,7 +5,7 @@ REPO=fort-nix/nix-bitcoin
 BRANCH=master
 OAUTH_TOKEN=$(pass show nix-bitcoin/github/oauth-token)
 
-if [ -z $OAUTH_TOKEN ]; then
+if [[ ! $OAUTH_TOKEN ]]; then
     echo "Please set OAUTH_TOKEN variable"
 fi
 
