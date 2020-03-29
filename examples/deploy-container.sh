@@ -38,7 +38,7 @@ in {
     inherit localAddress hostAddress;
     config = { pkgs, config, lib, ... }: {
       imports = [
-        <nix-bitcoin/example/configuration.nix>
+        <nix-bitcoin/examples/configuration.nix>
         <nix-bitcoin/modules/secrets/generate-secrets.nix>
       ];
       # Speed up evaluation
