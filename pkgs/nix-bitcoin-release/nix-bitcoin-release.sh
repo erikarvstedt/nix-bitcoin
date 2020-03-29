@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-
-set -e
+set -euo pipefail
 
 REPO=fort-nix/nix-bitcoin
 GPG_KEY=$1
-if [ -z $VERSION ]; then
+if [[ ! -v VERSION ]]; then
     VERSION=$(curl --silent "https://api.github.com/repos/$REPO/releases/latest" | jq -r '.tag_name' | tail -c +2)
 fi
 
