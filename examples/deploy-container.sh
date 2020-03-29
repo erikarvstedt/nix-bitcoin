@@ -22,6 +22,14 @@ if [[ ! -v IN_NIX_SHELL ]]; then
     exec nix-shell --run "${BASH_SOURCE[0]}"
 fi
 
+# Cleanup on exit
+cleanup() {
+    echo
+    echo "Deleting container..."
+    sudo extra-container destroy demo-node
+}
+trap "cleanup" EXIT
+
 # Build container.
 # You can re-run this command with a changed container config.
 # The running container is then switched to the new config.
@@ -72,6 +80,4 @@ echo
 echo "Bitcoind data dir:"
 sudo ls -al /var/lib/containers/demo-node/var/lib/bitcoind
 
-echo
-echo "Deleting container..."
-sudo extra-container destroy demo-node
+# Cleanup happens at exit (see above)
