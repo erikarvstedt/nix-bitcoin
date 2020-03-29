@@ -222,7 +222,7 @@ This is borrowed from the [NixOS manual](https://nixos.org/nixos/manual/index.ht
     ```
     wget https://releases.nixos.org/nixos/19.09/nixos-19.09.2284.bf7c0f0461e/nixos-minimal-19.09.2284.bf7c0f0461e-x86_64-linux.iso
     sha256sum nixos-minimal-19.09.2284.bf7c0f0461e-x86_64-linux.iso
-    9768eb945bef410fccfb82cb3d2e7ce7c02c3430aed0f2f1527273cb080fff3e
+    # output: 9768eb945bef410fccfb82cb3d2e7ce7c02c3430aed0f2f1527273cb080fff3e
     ```
     Alternatively you can build NixOS from source by following the instructions at https://nixos.org/nixos/manual/index.html#sec-building-cd.
 
