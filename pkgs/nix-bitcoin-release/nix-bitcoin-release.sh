@@ -16,14 +16,10 @@ curl --silent -L -O $BASEURL/SHA256SUMS.txt.asc
 
 GPG_HOME=$(mktemp -d)
 gpg --homedir $GPG_HOME --import $GPG_KEY &> /dev/null
-set +e
-GPG_OUTPUT=$(gpg --homedir $GPG_HOME --verify SHA256SUMS.txt.asc 2>&1)
-if [[ "$?" != 0 ]]
-then
+gpg --homedir $GPG_HOME --verify SHA256SUMS.txt.asc &> /dev/null || {
     echo "Signature verification failed"
     exit 1
-fi
-set -e
+}
 
 SHA256=$(cat SHA256SUMS.txt | grep -Eo '^[^ ]+')
 cat <<EOF
