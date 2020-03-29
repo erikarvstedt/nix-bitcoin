@@ -2,9 +2,9 @@ Updating
 ---
 In your deployment directory, enter the nix shell with `nix-shell` and run
 
-    ```
-    nix-bitcoin-release > nix-bitcoin-release.nix
-    ```
+```
+nix-bitcoin-release > nix-bitcoin-release.nix
+```
 
 Nodeinfo
 ---
