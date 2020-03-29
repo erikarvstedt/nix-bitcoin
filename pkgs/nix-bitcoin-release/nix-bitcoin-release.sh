@@ -12,7 +12,7 @@ GPG_HOME=$(mktemp -d)
 trap "rm -rf $TMPDIR $GPG_HOME" EXIT
 
 cd $TMPDIR
-BASEURL=https://github.com/jonasnick/nix-bitcoin/releases/download/v$VERSION
+BASEURL=https://github.com/$REPO/releases/download/v$VERSION
 curl --silent -L -O $BASEURL/SHA256SUMS.txt
 curl --silent -L -O $BASEURL/SHA256SUMS.txt.asc
 
