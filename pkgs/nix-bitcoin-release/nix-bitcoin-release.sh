@@ -9,12 +9,14 @@ if [ -z $VERSION ]; then
 fi
 
 TMP_DIR=$(mktemp -d)
+GPG_HOME=$(mktemp -d)
+trap "rm -rf $TMP_DIR $GPG_HOME" EXIT
+
 cd $TMP_DIR
 BASEURL=https://github.com/jonasnick/nix-bitcoin/releases/download/v$VERSION
 curl --silent -L -O $BASEURL/SHA256SUMS.txt
 curl --silent -L -O $BASEURL/SHA256SUMS.txt.asc
 
-GPG_HOME=$(mktemp -d)
 gpg --homedir $GPG_HOME --import $GPG_KEY &> /dev/null
 gpg --homedir $GPG_HOME --verify SHA256SUMS.txt.asc &> /dev/null || {
     echo "Signature verification failed"
