@@ -27,6 +27,7 @@ while true; do
 done
 
 TMPDIR=$(mktemp -d)
+trap "rm -rf $TMPDIR" EXIT
 ARCHIVE_NAME=nix-bitcoin-$TAG_NAME.tar.gz
 ARCHIVE=$TMPDIR/$ARCHIVE_NAME
 
