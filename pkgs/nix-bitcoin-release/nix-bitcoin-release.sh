@@ -7,11 +7,11 @@ if [[ ! -v VERSION ]]; then
     VERSION=$(curl --silent "https://api.github.com/repos/$REPO/releases/latest" | jq -r '.tag_name' | tail -c +2)
 fi
 
-TMP_DIR=$(mktemp -d)
+TMPDIR=$(mktemp -d)
 GPG_HOME=$(mktemp -d)
-trap "rm -rf $TMP_DIR $GPG_HOME" EXIT
+trap "rm -rf $TMPDIR $GPG_HOME" EXIT
 
-cd $TMP_DIR
+cd $TMPDIR
 BASEURL=https://github.com/jonasnick/nix-bitcoin/releases/download/v$VERSION
 curl --silent -L -O $BASEURL/SHA256SUMS.txt
 curl --silent -L -O $BASEURL/SHA256SUMS.txt.asc
