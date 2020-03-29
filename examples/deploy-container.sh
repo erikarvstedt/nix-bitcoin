@@ -57,12 +57,17 @@ EOF
 c() { sudo extra-container run demo-node -- "$@" | cat; }
 
 echo
-echo "Service info:"
+echo "Bitcoind service:"
 c systemctl status bitcoind
+echo
+echo "Bitcoind network:"
 c bitcoin-cli getnetworkinfo
+echo
+echo "lightning-cli state:"
 c lightning-cli getinfo
+echo
+echo "Node info:"
 c nodeinfo
-
 echo
 echo "Bitcoind data dir:"
 sudo ls -al /var/lib/containers/demo-node/var/lib/bitcoind
