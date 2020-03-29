@@ -32,16 +32,12 @@ ARCHIVE_NAME=nix-bitcoin-$TAG_NAME.tar.gz
 ARCHIVE=$TMPDIR/$ARCHIVE_NAME
 
 # Need to be in the repositories root directory for archiving
-cd $(git rev-parse --show-toplevel)
-git archive --format=tar.gz -o $ARCHIVE $BRANCH
-cd - &> /dev/null
+(cd $(git rev-parse --show-toplevel); git archive --format=tar.gz -o $ARCHIVE $BRANCH)
 
 SHA256SUMS=$TMPDIR/SHA256SUMS.txt
 # Want to use relative path with sha256sums because it'll output the first
 # argument
-cd $TMPDIR
-sha256sum $ARCHIVE_NAME > $SHA256SUMS
-cd - &> /dev/null
+(cd $TMPDIR; sha256sum $ARCHIVE_NAME > $SHA256SUMS)
 gpg -o $SHA256SUMS.asc -a --detach-sig $SHA256SUMS
 
 POST_DATA="{ \"tag_name\": \"v$TAG_NAME\", \"name\": \"nix-bitcoin-$TAG_NAME\", \"body\": \"nix-bitcoin-$TAG_NAME\", \"target_comitish\": \"$BRANCH\" }"
