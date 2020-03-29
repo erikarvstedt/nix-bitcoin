@@ -29,7 +29,7 @@ stdenv.mkDerivation rec {
 
   shellHook = ''
     export NIX_PATH="nixpkgs=${nixpkgs-path}:nix-bitcoin=${toString nix-bitcoin-path}:."
-    alias fetch-release=${toString ../helper/fetch-release}
+    alias fetch-release="${toString nix-bitcoin-path}/helper/fetch-release"
 
     # ssh-agent and nixops don't play well together (see
     # https://github.com/NixOS/nixops/issues/256). I'm getting `Received disconnect
