@@ -13,6 +13,7 @@ if [[ $# < 1 ]]; then
     echo "$0 <tag_name>"
     exit
 fi
+TAG_NAME=$1
 
 RESPONSE=$(curl https://api.github.com/repos/$REPO/releases/latest 2> /dev/null)
 echo "Latest release" $(echo $RESPONSE | jq -r '.tag_name' | tail -c +2)
@@ -25,7 +26,6 @@ while true; do
     esac
 done
 
-TAG_NAME=$1
 TMPDIR=$(mktemp -d)
 ARCHIVE_NAME=nix-bitcoin-$TAG_NAME.tar.gz
 ARCHIVE=$TMPDIR/$ARCHIVE_NAME
