@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-set -e
+set -euo pipefail
 
 REPO=fort-nix/nix-bitcoin
 BRANCH=master
@@ -10,7 +9,7 @@ if [ -z $OAUTH_TOKEN ]; then
     echo "Please set OAUTH_TOKEN variable"
 fi
 
-if [ -z $1 ]; then
+if [[ $# < 1 ]]; then
     echo "$0 <tag_name>"
     exit
 fi
