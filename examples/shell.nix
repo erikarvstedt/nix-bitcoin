@@ -4,7 +4,7 @@ let
   nix-bitcoin-release = import ./nix-bitcoin-release.nix;
 
   nix-bitcoin-path =
-    if builtins.isAttrs nix-bitcoin-release then nix-bitcoin-src-derivation
+    if builtins.isAttrs nix-bitcoin-release then nix-bitcoin-unpacked
     else nix-bitcoin-release;
 
   nixpkgs-path = (import "${toString nix-bitcoin-path}/pkgs/nixpkgs-pinned.nix").nixpkgs;
@@ -16,12 +16,9 @@ let
     sha256 = "0qr41mma2iwxckdhqfabw3vjcbp2ffvshnc3k11kwriwj14b766v";
   }) {};
 
-  nix-bitcoin-src-derivation = (import <nixpkgs> {}).stdenv.mkDerivation {
-    name = "nix-bitcoin-src";
-    src = builtins.fetchurl nix-bitcoin-release;
-    sourceRoot = "./";
-    installPhase = "cp -r . $out";
-  };
+  nix-bitcoin-unpacked = (import <nixpkgs> {}).runCommand "nix-bitcoin-src" {} ''
+    mkdir $out; tar xf ${builtins.fetchurl nix-bitcoin-release} -C $out
+  '';
 in
 with nixpkgs;
 
