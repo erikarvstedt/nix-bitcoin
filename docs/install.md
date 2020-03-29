@@ -104,7 +104,7 @@ You can also build Nix from source by following the instructions at https://nixo
     Now in the nix-shell run
 
     ```
-    nix-bitcoin-release > nix-bitcoin-release.nix
+    fetch-release > nix-bitcoin-release.nix
     ```
 
 3. Create a new directory for your nix-bitcoin deployment and copy initial files from nix-bitcoin
