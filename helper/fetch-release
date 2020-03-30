@@ -19,7 +19,7 @@ curl --silent -L -O $BASEURL/SHA256SUMS.txt
 curl --silent -L -O $BASEURL/SHA256SUMS.txt.asc
 
 # Import key and verify fingerprint
-gpg --homedir $GPG_HOME --import "$scriptDir/key-jonasnick.gpg" &> /dev/null
+gpg --homedir $GPG_HOME --import "$scriptDir/key-jonasnick.bin" &> /dev/null
 gpg --homedir $GPG_HOME --list-keys 36C71A37C9D988BDE82508D9B1A70E4F8DCD0366 > /dev/null
 
 gpg --homedir $GPG_HOME --verify SHA256SUMS.txt.asc &> /dev/null || {
