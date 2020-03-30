@@ -6,8 +6,10 @@ set -euo pipefail
 
 # This demo is a template for your own experiments.
 # Feel free to modify or to run nix-shell and execute individual statements of this
-# script in the interactive shell. MAKE SURE TO REPLACE the ssh identity file if
-# you use this script for anything serious.
+# script in the interactive shell.
+
+# MAKE SURE TO REPLACE the SSH identity file if you use this script for
+# anything serious.
 
 if [[ ! -v IN_NIX_SHELL ]]; then
     echo "Running script in nix shell env..."

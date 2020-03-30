@@ -27,9 +27,9 @@ Example
 The easiest way to try out nix-bitcoin is to use one of the provided examples.
 
 ```
-$ git clone https://github.com/fort-nix/nix-bitcoin
-$ cd examples/
-$ nix-shell
+git clone https://github.com/fort-nix/nix-bitcoin
+cd examples/
+nix-shell
 ```
 
 The following example scripts set up a nix-bitcoin node according to `examples/configuration.nix` and then
