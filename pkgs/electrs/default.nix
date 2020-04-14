@@ -1,13 +1,11 @@
-{ lib, rustPlatform, clang, llvmPackages, fetchFromGitHub, pkgs }:
+{ lib, rustPlatform, clang, llvmPackages, fetchurl, pkgs }:
 rustPlatform.buildRustPackage rec {
   pname = "electrs";
   version = "0.8.3";
 
-  src = fetchFromGitHub {
-    owner = "romanz";
-    repo = "electrs";
-    rev = "v${version}";
-    sha256 = "01993iv3kkf56s5x33gvk433zjwvqlfxa5vqrjl4ghr4i303ysc2";
+  src = fetchurl {
+    url = "https://github.com/romanz/electrs/archive/v${version}.tar.gz";
+    sha256 = "6a00226907a0c36b10884e7dd9f87eb58123f089977a752b917d166af072ea3d";
   };
 
   # Needed for librocksdb-sys
@@ -20,6 +18,12 @@ rustPlatform.buildRustPackage rec {
   else
     # for recent nixpkgs with cargo-native vendoring (introduced in nixpkgs PR #69274)
     "1x88zj7p4i7pfb25ch1a54sawgimq16bfcsz1nmzycc8nbwbf493";
+
+  # N.B. The cargo depfile checker expects us to have unpacked the src tarball
+  # into the standard dirname "source".
+  cargoDepsHook = ''
+    ln -s ${pname}-${version} source
+  '';
 
   meta = with lib; {
     description = "An efficient Electrum Server in Rust";
