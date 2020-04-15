@@ -5,6 +5,7 @@ rustPlatform.buildRustPackage rec {
 
   src = fetchurl {
     url = "https://github.com/romanz/electrs/archive/v${version}.tar.gz";
+    # Use ./get-sha256.sh to update
     sha256 = "6a00226907a0c36b10884e7dd9f87eb58123f089977a752b917d166af072ea3d";
   };
 
