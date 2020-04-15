@@ -4,8 +4,8 @@ set -euo pipefail
 
 # Creating temporary directory
 echo "Creating temporary directory"
-DIR="$(mktemp -d)"
-cd $DIR
+TMPDIR="$(mktemp -d)"
+cd $TMPDIR
 git clone https://github.com/romanz/electrs 2> /dev/null
 
 # Checking out latest release
@@ -15,7 +15,7 @@ latesttagelectrs=$(git describe --tags `git rev-list --tags --max-count=1`)
 echo "Latest release is ${latesttagelectrs}"
 
 # GPG Verification
-export GNUPGHOME=$DIR
+export GNUPGHOME=$TMPDIR
 gpg2 --fetch-key https://keybase.io/romanz/pgp_keys.asc?fingerprint=15c8c3574ae4f1e25f3f35c587cae5fa46917cbb 
 echo "Verifying latest release"
 git verify-tag ${latesttagelectrs}
