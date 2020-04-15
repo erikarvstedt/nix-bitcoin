@@ -1,6 +1,6 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash -p git gnupg
-set -e
+set -euo pipefail
 
 # Creating temporary directory
 echo "Creating temporary directory"
