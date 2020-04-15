@@ -14,7 +14,9 @@ echo "Latest release is ${latest}"
 
 # GPG verification
 export GNUPGHOME=$TMPDIR
-gpg --fetch-key https://keybase.io/romanz/pgp_keys.asc?fingerprint=15c8c3574ae4f1e25f3f35c587cae5fa46917cbb
+fingerprint=15c8c3574ae4f1e25f3f35c587cae5fa46917cbb
+gpg --fetch-key https://keybase.io/romanz/pgp_keys.asc?fingerprint=$fingerprint
+gpg --list-keys $fingerprint > /dev/null
 echo "Verifying latest release"
 git verify-tag ${latest}
 
