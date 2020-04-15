@@ -19,12 +19,6 @@ rustPlatform.buildRustPackage rec {
     # for recent nixpkgs with cargo-native vendoring (introduced in nixpkgs PR #69274)
     "1x88zj7p4i7pfb25ch1a54sawgimq16bfcsz1nmzycc8nbwbf493";
 
-  # N.B. The cargo depfile checker expects us to have unpacked the src tarball
-  # into the standard dirname "source".
-  cargoDepsHook = ''
-    ln -s ${pname}-${version} source
-  '';
-
   meta = with lib; {
     description = "An efficient Electrum Server in Rust";
     homepage = "https://github.com/romanz/electrs";
