@@ -2,7 +2,7 @@
 #! nix-shell -i bash -p git gnupg
 set -euo pipefail
 
-TMPDIR="$(mktemp -d)"
+TMPDIR="$(mktemp -d -p /tmp)"
 trap "rm -rf $TMPDIR" EXIT
 cd $TMPDIR
 
