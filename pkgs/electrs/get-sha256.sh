@@ -5,6 +5,7 @@ set -euo pipefail
 # Creating temporary directory
 echo "Creating temporary directory"
 TMPDIR="$(mktemp -d)"
+trap "rm -rf $TMPDIR" EXIT
 cd $TMPDIR
 git clone https://github.com/romanz/electrs 2> /dev/null
 
