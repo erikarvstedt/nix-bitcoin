@@ -9,15 +9,15 @@ cd $TMPDIR
 echo "Fetching latest release"
 git clone https://github.com/romanz/electrs 2> /dev/null
 cd electrs
-latesttagelectrs=$(git describe --tags `git rev-list --tags --max-count=1`)
-echo "Latest release is ${latesttagelectrs}"
+latest=$(git describe --tags `git rev-list --tags --max-count=1`)
+echo "Latest release is ${latest}"
 
 # GPG verification
 export GNUPGHOME=$TMPDIR
 gpg --fetch-key https://keybase.io/romanz/pgp_keys.asc?fingerprint=15c8c3574ae4f1e25f3f35c587cae5fa46917cbb
 echo "Verifying latest release"
-git verify-tag ${latesttagelectrs}
+git verify-tag ${latest}
 
 # Calculate sha256
 # The prefix option is necessary because GitHub prefixes the archive contents in this format
-echo "sha256 for ${latesttagelectrs} is $(git archive --format tar.gz --prefix=electrs-"${latesttagelectrs//v}"/ ${latesttagelectrs} | sha256sum )"
+echo "sha256 for ${latest} is $(git archive --format tar.gz --prefix=electrs-"${latest//v}"/ ${latest} | sha256sum )"
