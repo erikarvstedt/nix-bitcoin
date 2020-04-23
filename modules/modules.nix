@@ -14,6 +14,7 @@
     ./hardware-wallets.nix
     ./lnd.nix
     ./secrets/secrets.nix
+    ./joinmarket.nix
   ];
 
   disabledModules = [ "services/networking/bitcoind.nix" ];

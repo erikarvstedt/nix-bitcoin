@@ -115,6 +115,15 @@
   # `docs/usage.md`.
   # services.hardware-wallets.trezor = true;
 
+  ### JOINMARKET
+  # Enable this module to allow using JoinMarket's user interactive scripts (including
+  # tumbler.py).
+  # services.joinmarket.enable = true;
+  # Enable this option to enable the JoinMarket Yield Generator Bot. You will be able to
+  # earn sats by providing CoinJoin liquidity. This makes it impossible to use other
+  # scripts that access your wallet.
+  # services.joinmarket.yieldgenerator = true;
+
   # FIXME: Define your hostname.
   networking.hostName = "nix-bitcoin";
   time.timeZone = "UTC";

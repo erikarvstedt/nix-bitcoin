@@ -114,6 +114,8 @@ in {
 
     services.nix-bitcoin-webindex.enforceTor = true;
 
+    # joinmarket
+    services.joinmarket.bitcoin-rpcuser = cfg.bitcoind.rpcuser;
 
     environment.systemPackages = with pkgs; [
       tor
@@ -132,7 +134,8 @@ in {
         ++ (optionals cfg.lnd.enable [ "lnd" ])
         ++ (optionals cfg.liquidd.enable [ cfg.liquidd.group ])
         ++ (optionals (cfg.hardware-wallets.ledger || cfg.hardware-wallets.trezor)
-            [ cfg.hardware-wallets.group ]);
+            [ cfg.hardware-wallets.group ])
+        ++ (optionals cfg.joinmarket.enable [ "joinmarket" ]);
       openssh.authorizedKeys.keys = config.users.users.root.openssh.authorizedKeys.keys;
     };
     # Give operator access to onion hostnames
@@ -142,6 +145,9 @@ in {
     security.sudo.configFile =
      (optionalString cfg.lnd.enable ''
        ${operatorName}    ALL=(lnd) NOPASSWD: ALL
+     '') +
+     (optionalString cfg.joinmarket.enable ''
+       ${operatorName}    ALL=(joinmarket) NOPASSWD: ALL
      '');
 
     # Enable nixops ssh for operator (`nixops ssh operator@mynode`) on nixops-vbox deployments
