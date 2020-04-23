@@ -131,6 +131,7 @@ in {
           ${ip} link del nb-br
         '';
       };
+
     } //
     (let
       makeNetnsServices = n: v: let
@@ -230,6 +231,10 @@ in {
         id = 22;
         connections = [ "lnd" ];
       };
+      joinmarket = {
+        id = 23;
+        connections = [ "bitcoind" ];
+      };
     };
 
     services.bitcoind = {
@@ -299,6 +304,12 @@ in {
     };
 
     services.lightning-loop.cliExec = mkCliExec "lightning-loop";
+
+    services.joinmarket = mkIf config.services.joinmarket.enable {
+      rpc_host = netns.bitcoind.address;
+      cliExec = mkCliExec "joinmarket";
+    };
+    systemd.services.joinmarket-yieldgenerator.serviceConfig.NetworkNamespacePath = "/var/run/netns/nb-joinmarket";
   }
   ]);
 }

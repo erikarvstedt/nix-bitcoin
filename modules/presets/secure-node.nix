@@ -165,7 +165,8 @@ in {
         ++ (optionals cfg.lnd.enable [ "lnd" ])
         ++ (optionals cfg.liquidd.enable [ cfg.liquidd.group ])
         ++ (optionals (cfg.hardware-wallets.ledger || cfg.hardware-wallets.trezor)
-            [ cfg.hardware-wallets.group ]);
+            [ cfg.hardware-wallets.group ])
+        ++ (optionals cfg.joinmarket.enable [ cfg.joinmarket.group ]);
       openssh.authorizedKeys.keys = config.users.users.root.openssh.authorizedKeys.keys;
     };
     nix-bitcoin.netns-isolation.allowedUser = operatorName;
@@ -176,6 +177,9 @@ in {
     security.sudo.configFile =
      (optionalString cfg.lnd.enable ''
        ${operatorName}    ALL=(lnd) NOPASSWD: ALL
+     '') +
+     (optionalString cfg.joinmarket.enable ''
+       ${operatorName}    ALL=(${cfg.joinmarket.user}) NOPASSWD: ALL
      '');
 
     # Enable nixops ssh for operator (`nixops ssh operator@mynode`) on nixops-vbox deployments
