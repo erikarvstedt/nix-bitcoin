@@ -18,6 +18,7 @@
     ./netns-isolation.nix
     ./security.nix
     ./backups.nix
+    ./joinmarket.nix
   ];
 
   disabledModules = [ "services/networking/bitcoind.nix" ];

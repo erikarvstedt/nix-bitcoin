@@ -131,6 +131,7 @@ in {
           ${ip} link del nb-br
         '';
       };
+
     } //
     (let
       makeNetnsServices = n: v: let
@@ -230,6 +231,10 @@ in {
         id = 22;
         connections = [ "lnd" ];
       };
+      joinmarket = {
+        id = 23;
+        connections = [ "bitcoind" ];
+      };
     };
 
     services.bitcoind = {
@@ -299,6 +304,32 @@ in {
     };
 
     services.lightning-loop.cliExec = mkCliExec "lightning-loop";
+
+    services.joinmarket = mkIf config.services.joinmarket.enable {
+      rpc_host = netns.bitcoind.address;
+      add-utxo = pkgs.writeScriptBin "add-utxo.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/add-utxo.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+      convert_old_wallet = pkgs.writeScriptBin "convert_old_wallet.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/convert_old_wallet.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+      receive-payjoin = pkgs.writeScriptBin "receive-payjoin.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/receive-payjoin.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+      sendpayment = pkgs.writeScriptBin "sendpayment.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/sendpayment.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+      sendtomany = pkgs.writeScriptBin "sendtomany.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/sendtomany.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+      tumbler = pkgs.writeScriptBin "tumbler.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/tumbler.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+      wallet-tool = pkgs.writeScriptBin "wallet-tool.py" ''
+        cd ${config.services.joinmarket.dataDir} && netns-exec nb-joinmarket sudo -u ${config.services.joinmarket.user} ${pkgs.nix-bitcoin.joinmarket}/bin/wallet-tool.py --datadir=${config.services.joinmarket.dataDir} "$@"
+      '';
+    };
+    systemd.services.joinmarket-yieldgenerator.serviceConfig.NetworkNamespacePath = "/var/run/netns/nb-joinmarket";
   }
   ]);
 }
