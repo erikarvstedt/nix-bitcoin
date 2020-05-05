@@ -79,6 +79,7 @@ in {
         RemainAfterExit = true;
         # Run non-network facing services in own netns
         PrivateNetwork = "true";
+        CapabilityBoundingSet = "CAP_CHOWN CAP_FSETID CAP_SETFCAP CAP_DAC_OVERRIDE CAP_DAC_READ_SEARCH CAP_FOWNER CAP_IPC_OWNER";
       };
     };
   };
