@@ -289,6 +289,7 @@ in {
 
         # Permission for preStart
         PermissionsStartOnly = "true";
+        ReadWritePaths = "${cfg.dataDir}";
       } // (if cfg.enforceTor
             then nix-bitcoin-services.allowTor
             else nix-bitcoin-services.allowAnyIP)
@@ -320,6 +321,7 @@ in {
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         User = "${cfg.user}";
         Group = "${cfg.group}";
+        ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.allowTor;
     };
 
