@@ -20,6 +20,10 @@ with lib;
       LockPersonality = "true";
       IPAddressDeny = "any";
       PrivateUsers = "true";
+      RestrictSUIDSGID = "true";
+      RemoveIPC = "true";
+      RestrictRealtime = "true";
+      ProtectHostname = "true";
       CapabilityBoundingSet = "";
       # @system-service whitelist and docker seccomp blacklist
       SystemCallFilter = [ "@system-service" "~add_key clone3 get_mempolicy kcmp keyctl mbind move_pages name_to_handle_at personality process_vm_readv process_vm_writev request_key set_mempolicy setns unshare userfaultfd" ];
