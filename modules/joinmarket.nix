@@ -176,10 +176,13 @@ in {
     users.users.joinmarket = {
         description = "joinmarket User";
         group = "joinmarket";
-        extraGroups = [ "bitcoinrpc" ];
         home = cfg.dataDir;
     };
     users.groups.joinmarket = {};
+
+    systemd.tmpfiles.rules = [
+      "d '${cfg.dataDir}' 0770 ${config.users.users.joinmarket.name} ${config.users.users.joinmarket.group} - -"
+    ];
 
     # Communication server, needs to run to use any JM script
     systemd.services.joinmarketd = {
@@ -188,7 +191,6 @@ in {
       requires = [ "bitcoind.service" ];
       after = [ "bitcoind.service" ];
       preStart = ''
-        mkdir -m 0770 -p ${cfg.dataDir}
         # Create JoinMarket directory structure
         mkdir -m 0770 -p ${cfg.dataDir}/{logs,wallets,cmtdata}
         cp ${configFile} ${cfg.dataDir}/joinmarket.cfg
@@ -202,6 +204,7 @@ in {
         User = "joinmarket";
         Restart = "on-failure";
         RestartSec = "10s";
+        ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.defaultHardening
         // nix-bitcoin-services.allowTor;
     };
@@ -225,6 +228,7 @@ in {
         PermissionsStartOnly = "true";
         ExecStart = "${pkgs.bash}/bin/bash ${cfg.dataDir}/yieldgenerator-startscript.sh";
         User = "joinmarket";
+        ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.defaultHardening
         // nix-bitcoin-services.allowTor;
     };
