@@ -90,14 +90,20 @@ exprForCI() {
     ((memAvailableMiB < memoryMiB)) && memoryMiB=$memAvailableMiB
     >&2 echo "VM stats: CPUs: $numCPUs, memory: $memoryMiB MiB"
     >&2 echo "Host memory total: $((memTotalKiB / 1024)) MiB, available: $memAvailableMiB MiB"
-    vmTestNixExpr
+
+    # VMX is usually not available on CI nodes due to recursive virtualisation.
+    # Without explicitly disabling VMX, QEMU 4.20 fails with message
+    # "error: failed to set MSR 0x48b to 0x159ff00000000"
+    extraQEMUOpts="-cpu host,-vmx"
+    vmTestNixExpr $extraQEMUOpts
 }
 
 vmTestNixExpr() {
+  extraQEMUOpts="$1"
   cat <<EOF
     (import "$scriptDir/test.nix" {}).overrideAttrs (old: rec {
       buildCommand = ''
-        export QEMU_OPTS="-smp $numCPUs -m $memoryMiB"
+        export QEMU_OPTS="-smp $numCPUs -m $memoryMiB $extraQEMUOpts"
         echo "VM stats: CPUs: $numCPUs, memory: $memoryMiB MiB"
       '' + old.buildCommand;
     })
