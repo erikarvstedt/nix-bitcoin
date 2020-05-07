@@ -27,7 +27,7 @@ let
          # QEMU 4.20 from unstable fails on Travis build nodes with message
          # "error: failed to set MSR 0x48b to 0x159ff00000000"
          # Use version 4.0.1 instead.
-         inherit (pkgs19_09) qemu_test;
+         # inherit (pkgs19_09) qemu_test;
        };
     in
       test (args // { pkgs = pkgsFixed; });
