@@ -263,6 +263,7 @@ in {
       preStart = ''
         if [[ ! -e ${cfg.dataDir} ]]; then
           mkdir -m 0770 -p '${cfg.dataDir}'
+          #
         fi
         if [[ ! -e ${cfg.dataDir}/blocks ]]; then
           mkdir -m 0770 -p '${cfg.dataDir}/blocks'
