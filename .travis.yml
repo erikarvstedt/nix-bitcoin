@@ -43,6 +43,7 @@ script:
                 exit 1
             fi
             sudo chmod go+rw /dev/kvm
+            sudo modprobe msr
             test/run-tests.sh exprForCI
         else
             echo "(import ./. {}).$PKG"
