@@ -52,6 +52,72 @@ in {
       hiddenServices.sshd = mkHiddenService { port = 22; };
     };
 
+    # Network Namespaces
+    services.netns = {
+      enable = true;
+      bridge = {
+        ipAddress = "169.254.0.10";
+      };
+      # TODO: Operator namespace or `ip netns exec` commands
+      bitcoind = {
+        ipAddress = "169.254.0.12";
+        # if services.availableNetns.enable implemented in netns-chef.nix
+        availableNetns = [ "clightning" "lnd" "liquidd" "electrs" "joinmarket" ];
+      };
+      clightning = {
+        ipAddress = "169.254.0.13";
+        # services communicate with clightning over lightning-rpc socket
+        availableNetns = [ "bitcoind" ];
+      };
+      lnd = {
+        ipAddress = "169.254.0.14";
+        availableNetns = [ "bitcoind" ];
+      };
+      liquidd = {
+        ipAddress = "169.254.0.15";
+        availableNetns = [ "bitcoind" ];
+      };
+      electrs = {
+        ipAddress = "169.254.0.16";
+        availableNetns = [ "bitcoind" ]
+        ++ ( optionals config.services.electrs.TLSProxy.enable [ "nginx" ]);
+      };
+      joinmarket = {
+        ipAddress = "169.254.0.17";
+        availableNetns = [ "bitcoind" ];
+      };
+      spark-wallet = {
+        ipAddress = "169.254.0.18";
+        # communicates with clightning over lightning-rpc socket
+        availableNetns = [];
+        # TODO: Implement config.services.spark-wallet.enforceTor
+      };
+      lightning-charge = {
+        ipAddress = "169.254.0.19";
+        # communicates with clightning over lightning-rpc socket
+        availableNetns = [ "nanopos" ];
+        # TODO: Implement config.services.lightning-charge.enforceTor
+      };
+      nanopos = {
+        ipAddress = "169.254.0.20";
+        # communicates with clightning over lightning-rpc socket
+        availableNetns = [ "nginx" "lightning-charge" ];
+        # TODO: Implement config.services.nanopos.enforceTor
+      };
+      recurring-donations = {
+        ipAddress = "172.0.18.21";
+        # communicates with clightning over lightning-rpc socket
+        availableNetns = [];
+        # TODO: Implement config.services.recurring-donations.enforceTor
+      };
+      nginx = {
+        ipAddress = "172.0.18.22";
+        availableNetns = [ "electrs" "nanopos" ];
+        # TODO: Modularize nginx and implement cfg.enforceTor
+      };
+    };
+
+
     # bitcoind
     services.bitcoind = {
       enable = true;

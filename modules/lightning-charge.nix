@@ -21,6 +21,11 @@ in {
       default = "/var/lib/lightning-charge";
       description = "The data directory for lightning-charge.";
     };
+    extraArgs = mkOption {
+      type = types.separatedString " ";
+      default = "";
+      description = "Extra command line arguments passed to lightning-charge.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -54,7 +59,7 @@ in {
           # Needed to access clightning.dataDir in preStart
           PermissionsStartOnly = "true";
           EnvironmentFile = "${config.nix-bitcoin.secretsDir}/lightning-charge-env";
-          ExecStart = "${pkgs.nix-bitcoin.lightning-charge}/bin/charged -l ${config.services.clightning.dataDir}/bitcoin -d ${cfg.dataDir}/lightning-charge.db";
+          ExecStart = "${pkgs.nix-bitcoin.lightning-charge}/bin/charged -l ${config.services.clightning.dataDir}/bitcoin -d ${cfg.dataDir}/lightning-charge.db ${cfg.extraArgs}";
           User = user;
           Restart = "on-failure";
           RestartSec = "10s";

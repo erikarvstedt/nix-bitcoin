@@ -15,7 +15,7 @@ let
     [BLOCKCHAIN]
     blockchain_source = bitcoin-rpc
     network = mainnet
-    rpc_host = localhost
+    rpc_host = 169.254.0.12
     rpc_port = 8332
     rpc_user = ${cfg.bitcoin-rpcuser}
     rpc_password =
@@ -26,7 +26,7 @@ let
     port = 6697
     usessl = true
     socks5 = true
-    socks5_host = localhost
+    socks5_host = 169.254.0.10
     socks5_port = 9050
 
     [MESSAGING:server2]
@@ -35,7 +35,7 @@ let
     port = 6697
     usessl = false
     socks5 = true
-    socks5_host = localhost
+    socks5_host = 169.254.0.10
     socks5_port = 9050
 
     [LOGGING]

@@ -15,6 +15,7 @@
     ./lnd.nix
     ./secrets/secrets.nix
     ./joinmarket.nix
+    ./netns-chef.nix
   ];
 
   disabledModules = [ "services/networking/bitcoind.nix" ];

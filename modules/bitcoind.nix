@@ -260,10 +260,12 @@ in {
       "d '${cfg.dataDir}/blocks' 0770 ${cfg.user} ${cfg.group} - -"
     ];
 
+    systemd.services.netns-bitcoind = mkIf config.services.netns.enable f { name = "bitcoind"; iface = "veth1" };
+
     systemd.services.bitcoind = {
       description = "Bitcoin daemon";
       requires = [ "nix-bitcoin-secrets.target" ];
-      after = [ "network.target" "nix-bitcoin-secrets.target" ];
+      after = [ "tor.service" "network.target" "nix-bitcoin-secrets.target" ];
       wantedBy = [ "multi-user.target" ];
       preStart = ''
         ${optionalString cfg.dataDirReadableByGroup  "chmod -R g+rX '${cfg.dataDir}/blocks'"}

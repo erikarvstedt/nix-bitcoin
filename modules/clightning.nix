@@ -12,6 +12,7 @@ let
     ${optionalString (cfg.proxy != null) "proxy=${cfg.proxy}"}
     always-use-proxy=${if cfg.always-use-proxy then "true" else "false"}
     ${optionalString (cfg.bind-addr != null) "bind-addr=${cfg.bind-addr}"}
+    ${optionalString (cfg.bitcoin-rpcconnect != null) "bitcoin-rpcconnect=${cfg.bitcoin-rpcconnect}"}
     bitcoin-rpcuser=${cfg.bitcoin-rpcuser}
     rpc-file-mode=0660
   '';
@@ -53,6 +54,11 @@ in {
       description = ''
         Bitcoin RPC user
       '';
+    };
+    bitcoin-rpcconnect = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "The bitcoind RPC host to connect to.";
     };
     dataDir = mkOption {
       type = types.path;

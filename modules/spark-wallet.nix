@@ -7,7 +7,7 @@ let
   inherit (config) nix-bitcoin-services;
   onion-chef-service = (if cfg.onion-service then [ "onion-chef.service" ] else []);
   run-spark-wallet = pkgs.writeScript "run-spark-wallet" ''
-    CMD="${pkgs.nix-bitcoin.spark-wallet}/bin/spark-wallet --ln-path ${cfg.ln-path} -Q -k -c ${config.nix-bitcoin.secretsDir}/spark-wallet-login"
+    CMD="${pkgs.nix-bitcoin.spark-wallet}/bin/spark-wallet --ln-path ${cfg.ln-path} -Q -k -c ${config.nix-bitcoin.secretsDir}/spark-wallet-login ${cfg.extraArgs}"
     ${optionalString cfg.onion-service
       ''
       echo Getting onion hostname
@@ -42,6 +42,11 @@ in {
       description = ''
         "If enabled, configures spark-wallet to be reachable through an onion service.";
       '';
+    };
+    extraArgs = mkOption {
+      type = types.separatedString " ";
+      default = "";
+      description = "Extra command line arguments passed to spark-wallet.";
     };
   };
 

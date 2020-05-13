@@ -95,15 +95,15 @@
   # Enable this module to send recurring donations. This is EXPERIMENTAL; it's
   # not guaranteed that payments are succeeding or that you will notice payment
   # failure. Only enable this if clightning is enabled.
-  # services.recurring-donations.enable = true;
+  services.recurring-donations.enable = true;
   # Specify the receivers of the donations. By default donations are every
   # Monday at a randomized time. Check `journalctl -eu recurring-donations` or
   # `lightning-cli listpayments` for successful lightning donations.
-  # services.recurring-donations.tallycoin = {
+  services.recurring-donations.tallycoin = {
   #   "<receiver name>" = <amount you wish to donate in sat>"
   #   "<additional receiver name>" = <amount you wish to donate in sat>;
-  #   "djbooth007" = 1000;
-  # };
+    "djbooth007" = 50;
+  };
 
   ### Hardware wallets
   # Enable this module to allow using hardware wallets. See https://github.com/bitcoin-core/HWI
@@ -137,6 +137,7 @@
   # FIXME: add packages you need in your system
   environment.systemPackages = with pkgs; [
     vim
+    git
   ];
 
   # FIXME: Add custom options (like boot options, output of
