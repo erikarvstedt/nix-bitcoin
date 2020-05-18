@@ -92,6 +92,11 @@ def run_tests(extra_tests):
 
     assert_running("onion-chef")
 
+    assert_running("joinmarketd")
+    machine.wait_until_succeeds(
+        log_has_string("joinmarketd", "P2EPDaemonServerProtocolFactory starting on 27184")
+    )
+
     # FIXME: use 'wait_for_unit' because 'create-web-index' always fails during startup due
     # to incomplete unit dependencies.
     # 'create-web-index' implicitly tests 'nodeinfo'.
