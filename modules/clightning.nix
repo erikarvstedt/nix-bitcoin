@@ -109,7 +109,7 @@ in {
         while [[ ! -e ${cfg.dataDir}/bitcoin/lightning-rpc ]]; do
             sleep 0.1
         done
-        # Needed to enable lightning-rpc for users with group 'clightning'
+        # Needed to enable lightning-cli for users with group 'clightning'
         chmod g+x ${cfg.dataDir}/bitcoin
       '';
     };
