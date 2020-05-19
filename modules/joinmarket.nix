@@ -84,11 +84,21 @@ in {
       default = "/var/lib/joinmarket";
       description = "The data directory for joinmarket.";
     };
+    user = mkOption {
+      type = types.str;
+      default = "joinmarket";
+      description = "The user as which to run joinmarket.";
+    };
+    group = mkOption {
+      type = types.str;
+      default = cfg.user;
+      description = "The group as which to run joinmarket.";
+    };
     add-utxo = mkOption {
       readOnly = true;
       default = pkgs.writeScriptBin "add-utxo.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/add-utxo.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/add-utxo.py --datadir=${cfg.dataDir} "$@"
       ''; # Script needs to be executed in directory, because it needs to create 'logs' dir
       description = ''
         Script to add one or more utxos to the list that can be used to
@@ -99,7 +109,7 @@ in {
       readOnly = true;
       default = pkgs.writeScriptBin "convert_old_wallet.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/convert_old_wallet.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/convert_old_wallet.py --datadir=${cfg.dataDir} "$@"
       '';
       description = ''
         Script to convert old joinmarket json wallet format to new jmdat
@@ -110,7 +120,7 @@ in {
       readOnly = true;
       default = pkgs.writeScriptBin "receive-payjoin.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/receive-payjoin.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/receive-payjoin.py --datadir=${cfg.dataDir} "$@"
       '';
       description = ''
         Script to receive payjoins.
@@ -120,7 +130,7 @@ in {
       readOnly = true;
       default = pkgs.writeScriptBin "sendpayment.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/sendpayment.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/sendpayment.py --datadir=${cfg.dataDir} "$@"
       '';
       description = ''
         Script to send a single payment from a given mixing depth of
@@ -131,7 +141,7 @@ in {
       readOnly = true;
       default = pkgs.writeScriptBin "sendtomany.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/sendtomany.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/sendtomany.py --datadir=${cfg.dataDir} "$@"
       '';
       description = ''
         Script to create multiple utxos from one.
@@ -141,7 +151,7 @@ in {
       readOnly = true;
       default = pkgs.writeScriptBin "tumbler.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/tumbler.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/tumbler.py --datadir=${cfg.dataDir} "$@"
       '';
       description = ''
         Script to send bitcoins to many different addresses using
@@ -152,7 +162,7 @@ in {
       readOnly = true;
       default = pkgs.writeScriptBin "wallet-tool.py"
       ''
-        cd ${cfg.dataDir} && exec sudo -u joinmarket ${pkgs.nix-bitcoin.joinmarket}/bin/wallet-tool.py --datadir=${cfg.dataDir} "$@"
+        cd ${cfg.dataDir} && exec sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/wallet-tool.py --datadir=${cfg.dataDir} "$@"
       '';
       description = ''
         Script to monitor and manage your Joinmarket wallet.
@@ -173,15 +183,15 @@ in {
       pkgs.screen
       (hiPrio cfg.wallet-tool)
     ];
-    users.users.joinmarket = {
+    users.users.${cfg.user} = {
         description = "joinmarket User";
-        group = "joinmarket";
+        group = "${cfg.group}";
         home = cfg.dataDir;
     };
-    users.groups.joinmarket = {};
+    users.groups.${cfg.group} = {};
 
     systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${config.users.users.joinmarket.name} ${config.users.users.joinmarket.group} - -"
+      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
     ];
 
     # Communication server, needs to run to use any JM script
@@ -194,14 +204,14 @@ in {
         # Create JoinMarket directory structure
         mkdir -m 0770 -p ${cfg.dataDir}/{logs,wallets,cmtdata}
         cp ${configFile} ${cfg.dataDir}/joinmarket.cfg
-        chown -R 'joinmarket:joinmarket' '${cfg.dataDir}'
+        chown -R '${cfg.user}:${cfg.group}' '${cfg.dataDir}'
         chmod u=rw,g=,o= ${cfg.dataDir}/joinmarket.cfg
         sed -i "s/rpc_password =/rpc_password = $(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword)/g" '${cfg.dataDir}/joinmarket.cfg'
         '';
       serviceConfig = {
         PermissionsStartOnly = "true";
         ExecStart = "${pkgs.nix-bitcoin.joinmarket}/bin/joinmarketd.py";
-        User = "joinmarket";
+        User = "${cfg.user}";
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = "${cfg.dataDir}";
@@ -217,7 +227,7 @@ in {
       preStart = ''
         # Create files (if they don't already exist) with the right ownership/permissions
         touch ${cfg.dataDir}/{joinmarket-wallet-password,yieldgenerator-startscript.sh}
-        chown 'joinmarket:joinmarket' ${cfg.dataDir}/{joinmarket-wallet-password,yieldgenerator-startscript.sh}
+        chown '${cfg.user}:${cfg.group}' ${cfg.dataDir}/{joinmarket-wallet-password,yieldgenerator-startscript.sh}
         chmod u=rw,g=,o= ${cfg.dataDir}/joinmarket-wallet-password
         chmod 700 ${cfg.dataDir}/yieldgenerator-startscript.sh
         # Hacky way to pass wallet password to bot using stdin
@@ -227,7 +237,7 @@ in {
         WorkingDirectory = "${cfg.dataDir}";
         PermissionsStartOnly = "true";
         ExecStart = "${pkgs.bash}/bin/bash ${cfg.dataDir}/yieldgenerator-startscript.sh";
-        User = "joinmarket";
+        User = "${cfg.user}";
         ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.defaultHardening
         // nix-bitcoin-services.allowTor;
