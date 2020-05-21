@@ -48,7 +48,7 @@ in {
 
   config = mkIf cfg.enable {
     systemd.tmpfiles.rules = [
-      "d '/var/www' 0755 nginx nginx - -"
+      "d /var/www 0755 nginx nginx - -"
     ];
 
     services.nginx = {
