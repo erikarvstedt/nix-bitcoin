@@ -286,9 +286,6 @@ in {
         ExecStart = "${cfg.package}/bin/bitcoind -datadir='${cfg.dataDir}'";
         Restart = "on-failure";
         UMask = mkIf cfg.dataDirReadableByGroup "0027";
-
-        # Permission for preStart
-        PermissionsStartOnly = "true";
         ReadWritePaths = "${cfg.dataDir}";
       } // (if cfg.enforceTor
             then nix-bitcoin-services.allowTor

@@ -226,7 +226,7 @@ in {
         PIDFile = "${pidFile}";
         Restart = "on-failure";
 
-        # Permission for preStart
+        # Needed to read bitcoin-rpcpassword in preStart
         PermissionsStartOnly = "true";
         ReadWritePaths = "${cfg.dataDir}";
       } // (if cfg.enforceTor

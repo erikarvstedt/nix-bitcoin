@@ -80,6 +80,7 @@ in {
         RuntimeDirectory = "electrs";
         RuntimeDirectoryMode = "700";
         WorkingDirectory = "/run/electrs";
+        # Needed to read bitcoin-rpcpassword in preStart
         PermissionsStartOnly = "true";
         ExecStart = ''
           ${pkgs.nix-bitcoin.electrs}/bin/electrs -vvv \

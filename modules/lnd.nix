@@ -98,6 +98,7 @@ in {
         echo "bitcoind.rpcpass=$(cat ${secretsDir}/bitcoin-rpcpassword)" >> '${cfg.dataDir}/lnd.conf'
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
+        # Needed to read bitcoin-rpcpassword in preStart
         PermissionsStartOnly = "true";
         ExecStart = "${cfg.package}/bin/lnd --configfile=${cfg.dataDir}/lnd.conf";
         User = "lnd";
