@@ -80,8 +80,7 @@ in {
         ExecStart = "${pkgs.bash}/bin/bash ${onion-chef-script}";
         Type = "oneshot";
         RemainAfterExit = true;
-        # Run non-network facing services in own netns
-        PrivateNetwork = "true";
+        PrivateNetwork = "true"; # This service needs no network access
         PrivateUsers = "false";
         ReadWritePaths = "${dataDir}";
         CapabilityBoundingSet = "CAP_CHOWN CAP_FSETID CAP_SETFCAP CAP_DAC_OVERRIDE CAP_DAC_READ_SEARCH CAP_FOWNER CAP_IPC_OWNER";
