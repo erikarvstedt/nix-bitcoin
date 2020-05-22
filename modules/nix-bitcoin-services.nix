@@ -5,6 +5,7 @@ lib: pkgs:
 
 with lib;
 {
+  # These settings roughly follow systemd's "strict" security profile
   defaultHardening = {
       PrivateTmp = "true";
       ProtectSystem = "strict";
@@ -25,7 +26,8 @@ with lib;
       RestrictRealtime = "true";
       ProtectHostname = "true";
       CapabilityBoundingSet = "";
-      # @system-service whitelist and docker seccomp blacklist
+      # @system-service whitelist and docker seccomp blacklist (except for "clone"
+      # which is a core requirement for systemd services)
       SystemCallFilter = [ "@system-service" "~add_key clone3 get_mempolicy kcmp keyctl mbind move_pages name_to_handle_at personality process_vm_readv process_vm_writev request_key set_mempolicy setns unshare userfaultfd" ];
       SystemCallArchitectures= "native";
   };
