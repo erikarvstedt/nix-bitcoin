@@ -147,50 +147,6 @@ in {
       };
     };
 
-    f = { name, iface }:
-    mkIf config.services.${name}.enable = {
-      description = "Create ${name} namespace";
-      requires = [ "netns.service" ];
-      after = [ "netns.service" ];
-      requiredBy = [ "${name}.service" ];
-      bindsTo = [ "${name}.service" ];
-      before = [ "${name}.service" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = "yes";
-        ExecStartPre = "-${pkgs.iproute}/bin/ip netns delete ${name}";
-        ExecStart = [
-          "${pkgs.iproute}/bin/ip netns add ${name}"
-          "${pkgs.iproute}/bin/ip -n ${name} link set lo up"
-          "${pkgs.iproute}/bin/ip link add ${cfg.name.iface} type veth peer name br-${iface}"
-          "${pkgs.iproute}/bin/ip link set ${cfg.name.iface} netns ${cfg.name.iface}"
-          "${pkgs.iproute}/bin/ip -n ${name} addr add ${cfg.name.ipAddress}/24 dev ${cfg.name.iface}"
-          "${pkgs.iproute}/bin/ip link set br-${cfg.name.iface} up"
-          "${pkgs.iproute}/bin/ip -n ${name} link set ${cfg.name.iface} up"
-          "${pkgs.iproute}/bin/ip link set br-${cfg.name.iface} master br0"
-          "${pkgs.iproute}/bin/ip -n ${name} route add default via ${cfg.bridge.ipAddress}"
-        ]
-        ++ (optionals config.services.${name}.enforceTor [
-          "${pkgs.iproute}/bin/ip netns exec ${name} ${pkgs.iptables}/bin/iptables -P OUTPUT DROP"
-          "${pkgs.iproute}/bin/ip netns exec ${name} ${pkgs.iptables}/bin/iptables -A OUTPUT -d 127.0.0.1,${cfg.bridge.ipAddress} -j ACCEPT"
-        ])
-        ++ (optionals config.services.${name}.enforceTor && config.services.${availableNetns}.enable [
-          "${pkgs.iproute}/bin/ip netns exec ${name} ${pkgs.iptables}/bin/iptables -A OUTPUT -d ${cfg.availableNetns.ipAddress} -j ACCEPT"
-        ])
-        ++ [
-          "${pkgs.iproute}/bin/ip netns exec ${name} ${pkgs.iptables}/bin/iptables -P INPUT DROP"
-          "${pkgs.iproute}/bin/ip netns exec ${name} ${pkgs.iptables}/bin/iptables -A INPUT -s 127.0.0.1,${cfg.bridge.ipAddress} -j ACCEPT"
-        ]
-        ++ (optionals config.services.${availableNetns}.enable [
-          "${pkgs.iproute}/bin/ip netns exec ${name} ${pkgs.iptables}/bin/iptables -A INPUT -s ${cfg.availableNetns.ipAddress} -j ACCEPT"
-        ]);
-        ExecStop = ''
-          ${pkgs.iproute}/bin/ip netns delete ${name} ;\
-          ${pkgs.iproute}/bin/ip link del br-${cfg.name.iface}
-        '';
-      };
-    };
-
     systemd.services.netns-bitcoind = mkIf config.services.bitcoind.enable {
       description = "Create bitcoind namespace";
       requires = [ "netns.service" ];

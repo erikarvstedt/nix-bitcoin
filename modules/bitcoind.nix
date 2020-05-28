@@ -260,8 +260,6 @@ in {
       "d '${cfg.dataDir}/blocks' 0770 ${cfg.user} ${cfg.group} - -"
     ];
 
-    systemd.services.netns-bitcoind = mkIf config.services.netns.enable f { name = "bitcoind"; iface = "veth1" };
-
     systemd.services.bitcoind = {
       description = "Bitcoin daemon";
       requires = [ "nix-bitcoin-secrets.target" ];
