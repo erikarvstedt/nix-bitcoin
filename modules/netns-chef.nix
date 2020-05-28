@@ -9,19 +9,6 @@ let
     map = [ map ];
     version = 3;
   };
-
-  netns-init-script = pkgs.writeScript "netns-init.sh" ''
-    ${pkgs.iproute}/bin/ip link add name br0 type bridge
-    ${pkgs.iproute}/bin/ip link set br0 up
-    ${pkgs.iproute}/bin/ip addr add 169.254.0.10/24 brd + dev br0
-    ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 169.254.0.0/24 -j MASQUERADE
-    ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 169.254.0.0/24 -j MASQUERADE
-    ${pkgs.sysctl}/bin/sysctl -w net.ipv4.ip_forward=1
-  '';
-  netns-stop-script = pkgs.writeScript "netns-stop.sh" ''
-    ${pkgs.iproute}/bin/ip link del br0
-    ${pkgs.sysctl}/bin/sysctl -w net.ipv4.ip_forward=0
-  '';
 in {
   options.services.netns = {
     enable = mkOption {
@@ -135,15 +122,28 @@ in {
     };
 
     # Bridge creation
-    systemd.services.netns = {
+    systemd.services.netns = let
+      ip = "${pkgs.iproute}/bin/ip";
+      iptables = "${pkgs.iptables}/bin/iptables";
+    in {
       description = "Create bridge";
       requiredBy = [ "tor.service" ];
       before = [ "tor.service" ];
+      script = ''
+        ${ip} link add name br0 type bridge
+        ${ip} link set br0 up
+        ${ip} addr add 169.254.0.10/24 brd + dev br0
+        ${iptables} -t nat -D POSTROUTING -s 169.254.0.0/24 -j MASQUERADE
+        ${iptables} -t nat -A POSTROUTING -s 169.254.0.0/24 -j MASQUERADE
+        ${pkgs.sysctl}/bin/sysctl -w net.ipv4.ip_forward=1
+      '';
+      preStop = ''
+        ${ip} link del br0
+        ${pkgs.sysctl}/bin/sysctl -w net.ipv4.ip_forward=0
+      '';
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = "yes";
-        ExecStart = "${pkgs.bash}/bin/bash ${netns-init-script}";
-        ExecStop = "${pkgs.bash}/bin/bash ${netns-stop-script}";
       };
     };
 
