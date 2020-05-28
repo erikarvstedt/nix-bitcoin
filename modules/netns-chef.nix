@@ -11,13 +11,7 @@ let
   };
 in {
   options.services.netns = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-        If enabled, the netns-init service will be installed.
-      '';
-    };
+    enable = mkEnableOption "netns isolation";
   };
 
   config = mkIf cfg.enable {
