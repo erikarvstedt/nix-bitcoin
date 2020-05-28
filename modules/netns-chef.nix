@@ -27,7 +27,7 @@ in {
     networking.firewall.interfaces.br0.allowedTCPPorts = [ 9050 ];
 
     # Bridge creation
-    systemd.services.netns = let
+    systemd.services.netns-bridge = let
       ip = "${pkgs.iproute}/bin/ip";
       iptables = "${pkgs.iptables}/bin/iptables";
     in {
