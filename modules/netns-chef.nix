@@ -3,14 +3,14 @@
 with lib;
 
 let
-  cfg = config.services.netns;
+  cfg = config.nix-bitcoin.netns-isolation;
 
   mkHiddenService = map: {
     map = [ map ];
     version = 3;
   };
 in {
-  options.services.netns = {
+  options.nix-bitcoin.netns-isolation = {
     enable = mkEnableOption "netns isolation";
   };
 
