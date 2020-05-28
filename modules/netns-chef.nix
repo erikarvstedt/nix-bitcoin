@@ -25,6 +25,7 @@ in {
     networking.dhcpcd.extraConfig = "noipv4ll";
     services.tor.client.socksListenAddress = "169.254.0.10:9050";
     networking.firewall.interfaces.br0.allowedTCPPorts = [ 9050 ];
+    boot.kernel.sysctl."net.ipv4.ip_forward" = true;
 
     # Bridge creation
     systemd.services.netns-bridge = let
@@ -40,11 +41,9 @@ in {
         ${ip} addr add 169.254.0.10/24 brd + dev br0
         ${iptables} -t nat -D POSTROUTING -s 169.254.0.0/24 -j MASQUERADE
         ${iptables} -t nat -A POSTROUTING -s 169.254.0.0/24 -j MASQUERADE
-        ${pkgs.sysctl}/bin/sysctl -w net.ipv4.ip_forward=1
       '';
       preStop = ''
         ${ip} link del br0
-        ${pkgs.sysctl}/bin/sysctl -w net.ipv4.ip_forward=0
       '';
       serviceConfig = {
         Type = "oneshot";
