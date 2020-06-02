@@ -39,6 +39,7 @@ stdenv.mkDerivation rec {
 
     figlet "nix-bitcoin"
     (mkdir -p secrets; cd secrets; ${nix-bitcoin.generate-secrets})
+    chmod 0700 secrets
 
     # Don't run this hook when another nix-shell is run inside this shell
     unset shellHook
