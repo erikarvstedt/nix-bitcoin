@@ -24,8 +24,8 @@ nix-build --out-link $tmpDir/vm - <<'EOF'
 (import <nixpkgs/nixos> {
   configuration = {
     imports = [
-      <nix-bitcoin/examples/configuration.nix>
-      <nix-bitcoin/examples/qemu-vm/vm-config.nix>
+      <configuration.nix>
+      <qemu-vm/vm-config.nix>
       <nix-bitcoin/modules/secrets/generate-secrets.nix>
     ];
   };
