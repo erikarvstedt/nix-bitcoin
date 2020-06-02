@@ -30,7 +30,7 @@ mkdir -p $tmpDir
 export HOME=$tmpDir
 
 # Disable interactive queries and don't write to the $USER's known_hosts file
-export NIXOPS_SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+export NIXOPS_SSH_OPTS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/-o null LogLevel=ERROR"
 
 nixops create nixops/node.nix nixops/node-vbox.nix -d bitcoin-node
 nixops deploy -d bitcoin-node
