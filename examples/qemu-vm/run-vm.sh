@@ -26,7 +26,9 @@ runVM() {
     export QEMU_NET_OPTS=hostfwd=tcp::$sshPort-:22
     </dev/null $vm/bin/run-*-vm -m $vmMemoryMiB -smp $vmNumCPUs &>/dev/null &
     qemuPID=$!
+}
 
+vmWaitForSSH() {
     echo
     printf "Waiting for SSH connection..."
     while ! { start=$(getTimeMs) && c : 2>/dev/null; }; do

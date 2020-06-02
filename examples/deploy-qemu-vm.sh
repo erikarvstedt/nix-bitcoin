@@ -16,7 +16,8 @@ if [[ ! -v IN_NIX_SHELL ]]; then
     exec nix-shell --run "${BASH_SOURCE[0]}"
 fi
 
-source qemu-vm/run-vm.sh
+scriptDir=$(cd "${BASH_SOURCE[0]%/*}" && pwd)
+source "$scriptDir/qemu-vm/run-vm.sh"
 
 echo "Building VM"
 nix-build --out-link $tmpDir/vm - <<'EOF'
@@ -36,6 +37,7 @@ vmMemoryMiB=2048
 sshPort=60734
 runVM $tmpDir/vm $vmNumCPUs $vmMemoryMiB $sshPort
 
+vmWaitForSSH
 printf "Waiting until services are ready"
 c '
 attempts=60
