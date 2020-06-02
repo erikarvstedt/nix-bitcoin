@@ -110,11 +110,13 @@ in {
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = "${cfg.dataDir}";
-        ExecStartPost = [
+        ExecStartPost = let
+          restPort = toString cfg.restPort
+        in [
           # Run fully privileged for secrets dir write access
           "+${nix-bitcoin-services.script ''
             attempts=50
-            while ! { exec 3>/dev/tcp/127.0.0.1/${toString cfg.restPort} && exec 3>&-; } &>/dev/null; do
+            while ! { exec 3>/dev/tcp/127.0.0.1/${restPort} && exec 3>&-; } &>/dev/null; do
                   ((attempts-- == 0)) && { echo "lnd REST service unreachable"; exit 1; }
                   sleep 0.1
             done
@@ -125,7 +127,7 @@ in {
 
               ${pkgs.curl}/bin/curl -s \
                 --cacert ${secretsDir}/lnd-cert \
-                -X GET https://127.0.0.1:${toString cfg.restPort}/v1/genseed | ${pkgs.jq}/bin/jq -c '.cipher_seed_mnemonic' > "$mnemonic"
+                -X GET https://127.0.0.1:${restPort}/v1/genseed | ${pkgs.jq}/bin/jq -c '.cipher_seed_mnemonic' > "$mnemonic"
             fi
             chown lnd: "$mnemonic"
             chmod 400 "$mnemonic"
@@ -140,7 +142,7 @@ in {
                 --cacert ${secretsDir}/lnd-cert \
                 -X POST -d "{\"wallet_password\": \"$(cat ${secretsDir}/lnd-wallet-password | tr -d '\n' | base64 -w0)\", \
                 \"cipher_seed_mnemonic\": $(cat ${secretsDir}/lnd-seed-mnemonic | tr -d '\n')}" \
-                https://127.0.0.1:${toString cfg.restPort}/v1/initwallet
+                https://127.0.0.1:${restPort}/v1/initwallet
 
               # Guarantees that RPC calls with cfg.cli succeed after the service is started
               echo Wait until wallet is created
@@ -155,7 +157,7 @@ in {
                 --cacert ${secretsDir}/lnd-cert \
                 -X POST \
                 -d "{\"wallet_password\": \"$(cat ${secretsDir}/lnd-wallet-password | tr -d '\n' | base64 -w0)\"}" \
-                https://127.0.0.1:${toString cfg.restPort}/v1/unlockwallet
+                https://127.0.0.1:${restPort}/v1/unlockwallet
             fi
 
             # Wait until the RPC port is open
