@@ -27,7 +27,7 @@
 
   config = {
     assertions = [
-      { assertion = config.services.lnd.enable -> !config.services.clightning.enable;
+      { assertion = config.services.lnd.enable -> (!config.services.clightning.enable || systemd.services.lnd.wantedBy = []);
         message = ''
           LND and clightning can't be run in parallel because they both bind to lightning port 9735.
         '';
