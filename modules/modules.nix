@@ -26,6 +26,12 @@
   };
 
   config = {
+    assertions = [
+      { assertion = config.services.lnd.enable -> !config.services.clightning.enable;
+        message = "LND and clightning shouldn't be used on the same nix-bitcoin node.";
+      }
+    ];
+
     nixpkgs.overlays = [ (self: super: {
       nix-bitcoin = let
         pkgs = import ../pkgs { pkgs = super; };
