@@ -33,6 +33,15 @@ in {
 
   config = mkMerge [
     (mkIf (cfg.ledger || cfg.trezor) {
+      assertions = [
+        { assertion = !config.services.bitcoind.dataDirReadableByGroup;
+          message = ''
+            Hardware-Wallets are not compatible with bitcoind.dataDirReadableByGroup.
+            Note that this option is active when enabling electrs.high-memory.
+          '';
+        }
+      ];
+
       environment.systemPackages = with pkgs; [
         nix-bitcoin.hwi
         # Provides lsusb for debugging
