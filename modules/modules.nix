@@ -28,7 +28,9 @@
   config = {
     assertions = [
       { assertion = config.services.lnd.enable -> !config.services.clightning.enable;
-        message = "LND and clightning shouldn't be used on the same nix-bitcoin node.";
+        message = ''
+          LND and clightning can't be run in parallel because they both bind to lightning port 9735.
+        '';
       }
     ];
 
