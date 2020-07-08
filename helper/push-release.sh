@@ -4,10 +4,23 @@ set -euo pipefail
 REPO=fort-nix/nix-bitcoin
 BRANCH=master
 OAUTH_TOKEN=$(pass show nix-bitcoin/github/oauth-token)
+DRY_RUN=
 
 if [[ ! $OAUTH_TOKEN ]]; then
     echo "Please set OAUTH_TOKEN variable"
 fi
+
+set +u
+while :; do
+    case $1 in
+        --dry-run) DRY_RUN=1
+        ;;
+        *) break
+    esac
+    shift
+done
+set -u
+[ -n "$DRY_RUN" ] && echo "DRY_RUN=1"
 
 if [[ $# < 1 ]]; then
     echo "$0 <tag_name>"
@@ -27,7 +40,7 @@ while true; do
 done
 
 TMPDIR=$(mktemp -d)
-trap "rm -rf $TMPDIR" EXIT
+[[ ! $DRY_RUN ]] && trap "rm -rf $TMPDIR" EXIT
 ARCHIVE_NAME=nix-bitcoin-$TAG_NAME.tar.gz
 ARCHIVE=$TMPDIR/$ARCHIVE_NAME
 
@@ -39,6 +52,11 @@ SHA256SUMS=$TMPDIR/SHA256SUMS.txt
 # argument
 (cd $TMPDIR; sha256sum $ARCHIVE_NAME > $SHA256SUMS)
 gpg -o $SHA256SUMS.asc -a --detach-sig $SHA256SUMS
+
+if [[ -n $DRY_RUN ]]; then
+    echo "Created v$TAG_NAME in $TMPDIR"
+    exit 0
+fi
 
 POST_DATA="{ \"tag_name\": \"v$TAG_NAME\", \"name\": \"nix-bitcoin-$TAG_NAME\", \"body\": \"nix-bitcoin-$TAG_NAME\", \"target_comitish\": \"$BRANCH\" }"
 RESPONSE=$(curl -H "Authorization: token $OAUTH_TOKEN" -d "$POST_DATA" https://api.github.com/repos/$REPO/releases 2> /dev/null)
