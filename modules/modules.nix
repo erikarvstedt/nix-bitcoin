@@ -41,10 +41,12 @@
     ];
 
     nixpkgs.overlays = [ (self: super: {
-      nix-bitcoin = let
-        pkgs = import ../pkgs { pkgs = super; };
-      in
-        pkgs // pkgs.pinned;
+      nix-bitcoin =
+        let
+          pkgs = import ../pkgs { pkgs = super; };
+        in
+          pkgs // pkgs.pinned
+               // { lib = import ./lib.nix { inherit lib; }; };
     }) ];
   };
 }
