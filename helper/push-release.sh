@@ -5,28 +5,28 @@ REPO=fort-nix/nix-bitcoin
 BRANCH=master
 OAUTH_TOKEN=$(pass show nix-bitcoin/github/oauth-token)
 DRY_RUN=
+TAG_NAME=
 
 if [[ ! $OAUTH_TOKEN ]]; then
     echo "Please set OAUTH_TOKEN variable"
 fi
 
-set +u
-while :; do
-    case $1 in
-        --dry-run) DRY_RUN=1
-        ;;
-        *) break
+for arg in "$@"; do
+    case $arg in
+        --dry-run)
+            DRY_RUN=1
+            ;;
+        *)
+            TAG_NAME="$arg"
+            ;;
     esac
-    shift
 done
-set -u
-if [[ $DRY_RUN ]]; then echo "DRY_RUN=1"; fi
 
-if [[ $# < 1 ]]; then
-    echo "$0 <tag_name>"
+if [[ ! $TAG_NAME ]]; then
+    echo "$0 [--dry-run] <tag_name>"
     exit
 fi
-TAG_NAME=$1
+if [[ $DRY_RUN ]]; then echo "Dry run"; fi
 
 RESPONSE=$(curl https://api.github.com/repos/$REPO/releases/latest 2> /dev/null)
 echo "Latest release" $(echo $RESPONSE | jq -r '.tag_name' | tail -c +2)
