@@ -31,7 +31,7 @@ TAG_NAME=$1
 RESPONSE=$(curl https://api.github.com/repos/$REPO/releases/latest 2> /dev/null)
 echo "Latest release" $(echo $RESPONSE | jq -r '.tag_name' | tail -c +2)
 while true; do
-    read -p "Create release $1? [yn] " yn
+    read -p "Create release $TAG_NAME? [yn] " yn
     case $yn in
         [Yy]* ) break;;
         [Nn]* ) exit;;
@@ -68,8 +68,8 @@ fi
 
 post_asset() {
     GH_ASSET="https://uploads.github.com/repos/$REPO/releases/$ID/assets?name="
-    curl -H "Authorization: token $OAUTH_TOKEN" --data-binary "@$1" -H "Content-Type: application/octet-stream" \
-         $GH_ASSET/$(basename $1) &> /dev/null
+    curl -H "Authorization: token $OAUTH_TOKEN" --data-binary "@$TAG_NAME" -H "Content-Type: application/octet-stream" \
+         $GH_ASSET/$(basename $TAG_NAME) &> /dev/null
 }
 post_asset $ARCHIVE
 post_asset $SHA256SUMS
