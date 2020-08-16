@@ -53,7 +53,7 @@ SHA256SUMS=$TMPDIR/SHA256SUMS.txt
 (cd $TMPDIR; sha256sum $ARCHIVE_NAME > $SHA256SUMS)
 gpg -o $SHA256SUMS.asc -a --detach-sig $SHA256SUMS
 
-if [[ -n $DRY_RUN ]]; then
+if [[ $DRY_RUN ]]; then
     echo "Created v$TAG_NAME in $TMPDIR"
     exit 0
 fi
