@@ -20,7 +20,7 @@ while :; do
     shift
 done
 set -u
-[ -n "$DRY_RUN" ] && echo "DRY_RUN=1"
+if [[ $DRY_RUN ]]; then echo "DRY_RUN=1"; fi
 
 if [[ $# < 1 ]]; then
     echo "$0 <tag_name>"
@@ -40,7 +40,7 @@ while true; do
 done
 
 TMPDIR=$(mktemp -d)
-[[ ! $DRY_RUN ]] && trap "rm -rf $TMPDIR" EXIT
+if [[ ! $DRY_RUN ]]; then trap "rm -rf $TMPDIR" EXIT; fi
 ARCHIVE_NAME=nix-bitcoin-$TAG_NAME.tar.gz
 ARCHIVE=$TMPDIR/$ARCHIVE_NAME
 
