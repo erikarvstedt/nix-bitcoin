@@ -13,7 +13,7 @@ fi
 
 for arg in "$@"; do
     case $arg in
-        --dry-run)
+        --dry-run|-n)
             DRY_RUN=1
             ;;
         *)
@@ -23,7 +23,7 @@ for arg in "$@"; do
 done
 
 if [[ ! $TAG_NAME ]]; then
-    echo "$0 [--dry-run] <tag_name>"
+    echo "$0 [--dry-run|-n] <tag_name>"
     exit
 fi
 if [[ $DRY_RUN ]]; then echo "Dry run"; fi
