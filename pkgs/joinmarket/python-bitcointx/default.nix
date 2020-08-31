@@ -11,13 +11,11 @@ buildPythonPackage rec {
     sha256 = "35edd694473517508367338888633954eaa91b2622b3caada8fd3030ddcacba2";
   };
 
-  propagatedBuildInputs = [ secp256k1 ];
-
-  preConfigure = ''
-    cp -r ${secp256k1.src} libsecp256k1
-    touch libsecp256k1/autogen.sh
-    export INCLUDE_DIR=${secp256k1}/include
-    export LIB_DIR=${secp256k1}/lib
+  patchPhase = builtins.trace secp256k1.outPath ''
+    for path in core/secp256k1.py tests/test_load_secp256k1.py; do
+      substituteInPlace "bitcointx/$path" \
+        --replace "ctypes.util.find_library('secp256k1')" "'${secp256k1}/lib/libsecp256k1.so'"
+    done
   '';
 
   meta = with lib; {
