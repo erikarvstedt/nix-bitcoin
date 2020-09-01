@@ -16,6 +16,7 @@ let
     ${config.services.liquidd.dataDir}
     ${optionalString cfg.with-bulk-data "${config.services.electrs.dataDir}"}
     ${config.services.lightning-charge.dataDir}
+    ${config.services.joinmarket.dataDir}
     /var/lib/tor
     # Extra files
     ${cfg.extraFiles}
