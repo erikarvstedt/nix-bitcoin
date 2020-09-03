@@ -204,7 +204,7 @@ in {
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         PermissionsStartOnly = "true"; # Needed to read rpcpassword-privileged
-        ExecStart = "${pkgs.nix-bitcoin.joinmarket}/bin/joinmarketd.py";
+        ExecStart = "${pkgs.nix-bitcoin.joinmarket}/bin/joinmarketd";
         User = "${cfg.user}";
         Restart = "on-failure";
         RestartSec = "10s";
@@ -223,7 +223,7 @@ in {
       after = [ "joinmarket.service" ];
       preStart = ''
         jmwalletpassword=$(cat ${secretsDir}/jm-wallet-password)
-        echo "echo -n $jmwalletpassword | ${pkgs.nix-bitcoin.joinmarket}/bin/yg-privacyenhanced.py --datadir=${cfg.dataDir} --wallet-password-stdin wallet.jmdat" > /run/joinmarket-yieldgenerator/startscript.sh
+        echo "echo -n $jmwalletpassword | ${pkgs.nix-bitcoin.joinmarket}/bin/jm-yg-privacyenhanced --datadir=${cfg.dataDir} --wallet-password-stdin wallet.jmdat" > /run/joinmarket-yieldgenerator/startscript.sh
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // rec {
         WorkingDirectory = "${cfg.dataDir}";

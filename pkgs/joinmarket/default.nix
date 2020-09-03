@@ -48,15 +48,21 @@ stdenv.mkDerivation {
     mkdir -p $src-unpacked
     tar xzf $src --strip 1 -C $src-unpacked
     mkdir -p $out/{bin,src}
-    cp $src-unpacked/scripts/add-utxo.py $out/bin
-    cp $src-unpacked/scripts/convert_old_wallet.py $out/bin
-    cp $src-unpacked/scripts/joinmarketd.py $out/bin
-    cp $src-unpacked/scripts/receive-payjoin.py $out/bin
-    cp $src-unpacked/scripts/sendpayment.py $out/bin
-    cp $src-unpacked/scripts/sendtomany.py $out/bin
-    cp $src-unpacked/scripts/tumbler.py $out/bin
-    cp $src-unpacked/scripts/wallet-tool.py $out/bin
-    cp $src-unpacked/scripts/yg-privacyenhanced.py $out/bin
+
+    # add-utxo.py -> bin/jm-add-utxo
+    cpBin() {
+      cp $src-unpacked/scripts/$1 $out/bin/jm-''${1%.py}
+    }
+    cp $src-unpacked/scripts/joinmarketd.py $out/bin/joinmarketd
+    cpBin add-utxo.py
+    cpBin convert_old_wallet.py
+    cpBin receive-payjoin.py
+    cpBin sendpayment.py
+    cpBin sendtomany.py
+    cpBin tumbler.py
+    cpBin wallet-tool.py
+    cpBin yg-privacyenhanced.py
+
     chmod +x -R $out/bin
     patchShebangs $out/bin
   '';
