@@ -45,9 +45,8 @@ stdenv.mkDerivation {
   buildInputs = [ pythonEnv ];
 
   buildCommand = ''
-    mkdir -p $src-unpacked
+    mkdir -p $src-unpacked $out/bin
     tar xzf $src --strip 1 -C $src-unpacked
-    mkdir -p $out/{bin,src}
 
     # add-utxo.py -> bin/jm-add-utxo
     cpBin() {
