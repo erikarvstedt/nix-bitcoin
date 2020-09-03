@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, nixpkgsUnstablePath, python3 }:
+{ stdenv, fetchurl, python3 }:
 
 let
   version = "0.7.0";
@@ -10,8 +10,6 @@ let
   python = python3.override {
     packageOverrides = self: super: let
       joinmarketPkg = pkg: self.callPackage pkg { inherit version src; };
-      unstablePyPkg = pkgName:
-        self.callPackage "${nixpkgsUnstablePath}/pkgs/development/python-modules/${pkgName}";
     in {
       joinmarketbase = joinmarketPkg ./jmbase;
       joinmarketclient = joinmarketPkg ./jmclient;
@@ -24,8 +22,6 @@ let
       urldecode = self.callPackage ./urldecode {};
       python-bitcointx = self.callPackage ./python-bitcointx {};
       secp256k1 = self.callPackage ./secp256k1 {};
-
-      txtorcon = unstablePyPkg "txtorcon" {};
     };
   };
 
