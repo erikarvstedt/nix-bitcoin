@@ -21,4 +21,5 @@ git verify-tag ${latest}
 
 echo "tag: ${latest}"
 # The prefix option is necessary because GitHub prefixes the archive contents in this format
-echo "sha256: $(git archive --format tar.gz --prefix=joinmarket-clientserver-"${latest//v}"/ ${latest} | sha256sum | cut -d\  -f1)"
+echo "sha256: $(nix-hash --type sha256 --flat --base32 \
+                <(git archive --format tar.gz --prefix=joinmarket-clientserver-"${latest//v}"/ ${latest}))"

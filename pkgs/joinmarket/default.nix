@@ -4,7 +4,7 @@ let
   version = "0.7.0";
   src = fetchurl {
     url = "https://github.com/JoinMarket-Org/joinmarket-clientserver/archive/v${version}.tar.gz";
-    sha256 = "2fd0b40f818182ca8361458bb128f85fb4ae5330ea247a87f4d3d3e2871d4741";
+    sha256 = "0ha73n3y5lykyj3pl97a619sxd2zz0lb32s5c61wm0l1h47v9l1g";
   };
 
   python = python3.override {
