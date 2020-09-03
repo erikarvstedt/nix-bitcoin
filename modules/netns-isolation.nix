@@ -305,7 +305,7 @@ in {
 
     services.lightning-loop.cliExec = mkCliExec "lightning-loop";
 
-    services.joinmarket = mkIf config.services.joinmarket.enable {
+    services.joinmarket = {
       rpc_host = netns.bitcoind.address;
       cliExec = mkCliExec "joinmarket";
     };
