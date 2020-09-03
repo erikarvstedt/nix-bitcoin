@@ -5,9 +5,7 @@ buildPythonPackage rec {
   version = "1.1.1";
 
   src = fetchurl {
-    urls = [
-            "https://github.com/Simplexum/${pname}/archive/${pname}-v${version}.tar.gz"
-           ];
+    url = "https://github.com/Simplexum/${pname}/archive/${pname}-v${version}.tar.gz"
     sha256 = "35edd694473517508367338888633954eaa91b2622b3caada8fd3030ddcacba2";
   };
 
