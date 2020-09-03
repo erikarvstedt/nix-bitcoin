@@ -15,7 +15,7 @@ buildPythonPackage rec {
     longDescription= ''
       CoinJoin implementation with incentive structure to convince people to take part.
     '';
-    homepage = https://github.com/Joinmarket-Org/joinmarket-clientserver;
+    homepage = "https://github.com/Joinmarket-Org/joinmarket-clientserver";
     maintainers = with maintainers; [ nixbitcoin ];
     license = licenses.gpl3;
   };

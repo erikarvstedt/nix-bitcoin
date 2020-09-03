@@ -18,7 +18,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Cross-platform Python CFFI bindings for libsecp256k1";
-    homepage = https://github.com/ofek/coincurve;
+    homepage = "https://github.com/ofek/coincurve";
     maintainers = with maintainers; [ nixbitcoin ];
     license = licenses.asl20;
   };

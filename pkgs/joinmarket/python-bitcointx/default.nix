@@ -5,7 +5,7 @@ buildPythonPackage rec {
   version = "1.1.1";
 
   src = fetchurl {
-    url = "https://github.com/Simplexum/${pname}/archive/${pname}-v${version}.tar.gz"
+    url = "https://github.com/Simplexum/${pname}/archive/${pname}-v${version}.tar.gz";
     sha256 = "35edd694473517508367338888633954eaa91b2622b3caada8fd3030ddcacba2";
   };
 
@@ -23,7 +23,7 @@ buildPythonPackage rec {
       python-bitcointx is a python3 library providing an easy interface to the
       Bitcoin data structures
     '';
-    homepage = https://github.com/Simplexum/python-bitcointx;
+    homepage = "https://github.com/Simplexum/python-bitcointx";
     maintainers = with maintainers; [ nixbitcoin ];
     license = licenses.gpl3;
   };

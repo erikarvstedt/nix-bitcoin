@@ -17,7 +17,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Enhance Python with colored logging";
-    homepage = https://github.com/freelan-developers/chromalog;
+    homepage = "https://github.com/freelan-developers/chromalog";
     maintainers = with maintainers; [ nixbitcoin ];
     license = licenses.mit;
   };
