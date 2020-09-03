@@ -19,10 +19,7 @@ buildPythonPackage rec {
   '';
 
   meta = with lib; {
-    description = ''
-      python-bitcointx is a python3 library providing an easy interface to the
-      Bitcoin data structures
-    '';
+    description = "Interface to Bitcoin transaction data structures";
     homepage = "https://github.com/Simplexum/python-bitcointx";
     maintainers = with maintainers; [ nixbitcoin ];
     license = licenses.gpl3;

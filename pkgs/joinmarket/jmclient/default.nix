@@ -12,10 +12,7 @@ buildPythonPackage rec {
   propagatedBuildInputs = [ future configparser joinmarketbase mnemonic argon2_cffi bencoderpyx pyaes ];
 
   meta = with lib; {
-    description = "Client for Joinmarket refactored to separate client and backend operations";
-    longDescription= ''
-      CoinJoin implementation with incentive structure to convince people to take part.
-    '';
+    description = "Client library for Bitcoin coinjoins";
     homepage = "https://github.com/Joinmarket-Org/joinmarket-clientserver";
     maintainers = with maintainers; [ nixbitcoin ];
     license = licenses.gpl3;

@@ -9,7 +9,7 @@ buildPythonPackage rec {
   };
 
   meta = with lib; {
-    description = "A simple function to decode an encoded url.";
+    description = "A simple function to decode an encoded url";
     homepage = "https://github.com/jennyq/urldecode";
     maintainers = with maintainers; [ nixbitcoin ];
   };
