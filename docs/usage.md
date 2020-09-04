@@ -295,12 +295,11 @@ The tumbler needs to be able to run in the background for a long time, use scree
    Example: Tumbling into your wallet after buying from an exchange to improve privacy:
 
    ```console
-   jm-tumbler wallet.jmdat 1NY1qw2SpHupJbk5WD9RW3G78NECVPMXi1 14FEGCh23fYb4sCFKj6JXUQv2jpcBOWj9y 166b5ePjQR6pkeA37LbgYhbaTVBFns74Lu 155jvPSRCJoWNETjAXNfgWaVptaL4HtHmY 1HCajpvGsgeU42EAyUMVuQ7y6rCsF8mo7
+   jm-tumbler wallet.jmdat <addr1> <addr2> <addr3>
    ```
 
-   The addresses are from the Addresses tab in Electrum. After tumbling is done you
-   can spend bitcoins on normal things probably without the exchange collecting data
-   on your purchases. All other parameters are left as default values.
+   After tumbling your bitcoin end up in these three addresses. You can now spend
+   them without the exchange collecting data on your purchases.
 
    Get more information [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/tumblerguide.md)
 
