@@ -238,7 +238,8 @@ JoinMarket
     ```console
     jm-wallet-tool generate
     ```
-    Follow the on-screen instructions and write down your seed. Leave the wallet name as wallet.jmdat!
+    Follow the on-screen instructions and write down your seed. Use the suggested
+    default wallet name `wallet.jmdat`.
 
 3. Send funds to JoinMarket wallet
 
@@ -315,11 +316,11 @@ JoinMarket
 
    Bitcoin should be sent to one of the empty external addresses (sometimes known as receive addresses).
 
-## Try out a coinjoin; using `sendpayment.py`
+## Try out a coinjoin with `jm-sendpayment`
 
-1. Single coinjoins can be done using the script `sendpayment.py`. As with all Joinmarket user scripts, use `--help` to see a full list of options.
+1. Single coinjoins can be done using the script `jm-sendpayment`.
+   As with all JoinMarket user scripts, use `--help` to see a full list of options.
 
-   For example
 
    ```console
    jm-sendpayment wallet.jmdat 5000000 mprGzBA9rQk82Ly41TsmpQGa8UPpZb2w8c
@@ -369,13 +370,13 @@ The tumbler needs to be able to run in the background for a long time, use scree
    ```console
    exit
    ```
-## Run a "Maker" or "yield generator"
+## Run a "maker" or "yield generator"
 
 The maker/yield generator in nix-bitcoin is implemented using a systemd service.
 
 Click [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/YIELDGENERATOR.md) for general yield generator information.
 
-In nix-bitcoin the yg-privacyenhanced.py script is located in the system path. If you want to custom configure it, the easiest way to find it is by running `whereis yg-privacyenhanced.py`.
+In nix-bitcoin the jm-yg-privacyenhanced script is located in the system path. If you want to custom configure it, the easiest way to find it is by running `whereis yg-privacyenhanced.py`.
 
 1. On your node, write your JoinMarket wallet password from above into `/secrets/jm-wallet-password`
 
@@ -391,4 +392,4 @@ In nix-bitcoin the yg-privacyenhanced.py script is located in the system path. I
    systemctl status joinmarket-yieldgenerator
    ```
 
-6. Profit
+4. Profit
