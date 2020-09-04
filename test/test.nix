@@ -53,7 +53,13 @@ import ./make-test.nix rec {
     services.backups.enable = true;
 
     services.joinmarket.enable = true;
-    services.joinmarket.yieldgenerator = true;
+    services.joinmarket.yieldgenerator = {
+      enable = true;
+      customParameters = ''
+        txfee = 200
+        cjfee_a = 300
+      '';
+    };
 
     # to test that unused secrets are made inaccessible by 'setup-secrets'
     systemd.services.generate-secrets.postStart = ''

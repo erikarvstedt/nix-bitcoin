@@ -78,10 +78,20 @@ let
 in {
   options.services.joinmarket = {
     enable = mkEnableOption "JoinMarket";
-    yieldgenerator = mkOption {
-      type = types.bool;
-      default = false;
-      description = "Enable the yield generator bot";
+    yieldgenerator = {
+      enable = mkEnableOption "yield generator bot";
+      customParameters = mkOption {
+        type = types.str;
+        default = "";
+        example = ''
+          txfee = 200
+          cjfee_a = 300
+        '';
+        description = ''
+          Python code to define custom yield generator parameters, as described in
+          https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/YIELDGENERATOR.md
+        '';
+      };
     };
     dataDir = mkOption {
       type = types.path;
@@ -147,18 +157,29 @@ in {
     };
   }
 
-  (mkIf cfg.yieldgenerator {
+  (mkIf cfg.yieldgenerator.enable {
     nix-bitcoin.secrets.jm-wallet-password.user = cfg.user;
 
-    systemd.services.joinmarket-yieldgenerator = {
+    systemd.services.joinmarket-yieldgenerator = let
+      ygDefault = "${pkgs.nix-bitcoin.joinmarket}/bin/jm-yg-privacyenhanced";
+      ygBinary = if cfg.yieldgenerator.customParameters == "" then
+        ygDefault
+      else
+        pkgs.runCommand "jm-yieldgenerator-custom" {
+          inherit (cfg.yieldgenerator) customParameters;
+        } ''
+          substitute ${ygDefault} $out \
+            --replace "# end of settings customization" "$customParameters"
+          chmod +x $out
+        '';
+    in {
       description = "CoinJoin maker bot to gain privacy and passively generate income";
       wantedBy = [ "joinmarket.service" ];
       requires = [ "joinmarket.service" ];
       after = [ "joinmarket.service" ];
       preStart = let
-        jm = pkgs.nix-bitcoin.joinmarket;
         start = ''
-          exec ${jm}/bin/jm-yg-privacyenhanced --datadir='${cfg.dataDir}' --wallet-password-stdin wallet.jmdat
+          exec ${ygBinary} --datadir='${cfg.dataDir}' --wallet-password-stdin wallet.jmdat
         '';
       in ''
         pw=$(cat "${secretsDir}"/jm-wallet-password)
