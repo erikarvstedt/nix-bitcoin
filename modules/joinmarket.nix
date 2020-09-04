@@ -21,7 +21,7 @@ let
     rpc_host = ${cfg.rpc_host}
     rpc_port = 8332
     rpc_user = ${config.services.bitcoind.rpc.users.privileged.name}
-    rpc_password =
+    @@RPC_PASSWORD@@
 
     [MESSAGING:server1]
     host = darksci3bfoka7tw.onion
@@ -202,16 +202,13 @@ in {
       wantedBy = [ "multi-user.target" ];
       requires = [ "bitcoind.service" ];
       after = [ "bitcoind.service" ];
-      preStart = ''
-        # Create JoinMarket directory structure
-        mkdir -m 0770 -p ${cfg.dataDir}/{logs,wallets,cmtdata}
-        install -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
-        # PermissionsStartOnly creates files as root
-        chown -R '${cfg.user}:${cfg.group}' '${cfg.dataDir}'
-        sed -i "s/rpc_password =/rpc_password = $(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-privileged)/g" '${cfg.dataDir}/joinmarket.cfg'
-      '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
-        PermissionsStartOnly = "true"; # Needed to read rpcpassword-privileged
+        ExecStartPre = nix-bitcoin-services.privileged ''
+          install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
+          sed -i \
+             "s|@@RPC_PASSWORD@@|rpc_password = $(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-privileged)|" \
+             '${cfg.dataDir}/joinmarket.cfg'
+        '';
         ExecStart = "${pkgs.nix-bitcoin.joinmarket}/bin/joinmarketd";
         User = "${cfg.user}";
         Restart = "on-failure";
