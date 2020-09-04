@@ -276,7 +276,8 @@ JoinMarket
 
 
    ```console
-   jm-sendpayment wallet.jmdat 5000000 mprGzBA9rQk82Ly41TsmpQGa8UPpZb2w8c
+   # Send 100000 sat to address, mixing with a random pool of other parties
+   jm-sendpayment wallet.jmdat 100000 mprGzBA9rQk82Ly41TsmpQGa8UPpZb2w8c
    ```
 
 ## Run the tumbler
