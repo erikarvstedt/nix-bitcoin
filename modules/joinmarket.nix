@@ -60,6 +60,21 @@ let
     accept_commitment_broadcasts = 1
     commit_file_location = cmtdata/commitments.json
   '';
+
+   # The jm scripts create a 'logs' dir in the working dir,
+   # so run them inside dataDir.
+   cli = pkgs.runCommand "joinmarket-cli" {} ''
+     mkdir -p $out/bin
+     jm=${pkgs.nix-bitcoin.joinmarket}/bin
+     cd $jm
+     for bin in jm-*; do
+       {
+         echo "#!${pkgs.bash}/bin/bash";
+         echo "cd '${cfg.dataDir}' && ${cfg.cliExec} sudo -u ${cfg.user} $jm/$bin --datadir='${cfg.dataDir}' \"\$@\"";
+       } > $out/bin/$bin
+     done
+     chmod -R +x $out/bin
+   '';
 in {
   options.services.joinmarket = {
     enable = mkOption {
@@ -91,86 +106,15 @@ in {
       default = cfg.user;
       description = "The group as which to run JoinMarket.";
     };
-    add-utxo = mkOption {
-      default = pkgs.writeScriptBin "add-utxo.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/add-utxo.py --datadir=${cfg.dataDir} "$@"
-      ''; # Script needs to be ${cfg.cliExec}uted in directory, because it needs to create 'logs' dir
-      description = ''
-        Script to add one or more utxos to the list that can be used to
-        make commitments for anti-snooping.
-      '';
-    };
-    convert_old_wallet = mkOption {
-      default = pkgs.writeScriptBin "convert_old_wallet.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/convert_old_wallet.py --datadir=${cfg.dataDir} "$@"
-      '';
-      description = ''
-        Script to convert old JoinMarket json wallet format to new jmdat
-        format.
-      '';
-    };
-    receive-payjoin = mkOption {
-      default = pkgs.writeScriptBin "receive-payjoin.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/receive-payjoin.py --datadir=${cfg.dataDir} "$@"
-      '';
-      description = ''
-        Script to receive payjoins.
-      '';
-    };
-    sendpayment = mkOption {
-      default = pkgs.writeScriptBin "sendpayment.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/sendpayment.py --datadir=${cfg.dataDir} "$@"
-      '';
-      description = ''
-        Script to send a single payment from a given mixing depth of
-        your wallet to an given address using coinjoin.
-      '';
-    };
-    sendtomany = mkOption {
-      default = pkgs.writeScriptBin "sendtomany.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/sendtomany.py --datadir=${cfg.dataDir} "$@"
-      '';
-      description = ''
-        Script to create multiple utxos from one.
-      '';
-    };
-    tumbler = mkOption {
-      default = pkgs.writeScriptBin "tumbler.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/tumbler.py --datadir=${cfg.dataDir} "$@"
-      '';
-      description = ''
-        Script to send bitcoins to many different addresses using
-        coinjoin in an attempt to break the link between them.
-      '';
-    };
-    wallet-tool = mkOption {
-      default = pkgs.writeScriptBin "wallet-tool.py"
-      ''
-        cd ${cfg.dataDir} && ${cfg.cliExec} sudo -u ${cfg.user} ${pkgs.nix-bitcoin.joinmarket}/bin/wallet-tool.py --datadir=${cfg.dataDir} "$@"
-      '';
-      description = ''
-        Script to monitor and manage your JoinMarket wallet.
-      '';
+    cli = mkOption {
+      default = cli;
     };
     inherit (nix-bitcoin-services) cliExec;
   };
 
   config = mkIf cfg.enable (mkMerge [{
     environment.systemPackages = [
-      pkgs.nix-bitcoin.joinmarket
-      (hiPrio cfg.add-utxo)
-      (hiPrio cfg.convert_old_wallet)
-      (hiPrio cfg.receive-payjoin)
-      (hiPrio cfg.sendpayment)
-      (hiPrio cfg.sendtomany)
-      (hiPrio cfg.tumbler)
-      (hiPrio cfg.wallet-tool)
+      (hiPrio cfg.cli)
       pkgs.screen
     ];
     users.users.${cfg.user} = {
