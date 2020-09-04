@@ -227,39 +227,20 @@ JoinMarket
 
 ## Initialize JoinMarket Wallet
 
-1. Enable JoinMarket
+1. Enable JoinMarket in your node configuration
 
-   Change
-   ```
-   # services.joinmarket.enable = true;
-   ```
-   to
    ```
    services.joinmarket.enable = true;
    ```
-   in your `configuration.nix`
 
-2. Deploy to your node, for example
-
-   ```console
-   $ nix-shell
-   $ nixops deploy
-   ```
-
-3. SSH into your nix-bitcoin node
-
-   ```console
-   $ nixops ssh operator@bitcoin-node
-   ```
-
-4. Generate wallet
+2. Generate wallet on your node
 
     ```console
     $ wallet-tool.py generate
     ```
     Follow the on-screen instructions and write down your seed. Leave the wallet name as wallet.jmdat!
 
-5. Send funds to JoinMarket wallet
+3. Send funds to JoinMarket wallet
 
    Show addresses
 
@@ -394,32 +375,12 @@ Click [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/mast
 
 In nix-bitcoin the yg-privacyenhanced.py script is located in the system path. If you want to custom configure it, the easiest way to find it is by running `whereis yg-privacyenhanced.py`.
 
-1. Paste your JoinMarket wallet password from above into `secrets/jm-wallet-password`
+1. On your node, write your JoinMarket wallet password from above into `/secrets/jm-wallet-password`
 
-2. Enable Yield Generator Bot
+2. Enable yield generator bot in your node configuration
 
-   Change
-   ```
-   # services.joinmarket.yieldgenerator = true;
-   ```
-   to
    ```
    services.joinmarket.yieldgenerator = true;
-   ```
-   in your `configuration.nix`
-
-3. Deploy to your node, for example
-
-   ```console
-   $ nix-shell
-   $ nixops deploy
-   ```
-
-4. SSH into your nix-bitcoin node as root
-
-   ```console
-   $ nix-shell
-   $ nixops ssh root@bitcoin-node
    ```
 
 5. Start systemd service
