@@ -191,6 +191,12 @@ in {
       "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
     ];
 
+    # Joinmarket is TOR-only
+    services.tor = {
+      enable = true;
+      client.enable = true;
+    };
+
     systemd.services.joinmarket = {
       description = "Communication server, needs to run to use any JM script";
       wantedBy = [ "multi-user.target" ];
