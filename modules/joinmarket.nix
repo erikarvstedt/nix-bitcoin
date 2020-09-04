@@ -137,7 +137,7 @@ in {
     };
 
     systemd.services.joinmarket = {
-      description = "Communication server, needs to run to use any JM script";
+      description = "JoinMarket Daemon";
       wantedBy = [ "multi-user.target" ];
       requires = [ "bitcoind.service" ];
       after = [ "bitcoind.service" ];
