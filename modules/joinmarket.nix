@@ -155,16 +155,20 @@ in {
       wantedBy = [ "joinmarket.service" ];
       requires = [ "joinmarket.service" ];
       after = [ "joinmarket.service" ];
-      preStart = ''
-        jmwalletpassword=$(cat ${secretsDir}/jm-wallet-password)
-        echo "echo -n $jmwalletpassword | ${pkgs.nix-bitcoin.joinmarket}/bin/jm-yg-privacyenhanced --datadir=${cfg.dataDir} --wallet-password-stdin wallet.jmdat" > /run/joinmarket-yieldgenerator/startscript.sh
+      preStart = let
+        jm = pkgs.nix-bitcoin.joinmarket;
+        start = ''
+          exec ${jm}/bin/jm-yg-privacyenhanced --datadir='${cfg.dataDir}' --wallet-password-stdin wallet.jmdat
+        '';
+      in ''
+        pw=$(cat "${secretsDir}"/jm-wallet-password)
+        echo "echo -n $pw | ${start}" > $RUNTIME_DIRECTORY/start
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // rec {
-        WorkingDirectory = "${cfg.dataDir}";
-        RuntimeDirectory = "joinmarket-yieldgenerator";
+        RuntimeDirectory = "joinmarket-yieldgenerator"; # Only used to create start script
         RuntimeDirectoryMode = "700";
-        PermissionsStartOnly = "true";
-        ExecStart = "${pkgs.bash}/bin/bash /run/${RuntimeDirectory}/startscript.sh";
+        WorkingDirectory = "${cfg.dataDir}"; # The service creates dir 'logs' in the working dir
+        ExecStart = "${pkgs.bash}/bin/bash /run/${RuntimeDirectory}/start";
         User = "${cfg.user}";
         ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.allowTor;
