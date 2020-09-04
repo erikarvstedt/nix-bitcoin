@@ -236,7 +236,7 @@ JoinMarket
 2. Generate wallet on your node
 
     ```console
-    $ wallet-tool.py generate
+    jm-wallet-tool generate
     ```
     Follow the on-screen instructions and write down your seed. Leave the wallet name as wallet.jmdat!
 
@@ -245,7 +245,7 @@ JoinMarket
    Show addresses
 
    ```console
-   $ wallet-tool.py wallet.jmdat
+   jm-wallet-tool wallet.jmdat
    ```
 
    ```
@@ -322,7 +322,7 @@ JoinMarket
    For example
 
    ```console
-   $ sendpayment.py wallet.jmdat 5000000 mprGzBA9rQk82Ly41TsmpQGa8UPpZb2w8c
+   jm-sendpayment wallet.jmdat 5000000 mprGzBA9rQk82Ly41TsmpQGa8UPpZb2w8c
    ```
 
 ## Run the tumbler
@@ -332,7 +332,7 @@ The tumbler needs to be able to run in the background for a long time, use scree
 1. Start the screen session
 
    ```console
-   $ screen -S "tumbler"
+   screen -S "tumbler"
    ```
 
 2. Start the tumbler
@@ -340,24 +340,26 @@ The tumbler needs to be able to run in the background for a long time, use scree
    Example: Tumbling into your wallet after buying from an exchange to improve privacy:
 
    ```console
-   $ tumbler.py wallet.jmdat 1NY1qw2SpHupJbk5WD9RW3G78NECVPMXi1 14FEGCh23fYb4sCFKj6JXUQv2jpcBOWj9y 166b5ePjQR6pkeA37LbgYhbaTVBFns74Lu 155jvPSRCJoWNETjAXNfgWaVptaL4HtHmY 1HCajpvGsgeU42EAyUMVuQ7y6rCsF8mo7
+   jm-tumbler wallet.jmdat 1NY1qw2SpHupJbk5WD9RW3G78NECVPMXi1 14FEGCh23fYb4sCFKj6JXUQv2jpcBOWj9y 166b5ePjQR6pkeA37LbgYhbaTVBFns74Lu 155jvPSRCJoWNETjAXNfgWaVptaL4HtHmY 1HCajpvGsgeU42EAyUMVuQ7y6rCsF8mo7
    ```
 
-   The addresses are from the Addresses tab in Electrum. After tumbling is done you can spend bitcoins on normal things probably without the exchange collecting data on your purchases. All other parameters are left as default values.
+   The addresses are from the Addresses tab in Electrum. After tumbling is done you
+   can spend bitcoins on normal things probably without the exchange collecting data
+   on your purchases. All other parameters are left as default values.
 
    Get more information [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/tumblerguide.md)
 
-3. Detach screen session so you can leave ssh session
+3. Detach the screen session to leave the tumbler running in the background
 
    ```
    Ctrl-a d or Ctrl-a Ctrl-d
    ```
 
-4. View and interact with the screen session
+4. Re-attach to the screen session
 
 
    ```console
-   $ screen -r tumbler
+   screen -r tumbler
    ```
 
 5. End screen session
@@ -365,7 +367,7 @@ The tumbler needs to be able to run in the background for a long time, use scree
    Type exit when tumbler is done
 
    ```console
-   $ exit
+   exit
    ```
 ## Run a "Maker" or "yield generator"
 
