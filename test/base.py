@@ -99,8 +99,6 @@ def run_tests(extra_tests):
     machine.wait_until_succeeds(
         log_has_string("joinmarket", "P2EPDaemonServerProtocolFactory starting on 27184")
     )
-    succeed("systemctl start joinmarket-yieldgenerator")
-    assert_running("joinmarket-yieldgenerator")
     machine.wait_until_succeeds(
         log_has_string("joinmarket-yieldgenerator", "Failed to open wallet",)
     )

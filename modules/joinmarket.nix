@@ -152,6 +152,7 @@ in {
 
     systemd.services.joinmarket-yieldgenerator = {
       description = "CoinJoin maker bot to gain privacy and passively generate income";
+      wantedBy = [ "joinmarket.service" ];
       requires = [ "joinmarket.service" ];
       after = [ "joinmarket.service" ];
       preStart = ''
