@@ -263,54 +263,7 @@ JoinMarket
    internal addresses	m/49'/0'/0'/1
    Balance:	0.00000000
    Balance for mixdepth 0:	0.00000000
-   mixdepth	1	xpub6Crt4fcfpnrP2GZnVuT1qi9aw9cpCuXcnGEjAKhaoWAHq5M4pWX64DNio3XHirY5uTCZCi6vTmaLjU5YQXbVsTjyEdCE2zn3S2fzBNFjxs8
-   external addresses	m/49'/0'/1'/0	xpub6E2EnYy6yBXvE9U1nR5sSH58YiwbsKFZzaMkgMY5jrt2XFe4D5HVwikeTWyjuoczjQhJNezkwxrKAbUPMEDYHmbiaaiEAeXcL1yAcEAqtd7
-   m/49'/0'/1'/0/0     	3DdhEr9GCoMDVRLNGAwi9rb8F4HQX8newY	0.00000000	new
-   m/49'/0'/1'/0/1     	342XPkCQYzZkdUaB9TGPfVhf1iX55yE4gH	0.00000000	new
-   m/49'/0'/1'/0/2     	33RaQJTn1P8KNUvNnPRFM19zHjPhzuyCqc	0.00000000	new
-   m/49'/0'/1'/0/3     	3LydaxypMyYrbDFFp61f9rnZRcAJnZ5sv5	0.00000000	new
-   m/49'/0'/1'/0/4     	36u2ykPy6Y9tg811B8XjYoPjpTtEg98RPd	0.00000000	new
-   m/49'/0'/1'/0/5     	3AfSFczJEUN5RRbXirf8Pc74ve3ZaBVF8r	0.00000000	new
-   Balance:	0.00000000
-   internal addresses	m/49'/0'/1'/1
-   Balance:	0.00000000
-   Balance for mixdepth 1:	0.00000000
-   mixdepth	2	xpub6Crt4fcfpnrP2Tjc95HKmSgaCpi9P9EM54B12XAUfdnyAyoftFpNyikSK4pBtsvqZAnj8grDFf61xDmAHYimQXvaQkoTY3h9G5BAxHuYgvn
-   external addresses	m/49'/0'/2'/0	xpub6DrRZxJu5zEgxVMcrXmKGGeEQMgfh1MeZXvDXVYndqsqoFaJQUA94GbD1JX2p7Yw5NLcCUgg3WQXtXk5eP4vnNjGkDwA3FJoFFkE4PytauC
-   m/49'/0'/2'/0/0     	39uPqzuW6CiyRSUvdrBYfaqSD2AtH2k4wf	0.00000000	new
-   m/49'/0'/2'/0/1     	3FVYzJWE6g6kGj3hF7B5e7QpDQafBcUdnx	0.00000000	new
-   m/49'/0'/2'/0/2     	3HjYatHB5tZFGcC2SUCBqT1zCM7AwgGE5r	0.00000000	new
-   m/49'/0'/2'/0/3     	3CDco5iVa2iyEHGjXcAojsod6QDxeNedFg	0.00000000	new
-   m/49'/0'/2'/0/4     	3LKaYFENU16ix8FngQk6m9VmQFGaATEeCu	0.00000000	new
-   m/49'/0'/2'/0/5     	3B3TtgU6VgLF6BzQeG5znKZHpr3zgoftZC	0.00000000	new
-   Balance:	0.00000000
-   internal addresses	m/49'/0'/2'/1
-   Balance:	0.00000000
-   Balance for mixdepth 2:	0.00000000
-   mixdepth	3	xpub6Crt4fcfpnrP5B7ysPePnY98sKaLAdu9yCbHpkodb6evSKhr4BWvpB7nQquPdzncTuhMxmUhEcVNuYpXQf9i6VN9DFYu3PgPMckuu4P7EeQ
-   external addresses	m/49'/0'/3'/0	xpub6En2j7xGy2ihoYhpmTyDL1eER5B6rdas1HotoBiLbSXuXBMwZnjJTRefyJKVLUTfwDMgyATqZAwbZdKb8gQ8Fbno4XhUMPe6XBuN4LSsXN2
-   m/49'/0'/3'/0/0     	3LhThkjSvYmmXLNLMcXghbvaoGgDitwfmi	0.00000000	new
-   m/49'/0'/3'/0/1     	3LTwvukpZqsf9ghqnNQVu8szgScjoVnLdh	0.00000000	new
-   m/49'/0'/3'/0/2     	35FRiSaZ6Yotr3YB3yX9JgqAbsxCnuTBfm	0.00000000	new
-   m/49'/0'/3'/0/3     	3H7S5ZjYaWgSTXA1RFwGNytS2zsK1PfXoN	0.00000000	new
-   m/49'/0'/3'/0/4     	33b8j2nPCFCWXb7wDHPRggUFoPJMwGQYYt	0.00000000	new
-   m/49'/0'/3'/0/5     	3PE7fen989oPZn7XaRSAu3fvGN1P57SB9W	0.00000000	new
-   Balance:	0.00000000
-   internal addresses	m/49'/0'/3'/1
-   Balance:	0.00000000
-   Balance for mixdepth 3:	0.00000000
-   mixdepth	4	xpub6Crt4fcfpnrP9pZBowaYjC7595HXETHFw2YnqtukLnqpfb4PWbhWwt5jPdskLo8ZZbHBnccexTJUArt4V8C7592K3LvsrYkrvsQMJFiPx8z
-   external addresses	m/49'/0'/4'/0	xpub6E37s5W8C63FxsgcpMbH43ssUi8CQzfo3PrfSWfn9jKTYZgR4QZBCymJ8TPw3Vx5zoQ7aSgkqrEKr1NEerZuN8okV7w1JhNg2hoYEWohtT4
-   m/49'/0'/4'/0/0     	39n1tYKnPQ47bgCmsPWDHxuk2Mxo6GE4LZ	0.00000000	new
-   m/49'/0'/4'/0/1     	3BoLqHDSHdMHyrSEAP31bBzzw45bFwZhy7	0.00000000	new
-   m/49'/0'/4'/0/2     	31mo7D9UDmoStafYcyHpwV9sWY7oP9jUVQ	0.00000000	new
-   m/49'/0'/4'/0/3     	3JMVGEyZ5nyJR9NVsfNY93c34xx9rEtzmq	0.00000000	new
-   m/49'/0'/4'/0/4     	3AdD86dw59Q5EGHVupkHzR8pM4sW45bKqX	0.00000000	new
-   m/49'/0'/4'/0/5     	3Gu7jTxcmh5dHJXgCE7Z5fdMgUWuenE2GE	0.00000000	new
-   Balance:	0.00000000
-   internal addresses	m/49'/0'/4'/1
-   Balance:	0.00000000
-   Balance for mixdepth 4:	0.00000000
+   ...
    Total balance:	0.00000000
    ```
 
