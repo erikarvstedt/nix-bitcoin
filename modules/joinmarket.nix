@@ -18,7 +18,7 @@ let
     [BLOCKCHAIN]
     blockchain_source = bitcoin-rpc
     network = mainnet
-    rpc_host = ${cfg.rpc_host}
+    rpc_host = ${builtins.elemAt config.services.bitcoind.rpcbind 0}
     rpc_port = 8332
     rpc_user = ${config.services.bitcoind.rpc.users.privileged.name}
     @@RPC_PASSWORD@@
@@ -90,13 +90,6 @@ in {
       type = types.str;
       default = cfg.user;
       description = "The group as which to run JoinMarket.";
-    };
-    rpc_host = mkOption {
-      type = types.str;
-      default = "localhost";
-      description = ''
-        The address that the daemon will try to connect to bitcoind under.
-      '';
     };
     add-utxo = mkOption {
       default = pkgs.writeScriptBin "add-utxo.py"

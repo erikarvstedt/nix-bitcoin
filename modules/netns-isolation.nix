@@ -305,10 +305,7 @@ in {
 
     services.lightning-loop.cliExec = mkCliExec "lightning-loop";
 
-    services.joinmarket = {
-      rpc_host = netns.bitcoind.address;
-      cliExec = mkCliExec "joinmarket";
-    };
+    services.joinmarket.cliExec = mkCliExec "joinmarket";
     systemd.services.joinmarket-yieldgenerator.serviceConfig.NetworkNamespacePath = "/var/run/netns/nb-joinmarket";
   }
   ]);
