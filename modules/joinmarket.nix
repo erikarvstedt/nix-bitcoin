@@ -77,19 +77,11 @@ let
    '';
 in {
   options.services.joinmarket = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-        If enabled, JoinMarket will be installed.
-      '';
-    };
+    enable = mkEnableOption "JoinMarket";
     yieldgenerator = mkOption {
       type = types.bool;
       default = false;
-      description = ''
-        If enabled, the yield generator bot will be enabled.
-      '';
+      description = "Enable the yield generator bot";
     };
     dataDir = mkOption {
       type = types.path;
