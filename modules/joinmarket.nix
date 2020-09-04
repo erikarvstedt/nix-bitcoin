@@ -163,6 +163,9 @@ in {
       in ''
         pw=$(cat "${secretsDir}"/jm-wallet-password)
         echo "echo -n $pw | ${start}" > $RUNTIME_DIRECTORY/start
+
+        # This often does not get cleaned up after crashes, causing the yieldgenerator to fail
+        rm -f "${cfg.dataDir}"/wallets/.wallet.jmdat.lock
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // rec {
         RuntimeDirectory = "joinmarket-yieldgenerator"; # Only used to create start script
