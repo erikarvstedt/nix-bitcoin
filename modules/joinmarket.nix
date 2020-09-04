@@ -6,6 +6,8 @@ let
   cfg = config.services.joinmarket;
   inherit (config) nix-bitcoin-services;
   secretsDir = config.nix-bitcoin.secretsDir;
+
+  torAddress = builtins.head (builtins.split ":" config.services.tor.client.socksListenAddress);
   configFile = pkgs.writeText "config" ''
     [DAEMON]
     no_daemon = 0
@@ -27,7 +29,7 @@ let
     port = 6697
     usessl = true
     socks5 = true
-    socks5_host = ${builtins.head (builtins.split ":" config.services.tor.client.socksListenAddress)}
+    socks5_host = ${torAddress}
     socks5_port = 9050
 
     [MESSAGING:server2]
@@ -36,7 +38,7 @@ let
     port = 6697
     usessl = false
     socks5 = true
-    socks5_host = localhost
+    socks5_host = ${torAddress}
     socks5_port = 9050
 
     [LOGGING]
