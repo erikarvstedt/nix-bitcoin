@@ -151,7 +151,6 @@ in {
     nix-bitcoin.secrets.jm-wallet-password.user = cfg.user;
 
     systemd.services.joinmarket-yieldgenerator = {
-      enable = true;
       description = "CoinJoin maker bot to gain privacy and passively generate income";
       requires = [ "joinmarket.service" ];
       after = [ "joinmarket.service" ];
