@@ -8,7 +8,7 @@ let
   secretsDir = config.nix-bitcoin.secretsDir;
 
   torAddress = builtins.head (builtins.split ":" config.services.tor.client.socksListenAddress);
-  configFile = pkgs.writeText "config" ''
+  configFile = builtins.toFile "config" ''
     [DAEMON]
     no_daemon = 0
     daemon_port = 27183
