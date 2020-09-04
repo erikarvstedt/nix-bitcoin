@@ -385,10 +385,10 @@ In nix-bitcoin the yg-privacyenhanced.py script is located in the system path. I
    services.joinmarket.yieldgenerator = true;
    ```
 
-5. Start systemd service
+3. Check service status
 
    ```console
-   # systemctl start joinmarket-yieldgenerator
+   systemctl status joinmarket-yieldgenerator
    ```
 
 6. Profit
