@@ -327,9 +327,7 @@ The tumbler needs to be able to run in the background for a long time, use scree
 
 The maker/yield generator in nix-bitcoin is implemented using a systemd service.
 
-Click [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/YIELDGENERATOR.md) for general yield generator information.
-
-In nix-bitcoin the jm-yg-privacyenhanced script is located in the system path. If you want to custom configure it, the easiest way to find it is by running `whereis yg-privacyenhanced.py`.
+See [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/YIELDGENERATOR.md) for more yield generator information.
 
 1. On your node, write your JoinMarket wallet password from above into `/secrets/jm-wallet-password`
 
