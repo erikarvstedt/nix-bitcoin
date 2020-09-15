@@ -13,24 +13,25 @@ depsFile=$2
 : ${onlyCreateDeps:=}
 
 scriptDir=$(cd "${BASH_SOURCE[0]%/*}" && pwd)
-nixpkgs=$(realpath "$scriptDir"/../../../../..)
+nbPkgs=$(realpath "$scriptDir"/../..)
 
-evalNixpkgs() {
-  nix eval --raw "(with import \"$nixpkgs\" {}; $1)"
+evalNbPkgs() {
+  nix eval --raw "(with import \"$nbPkgs\" {}; $1)"
 }
 
 getRepo() {
-  url=$(evalNixpkgs $pkgName.src.meta.homepage)
+  url=$(evalNbPkgs $pkgName.src.meta.homepage)
   echo $(basename $(dirname $url))/$(basename $url)
 }
 
 getLatestVersionTag() {
-  "$nixpkgs"/pkgs/common-updater/scripts/list-git-tags https://github.com/$(getRepo) 2>/dev/null \
+  unstable=$(nix eval --raw "(import \"$nbPkgs/nixpkgs-pinned.nix\").nixpkgs-unstable")
+  $unstable/pkgs/common-updater/scripts/list-git-tags https://github.com/$(getRepo) 2>/dev/null \
     | sort -V | tail -1 | sed 's|^v||'
 }
 
 if [[ ! $onlyCreateDeps ]]; then
-  oldVersion=$(evalNixpkgs "$pkgName.version")
+  oldVersion=$(evalNbPkgs "$pkgName.version")
   if [[ $getVersionFromTags ]]; then
     newVersion=$(getLatestVersionTag)
   else
@@ -44,5 +45,6 @@ if [[ ! $onlyCreateDeps ]]; then
   fi
 fi
 
-storeSrc="$(nix-build "$nixpkgs" -A $pkgName.src --no-out-link)"
+echo "Creating deps.nix"
+storeSrc="$(nix-build "$nbPkgs" -A $pkgName.src --no-out-link)"
 . "$scriptDir"/create-deps.sh "$storeSrc" "$depsFile"

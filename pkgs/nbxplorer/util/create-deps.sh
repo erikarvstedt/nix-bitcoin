@@ -12,6 +12,7 @@ sln=$(cd "$pkgSrc"; find * -maxdepth 0 -name '*.sln' | head -1)
 [[ $sln ]] || { echo "No .sln file in $pkgSrc" ; exit 1; }
 
 tmpdir=$(mktemp -d /tmp/$pkgName-src.XXX)
+trap "rm -rf $tmpdir" EXIT
 echo "Using tmp dir: $tmpdir"
 cp -rT "$pkgSrc" "$tmpdir"
 chmod -R +w "$tmpdir"
@@ -42,4 +43,3 @@ echo "]" >> "$depsFile"
 echo "Created $depsFile"
 
 popd > /dev/null
-rm -r $tmpdir
