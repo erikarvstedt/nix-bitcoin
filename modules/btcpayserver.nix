@@ -29,16 +29,6 @@ in {
         default = cfg.nbxplorer.user;
         description = "The group as which to run nbxplorer.";
       };
-      btcrpcurl = mkOption {
-        type = types.str;
-        default = "http://127.0.0.1:8332";
-        description = "The RPC server url.";
-      };
-      btcnodeendpoint = mkOption {
-        type = types.str;
-        default = "127.0.0.1:8333";
-        description = "The p2p connection to a Bitcoin node.";
-      };
       bind = mkOption {
         type = types.str;
         default = "127.0.0.1";
@@ -107,8 +97,8 @@ in {
       configFile = builtins.toFile "config" ''
         network=mainnet
         btcrpcuser=${cfg.bitcoind.rpc.users.btcpayserver.name}
-        btcrpcurl=${cfg.nbxplorer.btcrpcurl}
-        btcnodeendpoint=${cfg.nbxplorer.btcnodeendpoint}
+        btcrpcurl=http://${builtins.elemAt config.services.bitcoind.rpcbind 0}:8332
+        btcnodeendpoint=${config.services.bitcoind.bind}:8333
         bind=${cfg.nbxplorer.bind}
       '';
     in {
