@@ -144,10 +144,14 @@ in {
         btcexplorerurl=http://${cfg.nbxplorer.bind}:24444/
         btcexplorercookiefile=${cfg.nbxplorer.dataDir}/Main/.cookie
         bind=${cfg.btcpayserver.bind}
-        ${optionalString (cfg.btcpayserver.lightningBackend == "clightning") ''
-          btclightning=type=clightning;server=unix:///${cfg.clightning.dataDir}/bitcoin/lightning-rpc
-        ''}
+      '' + optionalString (cfg.btcpayserver.lightningBackend == "clightning") ''
+        btclightning=type=clightning;server=unix:///${cfg.clightning.dataDir}/bitcoin/lightning-rpc
       '';
+      lndConfig =
+        "btclightning=type=lnd-rest;" +
+        "server=https://${toString cfg.lnd.listen}:${toString cfg.lnd.restPort}/;" +
+        "macaroonfilepath=/run/lnd/btcpayserver.macaroon;" +
+        "certthumbprint=";
     in let self = {
       wantedBy = [ "multi-user.target" ];
       requires = [ "nbxplorer.service" ]
@@ -156,11 +160,11 @@ in {
       preStart = ''
         install -m 600 ${configFile} ${cfg.btcpayserver.dataDir}/settings.config
         ${optionalString (cfg.btcpayserver.lightningBackend == "lnd") ''
-          certFingerprint=$(
+          {
+            echo -n "${lndConfig}";
             ${pkgs.openssl}/bin/openssl x509 -noout -fingerprint -sha256 -in ${config.nix-bitcoin.secretsDir}/lnd-cert \
-              | sed -e 's/.*=//;s/://g'
-          )
-          echo "btclightning=type=lnd-rest;server=https://${toString cfg.lnd.listen}:${toString cfg.lnd.restPort};macaroonfilepath=/run/lnd/btcpayserver.macaroon;certthumbprint=$certFingerprint" >> ${cfg.btcpayserver.dataDir}/settings.config
+              | sed -e 's/.*=//;s/://g';
+          } >> ${cfg.btcpayserver.dataDir}/settings.config
         ''}
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
