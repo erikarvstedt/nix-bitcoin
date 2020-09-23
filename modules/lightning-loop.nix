@@ -74,7 +74,6 @@ in {
     ];
 
     systemd.services.lightning-loop = {
-      description = "Run loopd";
       wantedBy = [ "multi-user.target" ];
       requires = [ "lnd.service" ];
       after = [ "lnd.service" ];
