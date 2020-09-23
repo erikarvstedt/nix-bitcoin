@@ -12,7 +12,7 @@ let
     tlscertpath=${secretsDir}/loop-cert
     tlskeypath=${secretsDir}/loop-key
 
-    lnd.host=${config.services.lnd.listen}:10009
+    lnd.host=${builtins.elemAt config.services.lnd.rpclisten 0}:${toString config.services.lnd.rpcPort}
     lnd.macaroondir=${config.services.lnd.dataDir}/chain/bitcoin/mainnet
     lnd.tlspath=${secretsDir}/lnd-cert
 
