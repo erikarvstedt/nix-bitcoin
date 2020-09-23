@@ -6,7 +6,7 @@ let
   cfg = config.services.lightning-loop;
   inherit (config) nix-bitcoin-services;
   secretsDir = config.nix-bitcoin.secretsDir;
-  configFile = pkgs.writeText "loopd.conf" ''
+  configFile = builtins.toFile "loopd.conf" ''
     datadir=${cfg.dataDir}
     logdir=${cfg.dataDir}/logs
     tlscertpath=${secretsDir}/loop-cert
@@ -78,12 +78,9 @@ in {
       wantedBy = [ "multi-user.target" ];
       requires = [ "lnd.service" ];
       after = [ "lnd.service" ];
-      preStart = ''
-        install -m600 ${configFile} '${cfg.dataDir}/loopd.conf'
-      '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         WorkingDirectory = cfg.dataDir;
-        ExecStart = "${cfg.package}/bin/loopd --configfile=${cfg.dataDir}/loopd.conf";
+        ExecStart = "${cfg.package}/bin/loopd --configfile=${configFile}";
         User = "lnd";
         Restart = "on-failure";
         RestartSec = "10s";
