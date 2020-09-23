@@ -21,7 +21,6 @@ let
     ${cfg.extraConfig}
   '';
 in {
-
   options.services.lightning-loop = {
     enable = mkEnableOption "lightning-loop";
     package = mkOption {
@@ -38,7 +37,7 @@ in {
     proxy = mkOption {
       type = types.nullOr types.str;
       default = null;
-      description = "Connect through SOCKS5 proxy";
+      description = "host:port of SOCKS5 proxy for connnecting to the loop server.";
     };
     extraConfig = mkOption {
       type = types.lines;
@@ -55,7 +54,7 @@ in {
       description = "Binary to connect with the lightning-loop instance.";
     };
     inherit (nix-bitcoin-services) cliExec;
-    enforceTor =  nix-bitcoin-services.enforceTor;
+    enforceTor = nix-bitcoin-services.enforceTor;
   };
 
   config = mkIf cfg.enable {
@@ -83,8 +82,8 @@ in {
         RestartSec = "10s";
         ReadWritePaths = "${cfg.dataDir}";
       } // (if cfg.enforceTor
-          then nix-bitcoin-services.allowTor
-          else nix-bitcoin-services.allowAnyIP);
+            then nix-bitcoin-services.allowTor
+            else nix-bitcoin-services.allowAnyIP);
     };
 
      nix-bitcoin.secrets = {
