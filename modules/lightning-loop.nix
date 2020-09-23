@@ -21,7 +21,6 @@ let
     ${cfg.extraConfig}
   '';
 in {
-
   options.services.lightning-loop = {
     enable = mkEnableOption "lightning-loop";
     package = mkOption {
@@ -57,7 +56,7 @@ in {
       description = "Binary to connect with the lnd instance.";
     };
     inherit (nix-bitcoin-services) cliExec;
-    enforceTor =  nix-bitcoin-services.enforceTor;
+    enforceTor = nix-bitcoin-services.enforceTor;
   };
 
   config = mkIf cfg.enable {
@@ -85,8 +84,8 @@ in {
         RestartSec = "10s";
         ReadWritePaths = "${cfg.dataDir}";
       } // (if cfg.enforceTor
-          then nix-bitcoin-services.allowTor
-          else nix-bitcoin-services.allowAnyIP);
+            then nix-bitcoin-services.allowTor
+            else nix-bitcoin-services.allowAnyIP);
     };
 
      nix-bitcoin.secrets = {
