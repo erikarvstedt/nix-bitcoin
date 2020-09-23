@@ -49,12 +49,10 @@ in {
       description = "Extra command line arguments passed to loopd.";
     };
     cli = mkOption {
-      default = pkgs.writeScriptBin "loop"
-      # Switch user because lnd makes datadir contents readable by user only
-      ''
-        ${cfg.cliExec} sudo -u lnd ${cfg.package}/bin/loop --tlscertpath ${secretsDir}/loop-cert "$@"
+      default = pkgs.writeScriptBin "loop" ''
+        ${cfg.cliExec} ${cfg.package}/bin/loop --tlscertpath ${secretsDir}/loop-cert "$@"
       '';
-      description = "Binary to connect with the lnd instance.";
+      description = "Binary to connect with the lightning-loop instance.";
     };
     inherit (nix-bitcoin-services) cliExec;
     enforceTor =  nix-bitcoin-services.enforceTor;
