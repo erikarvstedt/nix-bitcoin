@@ -33,7 +33,7 @@ in {
     dataDir = mkOption {
       type = types.path;
       default = "/var/lib/lightning-loop";
-      description = "The data directory for Loop.";
+      description = "The data directory for lightning-loop.";
     };
     proxy = mkOption {
       type = types.nullOr types.str;
