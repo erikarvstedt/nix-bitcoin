@@ -45,7 +45,7 @@ in {
       example = ''
         debuglevel=trace
       '';
-      description = "Extra command line arguments passed to loopd.";
+      description = "Extra lines appended to the configuration file.";
     };
     cli = mkOption {
       default = pkgs.writeScriptBin "loop" ''
