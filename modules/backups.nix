@@ -20,7 +20,7 @@ let
     ${config.services.btcpayserver.dataDir}
     ${config.services.joinmarket.dataDir}
     /secrets/jm-wallet-seed
-    ${config.services.postgresqlBackup.location}
+    ${config.services.postgresqlBackup.location}/btcpaydb.sql.gz
     /var/lib/tor
     # Extra files
     ${cfg.extraFiles}
