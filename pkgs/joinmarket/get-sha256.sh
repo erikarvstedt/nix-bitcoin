@@ -15,7 +15,7 @@ echo "Latest release is ${latest}"
 # GPG verification
 export GNUPGHOME=$TMPDIR
 echo "Fetching Adam Gibson's key"
-gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 2B6FC204D9BF332D062B461A141001A1AF77F20B #2> /dev/null
+gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 2B6FC204D9BF332D062B461A141001A1AF77F20B 2> /dev/null
 echo "Verifying latest release"
 git verify-commit ${latest}
 
