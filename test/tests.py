@@ -237,39 +237,22 @@ def _():
 # (and their corresponding network namespaces).
 @test("netns-isolation")
 def _():
-    ping_bitcoind = "ip netns exec nb-bitcoind ping -c 1 -w 1"
-    ping_nanopos = "ip netns exec nb-nanopos ping -c 1 -w 1"
-    ping_nbxplorer = "ip netns exec nb-nbxplorer ping -c 1 -w 1"
+    def get_ips(*services):
+        enabled = enabled_tests.intersection(services)
+        return " ".join(ip(service) for service in enabled)
 
-    # Positive ping tests (non-exhaustive)
-    machine.succeed(
-        "%s %s &&" % (ping_bitcoind, ip("bitcoind"))
-        + "%s %s &&" % (ping_bitcoind, ip("clightning"))
-        + "%s %s &&" % (ping_bitcoind, ip("lnd"))
-        + "%s %s &&" % (ping_bitcoind, ip("liquidd"))
-        + "%s %s &&" % (ping_bitcoind, ip("nbxplorer"))
-        + "%s %s &&" % (ping_nbxplorer, ip("btcpayserver"))
-        + "%s %s &&" % (ping_nanopos, ip("lightning-charge"))
-        + "%s %s &&" % (ping_nanopos, ip("nanopos"))
-        + "%s %s" % (ping_nanopos, ip("nginx"))
-    )
+    # These service lists are non-exhaustive
+    reachable_from_bitcoind = get_ips("clightning", "lnd", "liquidd", "nbxplorer")
+    unreachable_from_bitcoind = get_ips("lightning-loop", "btcpayserver", "spark-wallet", "nginx")
 
-    # Negative ping tests (non-exhaustive)
-    machine.fail(
-        "%s %s ||" % (ping_bitcoind, ip("spark-wallet"))
-        + "%s %s ||" % (ping_bitcoind, ip("lightning-loop"))
-        + "%s %s ||" % (ping_bitcoind, ip("lightning-charge"))
-        + "%s %s ||" % (ping_bitcoind, ip("nanopos"))
-        + "%s %s ||" % (ping_bitcoind, ip("nginx"))
-        + "%s %s ||" % (ping_nanopos, ip("bitcoind"))
-        + "%s %s ||" % (ping_nanopos, ip("clightning"))
-        + "%s %s ||" % (ping_nanopos, ip("lnd"))
-        + "%s %s ||" % (ping_nanopos, ip("lightning-loop"))
-        + "%s %s ||" % (ping_nanopos, ip("liquidd"))
-        + "%s %s ||" % (ping_nanopos, ip("electrs"))
-        + "%s %s ||" % (ping_nanopos, ip("spark-wallet"))
-        + "%s %s" % (ping_nanopos, ip("btcpayserver"))
-    )
+    if reachable_from_bitcoind:
+        machine.succeed(f"ip netns exec nb-bitcoind fping -c1 -t100 {reachable_from_bitcoind}")
+
+    if unreachable_from_bitcoind:
+        machine.fail(
+            # This fails when no host is reachable within 100 ms
+            f"ip netns exec nb-bitcoind fping -c1 -t100 --reachable=1 {unreachable_from_bitcoind}"
+        )
 
     # test that netns-exec can't be run for unauthorized namespace
     machine.fail("netns-exec nb-electrs ip a")
