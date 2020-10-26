@@ -169,12 +169,12 @@ EOF
 }
 
 # A basic subset of tests to keep the total runtime within
-# manageable bounds (<3 min on desktop systems).
+# manageable bounds (<4 min on desktop systems).
 # These are also run on the CI server.
 basic() {
     scenario=default buildTest "$@"
     scenario=netns buildTest "$@"
-    scenario=full evalTest "$@"
+    scenario=netnsRegtest buildTest "$@"
 }
 
 all() {
