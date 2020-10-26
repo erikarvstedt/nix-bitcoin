@@ -254,10 +254,11 @@ def _():
             f"ip netns exec nb-bitcoind fping -c1 -t100 --reachable=1 {unreachable_from_bitcoind}"
         )
 
-    # netns-exec should drop capabilities
-    assert_full_match(
-        "su operator -c 'netns-exec nb-bitcoind capsh --print | grep Current '", "Current: =\n"
-    )
+    if "joinmarket" in enabled_tests:
+        # netns-exec should drop capabilities
+        assert_full_match(
+            "su operator -c 'netns-exec nb-joinmarket capsh --print | grep Current'", "Current: =\n"
+        )
 
     if "clightning" in enabled_tests:
         # netns-exec should fail for unauthorized namespaces
