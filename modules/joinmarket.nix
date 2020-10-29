@@ -148,13 +148,13 @@ in {
       "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
     ];
 
-    services.tor.controlSocket.enable = true;
     services.bitcoind.disablewallet = false;
 
     # Joinmarket is TOR-only
     services.tor = {
       enable = true;
       client.enable = true;
+      controlSocket.enable = true;
     };
 
     systemd.services.joinmarket = {
