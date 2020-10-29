@@ -237,22 +237,27 @@ def _():
 # (and their corresponding network namespaces).
 @test("netns-isolation")
 def _():
-    def get_ips(*services):
+    def get_ips(services):
         enabled = enabled_tests.intersection(services)
         return " ".join(ip(service) for service in enabled)
 
-    # These service lists are non-exhaustive
-    reachable_from_bitcoind = get_ips("clightning", "lnd", "liquidd", "nbxplorer")
-    unreachable_from_bitcoind = get_ips("lightning-loop", "btcpayserver", "spark-wallet", "nginx")
+    def assert_reachable(src, dests):
+        dest_ips = get_ips(dests)
+        if src in enabled_tests and dest_ips:
+            machine.succeed(f"ip netns exec nb-{src} fping -c1 -t100 {dest_ips}")
 
-    if reachable_from_bitcoind:
-        machine.succeed(f"ip netns exec nb-bitcoind fping -c1 -t100 {reachable_from_bitcoind}")
+    def assert_unreachable(src, dests):
+        dest_ips = get_ips(dests)
+        if src in enabled_tests and dest_ips:
+            machine.fail(
+                # This fails when no host is reachable within 100 ms
+                f"ip netns exec nb-{src} fping -c1 -t100 --reachable=1 {dest_ips}"
+            )
 
-    if unreachable_from_bitcoind:
-        machine.fail(
-            # This fails when no host is reachable within 100 ms
-            f"ip netns exec nb-bitcoind fping -c1 -t100 --reachable=1 {unreachable_from_bitcoind}"
-        )
+    # These reachability tests are non-exhaustive
+    assert_reachable("bitcoind", ["clightning", "lnd", "liquidd"])
+    assert_unreachable("bitcoind", ["btcpayserver", "spark-wallet", "lightning-loop"])
+    assert_unreachable("btcpayserver", ["bitcoind", "lightning-loop", "liquidd"])
 
     if "joinmarket" in enabled_tests:
         # netns-exec should drop capabilities
