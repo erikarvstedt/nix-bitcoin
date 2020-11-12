@@ -33,6 +33,32 @@ env:
   - PKG=nixops19_09 STABLE=1
   - PKG=joinmarket STABLE=1
   - PKG=joinmarket STABLE=0
+  - PKG=clightning-plugins.donations STABLE=1
+  - PKG=clightning-plugins.donations STABLE=0
+  - PKG=clightning-plugins.drain STABLE=1
+  - PKG=clightning-plugins.drain STABLE=0
+  - PKG=clightning-plugins.feeadjuster STABLE=1
+  - PKG=clightning-plugins.feeadjuster STABLE=0
+  - PKG=clightning-plugins.helpme STABLE=1
+  - PKG=clightning-plugins.helpme STABLE=0
+  - PKG=clightning-plugins.jitrebalance STABLE=1
+  - PKG=clightning-plugins.jitrebalance STABLE=0
+  - PKG=clightning-plugins.monitor STABLE=1
+  - PKG=clightning-plugins.monitor STABLE=0
+  - PKG=clightning-plugins.persistent-channels STABLE=1
+  - PKG=clightning-plugins.persistent-channels STABLE=0
+  - PKG=clightning-plugins.probe STABLE=1
+  - PKG=clightning-plugins.probe STABLE=0
+  - PKG=clightning-plugins.prometheus STABLE=1
+  - PKG=clightning-plugins.prometheus STABLE=0
+  - PKG=clightning-plugins.rebalance STABLE=1
+  - PKG=clightning-plugins.rebalance STABLE=0
+  - PKG=clightning-plugins.sendinvoiceless STABLE=1
+  - PKG=clightning-plugins.sendinvoiceless STABLE=0
+  - PKG=clightning-plugins.summary STABLE=1
+  - PKG=clightning-plugins.summary STABLE=0
+  - PKG=clightning-plugins.zmq STABLE=1
+  - PKG=clightning-plugins.zmq STABLE=0
 script:
   - printf '%s (%s)\n' "$NIX_PATH" "$VER"
   - |

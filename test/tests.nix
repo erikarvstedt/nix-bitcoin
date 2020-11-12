@@ -70,6 +70,26 @@ let testEnv = rec {
     };
   };
 
+  clightningConfig = {
+    enable = true;
+    plugins = {
+      donations.enable = true;
+      drain.enable = true;
+      feeadjuster.enable = true;
+      helpme.enable = true;
+      jitrebalance.enable = true;
+      monitor.enable = true;
+      persistentChannels.enable = true;
+      probe.enable = true;
+      prometheus.enable = true;
+      rebalance.enable = true;
+      sendinvoiceless.enable = true;
+      summary.enable = true;
+      zmq.enable = true;
+    };
+  };
+
+
   scenarios = {
     base = baseConfig; # Included in all scenarios
 
@@ -79,7 +99,7 @@ let testEnv = rec {
     full = {
       tests.security = true;
 
-      services.clightning.enable = true;
+      services.clightning = clightningConfig;
       services.spark-wallet.enable = true;
       services.lightning-charge.enable = true;
       services.nanopos.enable = true;
@@ -119,7 +139,7 @@ let testEnv = rec {
     # All regtest-enabled services
     regtest = {
       imports = [ scenarios.regtestBase ];
-      services.clightning.enable = true;
+      services.clightning = clightningConfig;
       services.spark-wallet.enable = true;
       services.lnd.enable = true;
       services.lightning-loop.enable = true;

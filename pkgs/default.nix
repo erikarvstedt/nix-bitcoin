@@ -13,6 +13,7 @@ let self = {
   netns-exec = pkgs.callPackage ./netns-exec { };
   lightning-loop = pkgs.callPackage ./lightning-loop { };
   extra-container = pkgs.callPackage ./extra-container { };
+  clightning-plugins = import ./clightning-plugins pkgs;
 
   nbPython3Packages = (pkgs.python3.override {
     packageOverrides = pySelf: super: import ./python-packages self pySelf;

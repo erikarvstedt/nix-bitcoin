@@ -134,10 +134,32 @@ def _():
     succeed("su operator -c 'liquidswap-cli --help'")
 
 
+# backup requires manual setup, so we skip it in this test
+clightning_plugins = [
+    "donations",
+    "drain",
+    "feeadjuster",
+    "helpme",
+    "jitrebalance",
+    "monitor",
+    "persistent-channels",
+    "probe",
+    "prometheus",
+    "rebalance",
+    "sendinvoiceless",
+    "summary",
+    "zmq",
+]
+
+
 @test("clightning")
 def _():
     assert_running("clightning")
     assert_matches("su operator -c 'lightning-cli getinfo' | jq", '"id"')
+    for name in clightning_plugins:
+        assert_matches(
+            "su operator -c 'lightning-cli plugin list' | jq '.plugins[] | select(.active)'", name
+        )
 
 
 @test("lnd")

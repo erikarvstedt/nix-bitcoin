@@ -338,3 +338,38 @@ See [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master
     ```
 
 3. Profit
+
+clightning
+----
+
+## Plugins
+
+There are a number of [plugins](https://github.com/lightningd/plugins) available for clightning:
+
+- donations
+- drain
+- feeadjuster
+- helpme
+- jitrebalance
+- monitor
+- persistent-channels
+- probe
+- prometheus
+- rebalance
+- sendinvoiceless
+- summary
+- zmq
+
+You can activate and configure these plugins by addition configuration options like so:
+
+```nix
+services.clightning = {
+    enable = true;
+    plugins = {
+        prometheus.enable = true;
+        prometheus.listen = "0.0.0.0:9900";
+    };
+};
+```
+
+Please have a look at the module for a plugin (e.g. `modules/clightning-plugins/promethus.nix`) to learn its configuration options.
