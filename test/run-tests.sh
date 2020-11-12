@@ -193,10 +193,12 @@ build() {
     fi
 }
 
-command="${1:-build}"
-shift || true
-if [[ $command != build  ]]; then
+if [[ $# > 0 ]]; then
+    command=$1
+    shift
     : ${scenario:=default}
+else
+    command=build
 fi
 if [[ $command == eval ]]; then
     command=evalTest
