@@ -142,6 +142,7 @@ clightning_plugins = [
     "helpme",
     "jitrebalance",
     "monitor",
+    "noise",
     "persistent-channels",
     "probe",
     "prometheus",

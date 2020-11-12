@@ -72,6 +72,7 @@ let testEnv = rec {
 
   clightningConfig = {
     enable = true;
+    extraConfig = "plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.noise}";
     plugins = {
       donations.enable = true;
       drain.enable = true;
