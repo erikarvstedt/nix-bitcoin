@@ -72,21 +72,23 @@ let testEnv = rec {
 
   clightningConfig = {
     enable = true;
-    extraConfig = "plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.noise}";
     plugins = {
-      donations.enable = true;
-      drain.enable = true;
-      feeadjuster.enable = true;
       helpme.enable = true;
-      jitrebalance.enable = true;
       monitor.enable = true;
-      persistentChannels.enable = true;
-      probe.enable = true;
       prometheus.enable = true;
       rebalance.enable = true;
-      sendinvoiceless.enable = true;
       summary.enable = true;
-      zmq.enable = true;
+      zmq = let tcpEndpoint = "tcp://127.0.0.1:5501"; in {
+        enable = true;
+        channel-opened = tcpEndpoint;
+        connect = tcpEndpoint;
+        disconnect = tcpEndpoint;
+        invoice-payment = tcpEndpoint;
+        warning = tcpEndpoint;
+        forward-event = tcpEndpoint;
+        sendpay-success = tcpEndpoint;
+        sendpay-failure = tcpEndpoint;
+      };
     };
   };
 

@@ -134,20 +134,11 @@ def _():
     succeed("su operator -c 'liquidswap-cli --help'")
 
 
-# backup requires manual setup, so we skip it in this test
 clightning_plugins = [
-    "donations",
-    "drain",
-    "feeadjuster",
     "helpme",
-    "jitrebalance",
     "monitor",
-    "noise",
-    "persistent-channels",
-    "probe",
     "prometheus",
     "rebalance",
-    "sendinvoiceless",
     "summary",
     "zmq",
 ]
