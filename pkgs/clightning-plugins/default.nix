@@ -12,43 +12,14 @@ let
 
   version = builtins.substring 0 7 src.rev;
 
-  # TODO Make a separate backup (plugin) package so that the cli is also available
-  # TODO Handle conflict between sauron and bcli plugins
-
   plugins = with nbPython3Packages; {
-    autopilot = {
-      extraPkgs = [ dnspython networkx numpy ];
-      patchRequirements = "--replace networkx==2.3 networkx==2.4";
-    };
-    donations = {
-      extraPkgs = [ flask-bootstrap flask_wtf pillow qrcode ];
-    };
-    drain = {};
-    feeadjuster = {
-      # Fix requirements error: pyln-client 0.8.2 doesn't exist yet, 0.8.0 is the
-      # version from clightning master
-      patchRequirements = "--replace 'pyln-client>=0.8.2' pyln-client==0.8.0";
-    };
     helpme = {};
-    jitrebalance = {
-      patchRequirements = "--replace pyln-client==0.7.3 pyln-client>=0.7.3";
-    };
     monitor = {};
-    noise = {
-      extraPkgs = [ bitstring pyln-proto ];
-      patchRequirements = "--replace bitstring==3.1.6 bitstring==3.1.5";
-    };
-    persistent-channels = {};
-    probe = {
-      extraPkgs = [ sqlalchemy ];
-      patchRequirements = "--replace sqlalchemy==1.3.6 sqlalchemy==1.3.19";
-    };
     prometheus = {
       extraPkgs = [ prometheus_client ];
       patchRequirements = "--replace prometheus-client==0.6.0 prometheus-client==0.8.0";
     };
     rebalance = {};
-    sendinvoiceless = {};
     summary = {
       extraPkgs = [ packaging requests ];
     };

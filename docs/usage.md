@@ -340,23 +340,16 @@ See [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master
 3. Profit
 
 clightning
-----
+====
 
 ## Plugins
 
-There are a number of [plugins](https://github.com/lightningd/plugins) available for clightning:
+There are a number of [plugins](https://github.com/lightningd/plugins) available for clightning.  Currently `nix-bitcoin` supports:
 
-- donations
-- drain
-- feeadjuster
 - helpme
-- jitrebalance
 - monitor
-- persistent-channels
-- probe
 - prometheus
 - rebalance
-- sendinvoiceless
 - summary
 - zmq
 
