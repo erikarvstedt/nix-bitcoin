@@ -340,7 +340,7 @@ See [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master
 3. Profit
 
 clightning
-====
+---
 
 ## Plugins
 
