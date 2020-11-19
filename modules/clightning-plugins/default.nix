@@ -1,5 +1,6 @@
 { config, lib, pkgs, ... }:
 
+with lib;
 let
   cfg = config.services.clightning.plugins;
   pluginPkgs = config.nix-bitcoin.pkgs.clightning-plugins;
@@ -11,16 +12,16 @@ in {
   ];
 
   options.services.clightning.plugins = {
-    helpme.enable = lib.mkEnableOption "Help me (clightning plugin)";
-    monitor.enable = lib.mkEnableOption "Monitor (clightning plugin)";
-    rebalance.enable = lib.mkEnableOption "Rebalance (clightning plugin)";
+    helpme.enable = mkEnableOption "Help me (clightning plugin)";
+    monitor.enable = mkEnableOption "Monitor (clightning plugin)";
+    rebalance.enable = mkEnableOption "Rebalance (clightning plugin)";
   };
 
   config = {
-    services.clightning.extraConfig = lib.mkMerge [
-      (lib.mkIf cfg.helpme.enable "plugin-dir=${pluginPkgs.helpme}")
-      (lib.mkIf cfg.monitor.enable "plugin-dir=${pluginPkgs.monitor}")
-      (lib.mkIf cfg.rebalance.enable "plugin-dir=${pluginPkgs.rebalance}")
+    services.clightning.extraConfig = mkMerge [
+      (mkIf cfg.helpme.enable "plugin-dir=${pluginPkgs.helpme}")
+      (mkIf cfg.monitor.enable "plugin-dir=${pluginPkgs.monitor}")
+      (mkIf cfg.rebalance.enable "plugin-dir=${pluginPkgs.rebalance}")
     ];
   };
 }
