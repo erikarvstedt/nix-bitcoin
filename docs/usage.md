@@ -365,4 +365,4 @@ services.clightning = {
 };
 ```
 
-Please have a look at the module for a plugin (e.g. `modules/clightning-plugins/promethus.nix`) to learn its configuration options.
+Please have a look at the module for a plugin (e.g. [prometheus.nix](../modules/clightning-plugins/prometheus.nix)) to learn its configuration options.
