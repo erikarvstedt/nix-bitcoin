@@ -1,7 +1,6 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 let cfg = config.services.clightning.plugins.prometheus; in
-
 {
   options.services.clightning.plugins.prometheus = {
     enable = lib.mkEnableOption "Prometheus (clightning plugin)";
@@ -13,10 +12,9 @@ let cfg = config.services.clightning.plugins.prometheus; in
   };
 
   config = lib.mkIf cfg.enable {
-    services.clightning.extraConfig =
-      ''
+    services.clightning.extraConfig = ''
       plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.prometheus}
       prometheus-listen=${cfg.listen}
-      '';
+    '';
   };
 }

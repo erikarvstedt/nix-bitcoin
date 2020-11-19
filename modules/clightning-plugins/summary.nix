@@ -1,7 +1,6 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 
 let cfg = config.services.clightning.plugins.summary; in
-
 {
   options.services.clightning.plugins.summary = {
     enable = lib.mkEnableOption "Summary (clightning plugin)";
@@ -28,13 +27,12 @@ let cfg = config.services.clightning.plugins.summary; in
   };
 
   config = lib.mkIf cfg.enable {
-    services.clightning.extraConfig =
-      ''
+    services.clightning.extraConfig = ''
       plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.summary}
       summary-currency="${cfg.currency}"
       summary-currency-prefix="${cfg.currencyPrefix}"
       summary-availability-interval=${toString cfg.availabilityInterval}
       summary-availability-window=${toString cfg.availabilityWindow}
-      '';
+    '';
   };
 }
