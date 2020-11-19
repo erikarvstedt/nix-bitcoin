@@ -21,7 +21,11 @@ let testEnv = rec {
       }
     ];
 
-    config = {
+    options.test.features = {
+      clightningPlugins = mkEnableOption "all clightning plugins";
+    };
+
+    config = mkMerge [{
       tests.bitcoind = cfg.bitcoind.enable;
       services.bitcoind = {
         enable = true;
@@ -67,31 +71,29 @@ let testEnv = rec {
       systemd.services.generate-secrets.postStart = mkIfTest "security" ''
         install -o nobody -g nogroup -m777 <(:) /secrets/dummy
       '';
-    };
-  };
-
-  clightningConfig = {
-    enable = true;
-    plugins = {
-      helpme.enable = true;
-      monitor.enable = true;
-      prometheus.enable = true;
-      rebalance.enable = true;
-      summary.enable = true;
-      zmq = let tcpEndpoint = "tcp://127.0.0.1:5501"; in {
-        enable = true;
-        channel-opened = tcpEndpoint;
-        connect = tcpEndpoint;
-        disconnect = tcpEndpoint;
-        invoice-payment = tcpEndpoint;
-        warning = tcpEndpoint;
-        forward-event = tcpEndpoint;
-        sendpay-success = tcpEndpoint;
-        sendpay-failure = tcpEndpoint;
+    }
+    (mkIf config.test.features.clightningPlugins {
+      services.clightning.plugins = {
+        helpme.enable = true;
+        monitor.enable = true;
+        prometheus.enable = true;
+        rebalance.enable = true;
+        summary.enable = true;
+        zmq = let tcpEndpoint = "tcp://127.0.0.1:5501"; in {
+          enable = true;
+          channel-opened = tcpEndpoint;
+          connect = tcpEndpoint;
+          disconnect = tcpEndpoint;
+          invoice-payment = tcpEndpoint;
+          warning = tcpEndpoint;
+          forward-event = tcpEndpoint;
+          sendpay-success = tcpEndpoint;
+          sendpay-failure = tcpEndpoint;
+        };
       };
-    };
+    })
+    ];
   };
-
 
   scenarios = {
     base = baseConfig; # Included in all scenarios
@@ -102,7 +104,8 @@ let testEnv = rec {
     full = {
       tests.security = true;
 
-      services.clightning = clightningConfig;
+      services.clightning.enable = true;
+      test.features.clightningPlugins = true;
       services.spark-wallet.enable = true;
       services.lightning-charge.enable = true;
       services.nanopos.enable = true;
@@ -142,7 +145,8 @@ let testEnv = rec {
     # All regtest-enabled services
     regtest = {
       imports = [ scenarios.regtestBase ];
-      services.clightning = clightningConfig;
+      services.clightning.enable = true;
+      test.features.clightningPlugins = true;
       services.spark-wallet.enable = true;
       services.lnd.enable = true;
       services.lightning-loop.enable = true;
