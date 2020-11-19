@@ -15,14 +15,12 @@ let
     "sendpay-failure"
   ];
 
-  mkEndpointOption = name: {
-    inherit name;
-    value = mkOption {
+  mkEndpointOption = name:
+    mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "Endpoint for ${name}";
     };
-  };
 
   mkEndpointLine = n:
     let ep = builtins.getAttr n cfg; in
@@ -33,7 +31,7 @@ in
 {
   options.services.clightning.plugins.zmq = {
     enable = mkEnableOption "ZMQ (clightning plugin)";
-  } // builtins.listToAttrs (map mkEndpointOption endpoints);
+  } // lib.genAttrs endpoints mkEndpointOption;
 
   config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
