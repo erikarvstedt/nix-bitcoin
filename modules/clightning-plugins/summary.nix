@@ -8,12 +8,12 @@ let cfg = config.services.clightning.plugins.summary; in
     currency = mkOption {
       type = types.str;
       default = "USD";
-      description = "What currency should I look up on btcaverage?";
+      description = "The currency to look up on btcaverage.";
     };
     currencyPrefix = mkOption {
       type = types.str;
       default = "USD $";
-      description = "What prefix to use for currency";
+      description = "The prefix to use for the currency.";
     };
     availabilityInterval = mkOption {
       type = types.int;
