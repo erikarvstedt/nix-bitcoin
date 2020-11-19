@@ -44,7 +44,7 @@
   # under which peers can reach us.
   # services.clightning.announce-tor = true;
   # == Plugins
-  # See docs/usage.md for the list of available plugins.
+  # See ../docs/usage.md for the list of available plugins.
   # services.clightning.plugins.prometheus.enable = true;
 
   ### LND
