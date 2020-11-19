@@ -31,10 +31,10 @@ let
 
   basePkgs = [ nbPython3Packages.pyln-client ];
 
-  mkPlugin = name: plugin: pkgs.stdenv.mkDerivation (
-    let
-      python = pkgs.python3.withPackages (_: basePkgs ++ (plugin.extraPkgs or []));
-    in {
+  mkPlugin = name: plugin: let
+    python = pkgs.python3.withPackages (_: basePkgs ++ (plugin.extraPkgs or []));
+    script = "${plugin.scriptName or name}.py";
+    drv = pkgs.stdenv.mkDerivation {
       pname = "clightning-plugin-${name}";
       inherit version;
 
@@ -51,11 +51,13 @@ let
         PYTHONPATH=${toString python}/${python.sitePackages} \
           ${pkgs.python3Packages.pip}/bin/pip install -r requirements.txt --no-cache --no-index
 
-        script=${plugin.scriptName or name}.py
-        chmod +x $script
-        patchShebangs $script
+        chmod +x ${script}
+        patchShebangs ${script}
       '';
-    }
-);
+
+      passthru.path = "${drv}/${script}";
+    };
+  in drv;
+
 in
   builtins.mapAttrs mkPlugin plugins

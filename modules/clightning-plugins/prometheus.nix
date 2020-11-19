@@ -14,7 +14,7 @@ let cfg = config.services.clightning.plugins.prometheus; in
 
   config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
-      plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.prometheus}
+      plugin=${config.nix-bitcoin.pkgs.clightning-plugins.prometheus.path}
       prometheus-listen=${cfg.listen}
     '';
   };
