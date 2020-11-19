@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import json
 
 
 def succeed(*cmds):
@@ -134,24 +135,24 @@ def _():
     succeed("su operator -c 'liquidswap-cli --help'")
 
 
-clightning_plugins = [
-    "helpme",
-    "monitor",
-    "prometheus",
-    "rebalance",
-    "summary",
-    "zmq",
-]
-
-
 @test("clightning")
 def _():
     assert_running("clightning")
     assert_matches("su operator -c 'lightning-cli getinfo' | jq", '"id"')
-    for name in clightning_plugins:
-        assert_matches(
-            "su operator -c 'lightning-cli plugin list' | jq '.plugins[] | select(.active)'", name
-        )
+    if test_data["clightning-plugins"]:
+        plugin_list = succeed("lightning-cli plugin list")
+        plugins = json.loads(plugin_list)["plugins"]
+        active = set(plugin["name"] for plugin in plugins if plugin["active"])
+        failed = set(test_data["clightning-plugins"]).difference(active)
+        if failed:
+            raise Exception(
+                f"The following clightning plugins are inactive:\n{failed}.\n\n"
+                f"Output of 'lightning-cli plugin list':\n{plugin_list}"
+            )
+        else:
+            log.log("Active clightning plugins:")
+            for p in test_data["clightning-plugins"]:
+                log.log(os.path.basename(p))
 
 
 @test("lnd")

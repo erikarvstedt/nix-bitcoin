@@ -35,6 +35,11 @@ let testEnv = rec {
       tests.clightning = cfg.clightning.enable;
       # When WAN is disabled, DNS bootstrapping slows down service startup by ~15 s.
       services.clightning.extraConfig = mkIf config.test.noConnections "disable-dns";
+      test.data.clightning-plugins = let
+        plugins = config.services.clightning.plugins;
+        enabled = builtins.filter (plugin: plugins.${plugin}.enable) (builtins.attrNames plugins);
+        pluginPkgs = config.nix-bitcoin.pkgs.clightning-plugins;
+      in map (plugin: pluginPkgs.${plugin}.path) enabled;
 
       tests.spark-wallet = cfg.spark-wallet.enable;
 
