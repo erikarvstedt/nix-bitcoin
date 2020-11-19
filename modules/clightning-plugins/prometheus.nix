@@ -8,7 +8,7 @@ let cfg = config.services.clightning.plugins.prometheus; in
     listen = mkOption {
       type = types.str;
       default = "0.0.0.0:9750";
-      description = "Address and port to bind to";
+      description = "Address and port to bind to.";
     };
   };
 
