@@ -1,5 +1,6 @@
 { config, lib, ... }:
 
+with lib;
 let
   cfg = config.services.clightning.plugins.zmq;
 
@@ -16,8 +17,8 @@ let
 
   mkEndpointOption = name: {
     inherit name;
-    value = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
+    value = mkOption {
+      type = types.nullOr types.str;
       default = null;
       description = "Endpoint for ${name}";
     };
@@ -25,19 +26,19 @@ let
 
   mkEndpointLine = n:
     let ep = builtins.getAttr n cfg; in
-    lib.optionalString (ep != null) ''
+    optionalString (ep != null) ''
       zmq-pub-${n}=${ep}
     '';
 in
 {
   options.services.clightning.plugins.zmq = {
-    enable = lib.mkEnableOption "ZMQ (clightning plugin)";
+    enable = mkEnableOption "ZMQ (clightning plugin)";
   } // builtins.listToAttrs (map mkEndpointOption endpoints);
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
       plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.zmq}
-      ${lib.concatStrings (map mkEndpointLine endpoints)}
+      ${concatStrings (map mkEndpointLine endpoints)}
     '';
   };
 }
