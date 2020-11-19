@@ -22,10 +22,10 @@ let
       description = "Endpoint for ${name}";
     };
 
-  mkEndpointLine = n:
-    let ep = builtins.getAttr n cfg; in
-    optionalString (ep != null) ''
-      zmq-pub-${n}=${ep}
+  setEndpoint = ep:
+    let value = builtins.getAttr ep cfg; in
+    optionalString (value != null) ''
+      zmq-pub-${ep}=${value}
     '';
 in
 {
@@ -36,7 +36,7 @@ in
   config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
       plugin=${config.nix-bitcoin.pkgs.clightning-plugins.zmq.path}
-      ${concatStrings (map mkEndpointLine endpoints)}
+      ${concatStrings (map setEndpoint endpoints)}
     '';
   };
 }
