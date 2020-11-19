@@ -344,7 +344,7 @@ clightning
 
 ## Plugins
 
-There are a number of [plugins](https://github.com/lightningd/plugins) available for clightning.  Currently `nix-bitcoin` supports:
+There are a number of [plugins](https://github.com/lightningd/plugins) available for clightning. Currently `nix-bitcoin` supports:
 
 - helpme
 - monitor
@@ -353,7 +353,7 @@ There are a number of [plugins](https://github.com/lightningd/plugins) available
 - summary
 - zmq
 
-You can activate and configure these plugins by addition configuration options like so:
+You can activate and configure these plugins like so:
 
 ```nix
 services.clightning = {
