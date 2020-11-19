@@ -19,9 +19,9 @@ in {
 
   config = {
     services.clightning.extraConfig = mkMerge [
-      (mkIf cfg.helpme.enable "plugin-dir=${pluginPkgs.helpme}")
-      (mkIf cfg.monitor.enable "plugin-dir=${pluginPkgs.monitor}")
-      (mkIf cfg.rebalance.enable "plugin-dir=${pluginPkgs.rebalance}")
+      (mkIf cfg.helpme.enable "plugin=${pluginPkgs.helpme.path}")
+      (mkIf cfg.monitor.enable "plugin=${pluginPkgs.monitor.path}")
+      (mkIf cfg.rebalance.enable "plugin=${pluginPkgs.rebalance.path}")
     ];
   };
 }

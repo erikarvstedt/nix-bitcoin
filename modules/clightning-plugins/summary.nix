@@ -29,7 +29,7 @@ let cfg = config.services.clightning.plugins.summary; in
 
   config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
-      plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.summary}
+      plugin=${config.nix-bitcoin.pkgs.clightning-plugins.summary.path}
       summary-currency="${cfg.currency}"
       summary-currency-prefix="${cfg.currencyPrefix}"
       summary-availability-interval=${toString cfg.availabilityInterval}

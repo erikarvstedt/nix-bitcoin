@@ -37,7 +37,7 @@ in
 
   config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
-      plugin-dir=${config.nix-bitcoin.pkgs.clightning-plugins.zmq}
+      plugin=${config.nix-bitcoin.pkgs.clightning-plugins.zmq.path}
       ${concatStrings (map mkEndpointLine endpoints)}
     '';
   };
