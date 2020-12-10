@@ -7,7 +7,7 @@ container:
   memory: 8G
 
 environment:
-  CACHIX_SIGNING_KEY: ENCRYPTED[449fc699b3704075dcbb7c30bfbfa9c35861a4e0b65e1f105f4f8668dfb50aed3d842384fd97632fdebe009981f24f61]
+  CACHIX_SIGNING_KEY: ENCRYPTED[0255dffe6f1c7a05bdb587499dc098123be0fbc9ae73b8c10350352987c0b7225dd6c38d164c042856022dcad354c69d]
   # Save some traffic by excluding the full git history
   CIRRUS_CLONE_DEPTH: 1
 
