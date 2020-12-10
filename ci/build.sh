@@ -11,7 +11,7 @@ set -euo pipefail
 
 scenario=${scenario:-}
 CACHIX_SIGNING_KEY=${CACHIX_SIGNING_KEY:-}
-cachixCache=nix-bitcoin
+cachixCache=nix-bitcoin-ci-ea
 
 trap 'echo Error at line $LINENO' ERR
 
