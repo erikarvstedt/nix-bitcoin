@@ -29,18 +29,26 @@ let
         3. Transfer your funds manually by doing sweeps for each mixdepth:
            jm-sendpayment -m <mixdepth> -N 0 old.jmdat 0 <destaddr>
 
+           Run this command for every available mixdepth (`-m 0`, `-m 1`, ...).
+           IMPORTANT: Use a different <destaddr> for every run.
+
            Explanation of the options:
            -m <mixdepth>: spend from given mixdepth.
-                          Repeat the command for every available mixdepth, e.g. `-m 0`, `-m 1`, ...
            -N 0: don't coinjoin on this spend
            old.jmdat: spend from old wallet
            0: set amount to zero to do a sweep, i.e. transfer all funds at given mixdepth
            <destaddr>: destination p2wpkh address from wallet.jmdat with mixdepth 0
 
         Privacy Notes:
-        - Different <destaddr> should be used for every sweep.
-        - You might want to time stagger these transactions.
-        - Alternatively, you can use coin-freezing to use individual coins and not connect them.
+        - This method transfers all funds to the same mixdepth 0.
+          Because wallet inputs at the same mixdepth can be considered to be linked, this undoes
+          the unlinking effects of previous coinjoins and resets all funds to mixdepth 0.
+          This only applies in case that the inputs to the new wallet are used for further coinjoins.
+          When inputs are instead kept separate in future transactions, the unlinking effects of
+          different mixdepths are preserved.
+        - A different <destaddr> should be used for every transaction.
+        - You might want to time stagger the transactions.
+        - Additionally, you can use coin-freezing to exclude specific inputs from the sweep.
 
         More information at
         https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/v0.8.0/docs/NATIVE-SEGWIT-UPGRADE.md
