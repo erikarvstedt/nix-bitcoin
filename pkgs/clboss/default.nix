@@ -1,11 +1,8 @@
-{ stdenv, pkgs, fetchurl, pkgconfig, curl, dnsutils, libev, sqlite }:
+{ stdenv, fetchurl, pkgconfig, curl, dnsutils, libev, sqlite }:
 
 let
-  curlWithGnuTls = curl.override { gnutlsSupport = true; sslSupport = false; };
-
+  curlWithGnuTLS = curl.override { gnutlsSupport = true; sslSupport = false; };
 in
-
-with stdenv.lib;
 stdenv.mkDerivation rec {
   pname = "clboss";
   version = "0.10";
@@ -15,13 +12,13 @@ stdenv.mkDerivation rec {
     sha256 = "1bmlpfhsjs046qx2ikln15rj4kal32752zs1s5yjklsq9xwnbciz";
   };
 
-  enableParallelBuilding = true;
-
-  nativeBuildInputs = [ pkgconfig libev curlWithGnuTls sqlite ];
+  nativeBuildInputs = [ pkgconfig libev curlWithGnuTLS sqlite ];
 
   propogatedBuildInputs = [ dnsutils ];
 
-  meta = {
+  enableParallelBuilding = true;
+
+  meta = with stdenv.lib; {
     description = "Automated C-Lightning Node Manager";
     homepage = "https://github.com/ZmnSCPxj/clboss";
     maintainers = with maintainers; [ nixbitcoin ];
