@@ -9,7 +9,7 @@ let cfg = config.services.clightning.plugins.clboss; in
       type = types.ints.positive;
       default = 30000;
       description = ''
-        Specify target amount that CLBOSS will leave onchain
+        Specify target amount (in satoshi) that CLBOSS will leave onchain.
       '';
     };
   };
@@ -19,7 +19,7 @@ let cfg = config.services.clightning.plugins.clboss; in
       plugin=${config.nix-bitcoin.pkgs.clboss}/bin/clboss
       clboss-min-onchain=${toString cfg.min-onchain}
     '';
-    systemd.services.clightning.path =[
+    systemd.services.clightning.path = [
       pkgs.dnsutils
     ] ++ optional config.services.clightning.enforceTor (hiPrio config.nix-bitcoin.torify);
   };
