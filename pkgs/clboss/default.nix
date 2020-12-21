@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, pkgconfig, curl, dnsutils, libev, sqlite }:
+{ stdenv, fetchurl, pkgconfig, curl, libev, sqlite }:
 
 let
   curlWithGnuTLS = curl.override { gnutlsSupport = true; sslSupport = false; };
@@ -13,8 +13,6 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ pkgconfig libev curlWithGnuTLS sqlite ];
-
-  propogatedBuildInputs = [ dnsutils ];
 
   enableParallelBuilding = true;
 
