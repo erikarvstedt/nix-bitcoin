@@ -12,16 +12,6 @@ let cfg = config.services.clightning.plugins.clboss; in
         Specify target amount that CLBOSS will leave onchain
       '';
     };
-    torify = mkOption {
-    # needs custom wrapper because torsocks doesn't honor global settings
-    # https://github.com/NixOS/nixpkgs/issues/94236
-      readOnly = true;
-      default = pkgs.writeScriptBin "torify"''
-        ${pkgs.tor}/bin/torify \
-        --address ${toString (head (splitString ":" config.services.tor.client.socksListenAddress))} \
-        "$@"
-      '';
-    };
   };
 
   config = mkIf cfg.enable {
@@ -31,6 +21,6 @@ let cfg = config.services.clightning.plugins.clboss; in
     '';
     systemd.services.clightning.path =[
       pkgs.dnsutils
-    ] ++ optional config.services.clightning.enforceTor (hiPrio cfg.torify);
+    ] ++ optional config.services.clightning.enforceTor (hiPrio config.nix-bitcoin.torify);
   };
 }
