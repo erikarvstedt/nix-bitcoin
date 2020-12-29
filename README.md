@@ -40,35 +40,38 @@ Goals
 
 Features
 ---
-Default
-* bitcoind with outbound connections through Tor and inbound connections through an onion service. By default loaded with banlist of spy nodes.
-* [clightning](https://github.com/ElementsProject/lightning) with outbound connections through Tor, onion service unannounced
-* includes "nodeinfo" script which prints basic info about the node
-* adds non-root user "operator" who has access to client tools (ex. bitcoin-cli, lightning-cli)
+A [configuration template](modules/presets/secure-node.nix) for setting up a secure node
+* All applications use Tor for outbound connections and accept inbound connections via onion services.
+* Includes a [nodeinfo](modules/nodeinfo.nix) script which prints basic info about the node.
 
-In `configuration.nix` the user can enable
-* announcing a clightning onion service and [clightning plugins](https://github.com/lightningd/plugins):
-  * [clboss](https://github.com/ZmnSCPxj/clboss): Automated C-Lightning Node Manager
-  * [helpme](https://github.com/lightningd/plugins/tree/master/helpme): Walks you through setting up a fresh c-lightning node
-  * [monitor](https://github.com/renepickhardt/plugins/tree/master/monitor): Helps you analyze the health of your peers and channels
-  * [prometheus](https://github.com/lightningd/plugins/tree/master/prometheus): Lightning node exporter for the prometheus timeseries server
-  * [rebalance](https://github.com/lightningd/plugins/tree/master/rebalance): Keeps your channels balanced
-  * [summary](https://github.com/lightningd/plugins/tree/master/summary): Print a nice summary of the node status
-  * [zmq](https://github.com/lightningd/plugins/tree/master/zmq): Publishes notifications via ZeroMQ to configured endpoints
-* [lnd](https://github.com/lightningnetwork/lnd) with or wihtout announcing an onion service
-* [spark-wallet](https://github.com/shesek/spark-wallet)
-* [electrs](https://github.com/romanz/electrs)
-* [btcpayserver](https://github.com/btcpayserver/btcpayserver)
-* [liquid](https://github.com/elementsproject/elements)
-* [lightning charge](https://github.com/ElementsProject/lightning-charge) (deprecated)
-* [nanopos](https://github.com/ElementsProject/nanopos) (deprecated)
-* [nix-bitcoin webindex](modules/nix-bitcoin-webindex.nix), an index page using nginx to display node information and link to nanopos
-* [recurring-donations](modules/recurring-donations.nix), a module to repeatedly send lightning payments to recipients specified in the configuration.
-* [bitcoin-core-hwi](https://github.com/bitcoin-core/HWI)
-* [netns-isolation](modules/netns-isolation.nix), isolates modules/services on a network-level in network namespaces
-* [Lightning Loop](https://github.com/lightninglabs/loop)
-* [backups](modules/backups.nix), daily duplicity backups of all your nodes important files
-* [JoinMarket](https://github.com/joinmarket-org/joinmarket-clientserver)
+NixOS modules
+* Application services
+  * [bitcoind](https://github.com/bitcoin/bitcoin), with a default banlist against spy nodes
+  * [clightning](https://github.com/ElementsProject/lightning) with support for announcing an onion service\
+    Available plugins:
+    * [clboss](https://github.com/ZmnSCPxj/clboss): automated C-Lightning Node Manager
+    * [helpme](https://github.com/lightningd/plugins/tree/master/helpme): walks you through setting up a fresh c-lightning node
+    * [monitor](https://github.com/renepickhardt/plugins/tree/master/monitor): helps you analyze the health of your peers and channels
+    * [prometheus](https://github.com/lightningd/plugins/tree/master/prometheus): lightning node exporter for the prometheus timeseries server
+    * [rebalance](https://github.com/lightningd/plugins/tree/master/rebalance): keeps your channels balanced
+    * [summary](https://github.com/lightningd/plugins/tree/master/summary): print a nice summary of the node status
+    * [zmq](https://github.com/lightningd/plugins/tree/master/zmq): publishes notifications via ZeroMQ to configured endpoints
+  * [lnd](https://github.com/lightningnetwork/lnd) with support for announcing an onion service
+  * [spark-wallet](https://github.com/shesek/spark-wallet)
+  * [electrs](https://github.com/romanz/electrs)
+  * [btcpayserver](https://github.com/btcpayserver/btcpayserver)
+  * [liquid](https://github.com/elementsproject/elements)
+  * [lightning charge](https://github.com/ElementsProject/lightning-charge) (deprecated)
+  * [nanopos](https://github.com/ElementsProject/nanopos) (deprecated)
+  * [Lightning Loop](https://github.com/lightninglabs/loop)
+  * [JoinMarket](https://github.com/joinmarket-org/joinmarket-clientserver)
+  * [recurring-donations](modules/recurring-donations.nix): for periodic lightning payments
+  * [bitcoin-core-hwi](https://github.com/bitcoin-core/HWI)
+* Helper
+  * [netns-isolation](modules/netns-isolation.nix): isolates applications on the network-level via network namespaces
+  * [backups](modules/backups.nix): daily duplicity backups of all your node's important files
+  * [operator](modules/operator.nix): adds non-root user `operator` who has access to client tools (e.g. `bitcoin-cli`, `lightning-cli`)
+  * [nix-bitcoin webindex](modules/nix-bitcoin-webindex.nix): a local website to display node information
 
 Security
 ---
