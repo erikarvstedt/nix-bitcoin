@@ -8,14 +8,11 @@
 </p>
 <br/>
 <p align="center">
-    <a href="https://github.com/fort-nix/nix-bitcoin/blob/master/LICENSE" target="_blank">
-        <img src="https://img.shields.io/github/license/fort-nix/nix-bitcoin" alt="GitHub license">
+    <a href="https://cirrus-ci.com/github/fort-nix/nix-bitcoin" target="_blank">
+        <img src="https://api.cirrus-ci.com/github/fort-nix/nix-bitcoin.svg?branch=master" alt="CirrusCI status">
     </a>
     <a href="https://github.com/fort-nix/nix-bitcoin/releases/latest" target="_blank">
         <img src="https://img.shields.io/github/v/release/fort-nix/nix-bitcoin" alt="GitHub tag (latest SemVer)">
-    </a>
-    <a href="https://cirrus-ci.com/github/fort-nix/nix-bitcoin" target="_blank">
-        <img src="https://api.cirrus-ci.com/github/fort-nix/nix-bitcoin.svg?branch=master" alt="CirrusCI actions status">
     </a>
     <a href="https://github.com/fort-nix/nix-bitcoin/commits/master" target="_blank">
         <img src="https://img.shields.io/github/commit-activity/y/fort-nix/nix-bitcoin" alt="GitHub commit activity">
