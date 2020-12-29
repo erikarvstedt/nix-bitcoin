@@ -35,6 +35,10 @@ Goals
 * Be a usable, secure platform for trustless Bitcoin yield generation
 * Be a reproducible and extensible platform for applications building on Bitcoin
 
+Examples
+---
+See the [examples directory](examples/README.md).
+
 Features
 ---
 A [configuration template](modules/presets/secure-node.nix) for setting up a secure node
@@ -78,10 +82,6 @@ Security
 * **Defense-in-depth:** nix-bitcoin is built with a [hardened kernel](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix) by default, services are confined through discretionary access control, Linux namespaces, [dbus firewall](modules/security.nix) and seccomp-bpf with continuous improvements.
 
 Note that if the machine you're deploying *from* is insecure, there is nothing nix-bitcoin can do to protect itself.
-
-Examples
----
-Example `configuration.nix` and scripts, from which you can build your own deployment, can be found in the [examples directory](examples).
 
 Docs
 ---
