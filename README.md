@@ -1,11 +1,11 @@
 <br/>
+<br/>
 <p align="center">
   <img
-    width="500"
-    src="https://raw.githubusercontent.com/nixbitcoin/nix-bitcoin/update-readme/docs/img/nix-bitcoin-logo-text.png"
+    width="320"
+    src="docs/img/nix-bitcoin-logo.png"
     alt="nix-bitcoin logo">
 </p>
-
 <br/>
 <p align="center">
     <a href="https://github.com/fort-nix/nix-bitcoin/blob/master/LICENSE" target="_blank">
