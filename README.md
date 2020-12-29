@@ -33,9 +33,9 @@ nix-bitcoin is a collection of Nix packages and NixOS modules for easily install
 
 Goals
 ---
-* Make it easy to deploy a reasonably secure Bitcoin node with a usable wallet
+* Make it easy to deploy a secure Bitcoin node with a usable wallet
 * Allow providing public infrastructure for Bitcoin and higher-layer protocols
-* Be a usable, reasonably secure platform for trustless Bitcoin yield generation
+* Be a usable, secure platform for trustless Bitcoin yield generation
 * Be a reproducible and extensible platform for applications building on Bitcoin
 
 Features
@@ -77,7 +77,7 @@ Security
 * **Principle of Least Privilege:** Services operate with least privileges; they each have their own user and are restricted further with [systemd options](modules/nix-bitcoin-services.nix), [RPC whitelisting](modules/bitcoind-rpc-public-whitelist.nix), and [netns-isolation](modules/netns-isolation.nix). There's a non-root user *operator* to interact with the various services.
 * **Defense-in-depth:** nix-bitcoin is built with a [hardened kernel](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/hardened.nix) by default, services are confined through discretionary access control, Linux namespaces, [dbus firewall](modules/security.nix) and seccomp-bpf with continuous improvements.
 
-Note, if the machine you're deploying *from* is insecure, there is nothing nix-bitcoin can do to protect itself.
+Note that if the machine you're deploying *from* is insecure, there is nothing nix-bitcoin can do to protect itself.
 
 Examples
 ---
