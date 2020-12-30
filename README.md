@@ -1,5 +1,4 @@
 <br/>
-<br/>
 <p align="center">
   <img
     width="320"
