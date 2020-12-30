@@ -4,6 +4,7 @@
     src="docs/img/nix-bitcoin-logo.png"
     alt="nix-bitcoin logo">
 </p>
+<br/>
 <p align="center">
     <a href="https://cirrus-ci.com/github/fort-nix/nix-bitcoin" target="_blank">
         <img src="https://api.cirrus-ci.com/github/fort-nix/nix-bitcoin.svg?branch=master" alt="CirrusCI status">
