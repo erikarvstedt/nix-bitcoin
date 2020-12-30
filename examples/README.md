@@ -9,11 +9,9 @@ cd nix-bitcoin/examples/
 nix-shell
 ```
 
-By default, [`configuration.nix`](configuration.nix) enables `bitcoind`, `clightning` (onion service unnannounced),
-and `operator` [features](../README.md#features).
-
 The following example scripts set up a nix-bitcoin node according to [`configuration.nix`](configuration.nix) and then
-shut down immediately. They leave no traces (outside of `/nix/store`) on the host system.
+shut down immediately. They leave no traces (outside of `/nix/store`) on the host system.\
+By default, [`configuration.nix`](configuration.nix) enables `bitcoind` and `clightning` (with an onion service).
 
 - [`./deploy-container.sh`](deploy-container.sh) creates a [NixOS container](https://github.com/erikarvstedt/extra-container).\
   This is the fastest way to set up a node.\
