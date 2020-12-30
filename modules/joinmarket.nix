@@ -158,8 +158,6 @@ in {
       controlSocket.enable = true;
     };
 
-    nix-bitcoin.secrets.jm-wallet-password.user = cfg.user;
-
     systemd.services.joinmarket = {
       description = "JoinMarket Daemon";
       wantedBy = [ "multi-user.target" ];
@@ -198,6 +196,8 @@ in {
         ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.allowTor;
     };
+
+    nix-bitcoin.secrets.jm-wallet-password.user = cfg.user;
   }
 
   (mkIf cfg.yieldgenerator.enable {
