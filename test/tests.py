@@ -234,6 +234,12 @@ def _():
     )
 
 
+@test("joinmarket-ob-watcher")
+def _():
+    assert_running("joinmarket-ob-watcher")
+    machine.wait_until_succeeds(log_has_string("joinmarket-ob-watcher", "Starting ob-watcher"))
+
+
 @test("secure-node")
 def _():
     assert_running("onion-chef")
