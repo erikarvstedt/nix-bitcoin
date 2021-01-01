@@ -12,6 +12,7 @@ let
     joinmarketclient
     joinmarketbitcoin
     joinmarketdaemon
+    matplotlib # for ob-watcher
   ];
 
   pythonEnv = python3.withPackages (_: runtimePackages);
