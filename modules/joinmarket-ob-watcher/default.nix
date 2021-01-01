@@ -14,7 +14,7 @@ let
     [MESSAGING:server1]
     host = darksci3bfoka7tw.onion
     channel = joinmarket-pit
-    port = 6697
+    port = ${toString cfg.port}
     usessl = true
     socks5 = true
     socks5_host = ${torAddress}
@@ -32,6 +32,16 @@ let
 in {
   options.services.joinmarket-ob-watcher = {
     enable = mkEnableOption "JoinMarket orderbook watcher";
+    address = mkOption {
+      type = types.str;
+      default = "127.0.0.1";
+      description = "HTTP server address.";
+    };
+    port = mkOption {
+      type = types.port;
+      default = 62601;
+      description = "HTTP server port.";
+    };
     user = mkOption {
       type = types.str;
       default = "joinmarket-ob-watcher";
@@ -41,13 +51,6 @@ in {
       type = types.str;
       default = cfg.user;
       description = "The group as which to run JoinMarket orderbook watcher.";
-    };
-    host = mkOption {
-      type = types.str;
-      default = "127.0.0.1";
-      description = ''
-        "http server listen address.";
-      '';
     };
     dataDir = mkOption {
       readOnly = true;
@@ -82,7 +85,10 @@ in {
         StateDirectory = "joinmarket-ob-watcher";
         StateDirectoryMode = "0770";
         WorkingDirectory = "${cfg.dataDir}"; # The service creates dir 'logs' in the working dir
-        ExecStart = "${nbPkgs.joinmarket}/bin/ob-watcher --datadir=${cfg.dataDir} --host=${cfg.host}";
+        ExecStart = ''
+          ${nbPkgs.joinmarket}/bin/ob-watcher --datadir=${cfg.dataDir} \
+            --host=${cfg.address} --port=${toString cfg.port}
+        '';
         User = "${cfg.user}";
         Restart = "on-failure";
         RestartSec = "10s";

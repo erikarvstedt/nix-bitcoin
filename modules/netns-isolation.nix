@@ -305,7 +305,7 @@ in {
     services.joinmarket.cliExec = mkCliExec "joinmarket";
     systemd.services.joinmarket-yieldgenerator.serviceConfig.NetworkNamespacePath = "/var/run/netns/nb-joinmarket";
 
-    services.joinmarket-ob-watcher.host = netns.joinmarket-ob-watcher.address;
+    services.joinmarket-ob-watcher.address = netns.joinmarket-ob-watcher.address;
   }
   ]);
 }
