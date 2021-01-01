@@ -32,11 +32,6 @@ let
 in {
   options.services.joinmarket-ob-watcher = {
     enable = mkEnableOption "JoinMarket orderbook watcher";
-    dataDir = mkOption {
-      type = types.path;
-      default = "/var/lib/joinmarket-ob-watcher";
-      description = "The data directory for JoinMarket orderbook watcher.";
-    };
     user = mkOption {
       type = types.str;
       default = "joinmarket-ob-watcher";
@@ -54,6 +49,11 @@ in {
         "http server listen address.";
       '';
     };
+    dataDir = mkOption {
+      readOnly = true;
+      default = "/var/lib/joinmarket-ob-watcher";
+      description = "The data directory for JoinMarket orderbook watcher.";
+    };
     enforceTor =  nix-bitcoin-services.enforceTor;
   };
 
@@ -65,10 +65,6 @@ in {
         extraGroups = [ "tor" ];
     };
     users.groups.${cfg.group} = {};
-
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
 
     services.tor = {
       enable = true;
@@ -84,12 +80,12 @@ in {
         install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // rec {
-        WorkingDirectory = "${cfg.dataDir}";
+        StateDirectory = "joinmarket-ob-watcher";
+        WorkingDirectory = "${cfg.dataDir}"; # The service creates dir 'logs' in the working dir
         ExecStart = "${nbPkgs.joinmarket}/bin/jm-ob-watcher --datadir=${cfg.dataDir} --host=${cfg.host}";
         User = "${cfg.user}";
         Restart = "on-failure";
         RestartSec = "10s";
-        ReadWritePaths = "${cfg.dataDir}";
       } // nix-bitcoin-services.allowTor;
     };
   };
