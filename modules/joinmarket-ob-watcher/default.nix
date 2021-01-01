@@ -7,7 +7,6 @@ let
   inherit (config) nix-bitcoin-services;
   nbPkgs = config.nix-bitcoin.pkgs;
   torAddress = builtins.head (builtins.split ":" config.services.tor.client.socksListenAddress);
-  orderbookHtml = ./orderbook.html;
   configFile = builtins.toFile "config" ''
     [BLOCKCHAIN]
     blockchain_source = no-blockchain
@@ -83,14 +82,10 @@ in {
       after = [ "network.target" ];
       preStart = ''
         install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
-        cp ${orderbookHtml} $RUNTIME_DIRECTORY/orderbook.html
-        cp ${nbPkgs.joinmarket}/bin/ob-watcher $RUNTIME_DIRECTORY/ob-watcher
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // rec {
-        RuntimeDirectory = "joinmarket-ob-watcher";
-        RuntimeDirectoryMode = "700";
         WorkingDirectory = "${cfg.dataDir}";
-        ExecStart = "/run/${RuntimeDirectory}/ob-watcher --datadir=${cfg.dataDir} --host=${cfg.host}";
+        ExecStart = "${nbPkgs.joinmarket}/bin/ob-watcher --datadir=${cfg.dataDir} --host=${cfg.host}";
         User = "${cfg.user}";
         Restart = "on-failure";
         RestartSec = "10s";
