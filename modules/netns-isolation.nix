@@ -252,7 +252,6 @@ in {
       };
       joinmarket-ob-watcher = {
         id = 26;
-        connections = [ "nginx" ];
       };
     };
 
