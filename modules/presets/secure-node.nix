@@ -119,7 +119,8 @@ in {
 
     services.nix-bitcoin-webindex.enforceTor = true;
 
-    services.tor.hiddenServices.joinmarket-ob-watcher = mkIf cfg.joinmarket-ob-watcher.enable (mkHiddenService { port = 80; toPort = 62601; toHost = cfg.joinmarket-ob-watcher.host; });
+    services.tor.hiddenServices.joinmarket-ob-watcher = mkIf cfg.joinmarket-ob-watcher.enable
+      (mkHiddenService { port = 80; toPort = cfg.joinmarket-ob-watcher.port; toHost = cfg.joinmarket-ob-watcher.host; });
 
     # Backups
     services.backups = {
