@@ -20,7 +20,7 @@ with lib;
     ./electrs.nix
     ./liquid.nix
     ./joinmarket.nix
-    ./joinmarket-ob-watcher
+    ./joinmarket-ob-watcher.nix
     ./hardware-wallets.nix
     ./recurring-donations.nix
 
