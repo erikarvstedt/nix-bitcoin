@@ -75,7 +75,6 @@ in {
     };
 
     systemd.services.joinmarket-ob-watcher = {
-      description = "Webpage to monitor your local orderbook";
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" ];
       preStart = ''
