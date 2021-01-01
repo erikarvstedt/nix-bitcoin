@@ -54,7 +54,6 @@ in {
       default = "/var/lib/joinmarket-ob-watcher";
       description = "The data directory for JoinMarket orderbook watcher.";
     };
-    enforceTor =  nix-bitcoin-services.enforceTor;
   };
 
   config = mkIf cfg.enable {
