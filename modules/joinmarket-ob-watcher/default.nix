@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-
 let
   cfg = config.services.joinmarket-ob-watcher;
   inherit (config) nix-bitcoin-services;
@@ -68,7 +67,8 @@ in {
 
     systemd.services.joinmarket-ob-watcher = {
       wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" ];
+      requires = [ "tor.service" ];
+      after = [ "tor.service" ];
       preStart = ''
         install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
       '';
