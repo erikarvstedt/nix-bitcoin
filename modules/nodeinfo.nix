@@ -54,6 +54,12 @@ let
       echo BTCPAYSERVER_ONION="$BTCPAYSERVER_ONION"
     fi
 
+    JOINMARKETOBWATCHER_ONION_FILE=/var/lib/onion-chef/${operatorName}/joinmarket-ob-watcher
+    if [ -e "$JOINMARKETOBWATCHER_ONION_FILE" ]; then
+      JOINMARKETOBWATCHER_ONION="$(cat $JOINMARKETOBWATCHER_ONION_FILE)"
+      echo JOINMARKETOBWATCHER_ONION="$JOINMARKETOBWATCHER_ONION"
+    fi
+
     SSHD_ONION_FILE=/var/lib/onion-chef/${operatorName}/sshd
     if [ -e "$SSHD_ONION_FILE" ]; then
     SSHD_ONION="$(cat $SSHD_ONION_FILE)"

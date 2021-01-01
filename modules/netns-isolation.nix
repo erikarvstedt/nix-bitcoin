@@ -250,6 +250,10 @@ in {
         id = 25;
         connections = [ "bitcoind" ];
       };
+      joinmarket-ob-watcher = {
+        id = 26;
+        connections = [ "nginx" ];
+      };
     };
 
     services.bitcoind = {
@@ -300,6 +304,8 @@ in {
 
     services.joinmarket.cliExec = mkCliExec "joinmarket";
     systemd.services.joinmarket-yieldgenerator.serviceConfig.NetworkNamespacePath = "/var/run/netns/nb-joinmarket";
+
+    services.joinmarket-ob-watcher.host = netns.joinmarket-ob-watcher.address;
   }
   ]);
 }

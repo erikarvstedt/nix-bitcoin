@@ -23,7 +23,7 @@ stdenv.mkDerivation {
   buildInputs = [ pythonEnv ];
 
   installPhase = ''
-    mkdir -p $out/bin
+    mkdir -p $out/bin $out/share
 
     # add-utxo.py -> bin/jm-add-utxo
     cpBin() {
@@ -31,6 +31,8 @@ stdenv.mkDerivation {
     }
 
     cp scripts/joinmarketd.py $out/bin/joinmarketd
+    cp scripts/obwatch/ob-watcher.py $out/bin/ob-watcher
+    cp scripts/obwatch/orderbook.html $out/share/orderbook.html
     cpBin add-utxo.py
     cpBin convert_old_wallet.py
     cpBin receive-payjoin.py
