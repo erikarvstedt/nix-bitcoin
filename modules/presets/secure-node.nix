@@ -119,6 +119,8 @@ in {
 
     services.nix-bitcoin-webindex.enforceTor = true;
 
+    services.tor.hiddenServices.joinmarket-ob-watcher = mkIf cfg.joinmarket-ob-watcher.enable (mkHiddenService { port = 80; toPort = 62601; toHost = cfg.joinmarket-ob-watcher.host; });
+
     # Backups
     services.backups = {
       program = "duplicity";
@@ -133,7 +135,7 @@ in {
 
     services.onion-chef = {
       enable = true;
-      access.${operatorName} = [ "bitcoind" "clightning" "nginx" "liquidd" "spark-wallet" "electrs" "btcpayserver" "sshd" ];
+      access.${operatorName} = [ "bitcoind" "clightning" "nginx" "liquidd" "spark-wallet" "electrs" "btcpayserver" "sshd" "joinmarket-ob-watcher" ];
     };
 
     nix-bitcoin.operator.enable = true;

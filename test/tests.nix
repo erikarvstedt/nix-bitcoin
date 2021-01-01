@@ -62,6 +62,7 @@ let testEnv = rec {
 
       tests.joinmarket = cfg.joinmarket.enable;
       tests.joinmarket-yieldgenerator = cfg.joinmarket.yieldgenerator.enable;
+      tests.joinmarket-ob-watcher = cfg.joinmarket-ob-watcher.enable;
       services.joinmarket.yieldgenerator = {
         enable = config.services.joinmarket.enable;
         customParameters = ''
@@ -121,6 +122,7 @@ let testEnv = rec {
       services.liquidd.enable = true;
       services.btcpayserver.enable = true;
       services.joinmarket.enable = true;
+      services.joinmarket-ob-watcher.enable = true;
       services.backups.enable = true;
 
       services.hardware-wallets = {
@@ -159,6 +161,7 @@ let testEnv = rec {
       services.electrs.enable = true;
       services.btcpayserver.enable = true;
       services.joinmarket.enable = true;
+      services.joinmarket-ob-watcher.enable = true;
     };
 
     # netns and regtest, without secure-node.nix
