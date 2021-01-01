@@ -22,8 +22,17 @@ stdenv.mkDerivation {
 
   buildInputs = [ pythonEnv ];
 
+  # Convert links from root-relative to relative to allow hosting ob-watcher with an
+  # arbitrary URL path prefix
+  patchPhase = ''
+    sed -i \
+      -e 's|href="/"|href="."|g' \
+      -e 's|href="/|href="|g' \
+      scripts/obwatch/orderbook.html
+  '';
+
   installPhase = ''
-    mkdir -p $out/bin $out/share
+    mkdir -p $out/bin
 
     # add-utxo.py -> bin/jm-add-utxo
     cpBin() {
@@ -31,8 +40,7 @@ stdenv.mkDerivation {
     }
 
     cp scripts/joinmarketd.py $out/bin/joinmarketd
-    cp scripts/obwatch/ob-watcher.py $out/bin/ob-watcher
-    cp scripts/obwatch/orderbook.html $out/share/orderbook.html
+    cp scripts/obwatch/ob-watcher.py $out/bin/jm-ob-watcher
     cpBin add-utxo.py
     cpBin convert_old_wallet.py
     cpBin receive-payjoin.py
@@ -45,5 +53,8 @@ stdenv.mkDerivation {
 
     chmod +x -R $out/bin
     patchShebangs $out/bin
+
+    # This file must be placed in the same dir as ob-watcher
+    cp scripts/obwatch/orderbook.html $out/bin/orderbook.html
   '';
 }
