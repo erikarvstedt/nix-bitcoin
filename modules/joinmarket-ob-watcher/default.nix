@@ -62,7 +62,6 @@ in {
     services.tor = {
       enable = true;
       client.enable = true;
-      controlSocket.enable = true;
     };
 
     systemd.services.joinmarket-ob-watcher = {
@@ -88,7 +87,6 @@ in {
     users.users.${cfg.user} = {
       group = cfg.group;
       home = cfg.dataDir; # The service writes to HOME/.config/matplotlib
-      extraGroups = [ "tor" ];
     };
     users.groups.${cfg.group} = {};
   };
