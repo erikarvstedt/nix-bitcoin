@@ -1,4 +1,4 @@
-{ version, src, lib, buildPythonPackage, fetchurl, future, twisted, service-identity, chromalog, matplotlib }:
+{ version, src, lib, buildPythonPackage, fetchurl, future, twisted, service-identity, chromalog }:
 
 buildPythonPackage rec {
   pname = "joinmarketbase";
@@ -6,7 +6,7 @@ buildPythonPackage rec {
 
   postUnpack = "sourceRoot=$sourceRoot/jmbase";
 
-  propagatedBuildInputs = [ future twisted service-identity chromalog matplotlib ];
+  propagatedBuildInputs = [ future twisted service-identity chromalog ];
 
   meta = with lib; {
     homepage = "https://github.com/Joinmarket-Org/joinmarket-clientserver";
