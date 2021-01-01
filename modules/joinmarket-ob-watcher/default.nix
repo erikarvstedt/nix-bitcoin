@@ -42,6 +42,11 @@ in {
       default = 62601;
       description = "HTTP server port.";
     };
+    dataDir = mkOption {
+      readOnly = true;
+      default = "/var/lib/joinmarket-ob-watcher";
+      description = "The data directory for JoinMarket orderbook watcher.";
+    };
     user = mkOption {
       type = types.str;
       default = "joinmarket-ob-watcher";
@@ -52,22 +57,9 @@ in {
       default = cfg.user;
       description = "The group as which to run JoinMarket orderbook watcher.";
     };
-    dataDir = mkOption {
-      readOnly = true;
-      default = "/var/lib/joinmarket-ob-watcher";
-      description = "The data directory for JoinMarket orderbook watcher.";
-    };
   };
 
   config = mkIf cfg.enable {
-    users.users.${cfg.user} = {
-        description = "joinmarket orderbook watcher User";
-        group = "${cfg.group}";
-        home = cfg.dataDir;
-        extraGroups = [ "tor" ];
-    };
-    users.groups.${cfg.group} = {};
-
     services.tor = {
       enable = true;
       client.enable = true;
@@ -87,10 +79,17 @@ in {
           ${nbPkgs.joinmarket}/bin/jm-ob-watcher --datadir=${cfg.dataDir} \
             --host=${cfg.address} --port=${toString cfg.port}
         '';
-        User = "${cfg.user}";
+        User = cfg.user;
         Restart = "on-failure";
         RestartSec = "10s";
       } // nix-bitcoin-services.allowTor;
     };
+
+    users.users.${cfg.user} = {
+      group = cfg.group;
+      home = cfg.dataDir; # The service writes to HOME/.config/matplotlib
+      extraGroups = [ "tor" ];
+    };
+    users.groups.${cfg.group} = {};
   };
 }
