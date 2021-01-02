@@ -30,6 +30,11 @@ in {
     lnd.enable = defaultTrue;
     liquidd.enable = defaultTrue;
     electrs.enable = defaultTrue;
+    spark-wallet = {
+      enable = defaultTrue;
+      externalPort = 80;
+      announce = true;
+    };
     btcpayserver = {
       enable = defaultTrue;
       externalPort = 80;
