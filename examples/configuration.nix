@@ -55,7 +55,7 @@
   # Enable this option to announce our Tor Hidden Service. By default lnd
   # offers outgoing functionality, but doesn't announce the Tor Hidden Service
   # under which peers can reach us.
-  # services.lnd.announce-tor = true;
+  # nix-bitcoin.onionServices.lnd.announce = true;
   ## WARNING
   # If you use lnd, you should manually backup your wallet mnemonic
   # seed. This will allow you to recover on-chain funds. You can run the
