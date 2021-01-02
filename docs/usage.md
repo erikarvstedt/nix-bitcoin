@@ -8,7 +8,7 @@ fetch-release > nix-bitcoin-release.nix
 
 Nodeinfo
 ---
-Run `nodeinfo` to see the onion addresses for enabled services.
+Run `nodeinfo` to see onion addresses and local addresses for enabled services.
 
 Connect to spark-wallet
 ---
