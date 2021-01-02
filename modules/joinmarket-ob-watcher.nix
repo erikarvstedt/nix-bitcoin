@@ -69,7 +69,7 @@ in {
       requires = [ "tor.service" ];
       after = [ "tor.service" ];
       preStart = ''
-        install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
+        ln -snf ${configFile} ${cfg.dataDir}/joinmarket.cfg
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // rec {
         StateDirectory = "joinmarket-ob-watcher";
