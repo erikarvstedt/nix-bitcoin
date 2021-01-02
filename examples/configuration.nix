@@ -41,7 +41,7 @@
   # Enable this option to announce our Tor Hidden Service. By default clightning
   # offers outgoing functionality, but doesn't announce the Tor Hidden Service
   # under which peers can reach us.
-  # services.clightning.announce-tor = true;
+  # nix-bitcoin.onionServices.clightning.announce = true;
   # == Plugins
   # See ../docs/usage.md for the list of available plugins.
   # services.clightning.plugins.prometheus.enable = true;

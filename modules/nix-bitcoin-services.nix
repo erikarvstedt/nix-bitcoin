@@ -51,6 +51,15 @@ let self = {
     '';
   };
 
+  getAnnounceAddressCmd = mkOption {
+    type = types.str;
+    default = "";
+    description = ''
+      Bash expression which outputs the service address to announce.
+      If left empty, no address is announced.
+    '';
+  };
+
   script = src: pkgs.writers.writeBash "script" ''
     set -eo pipefail
     ${src}
