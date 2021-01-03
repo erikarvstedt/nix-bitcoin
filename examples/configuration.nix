@@ -14,6 +14,10 @@
     # FIXME: Uncomment next line to import your hardware configuration. If so,
     # add the hardware configuration file to the same directory as this file.
     #./hardware-configuration.nix
+
+    # FIXME: Uncomment next line to import settings specific to deployments with
+    # krops.
+    #./krops-configuration.nix
   ];
   # FIXME: Enable modules by uncommenting their respective line. Disable
   # modules by commenting out their respective line.
