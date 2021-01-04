@@ -161,7 +161,6 @@ let testEnv = rec {
       services.electrs.enable = true;
       services.btcpayserver.enable = true;
       services.joinmarket.enable = true;
-      services.joinmarket-ob-watcher.enable = true;
     };
 
     # netns and regtest, without secure-node.nix
