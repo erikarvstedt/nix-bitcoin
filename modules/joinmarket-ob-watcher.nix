@@ -56,7 +56,11 @@ in {
       default = cfg.user;
       description = "The group as which to run JoinMarket orderbook watcher.";
     };
-    enforceTor =  nix-bitcoin-services.enforceTor;
+    # This option is only used by netns-isolation
+    enforceTor = mkOption {
+      readOnly = true;
+      default = true;
+    };
   };
 
   config = mkIf cfg.enable {
