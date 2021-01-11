@@ -179,7 +179,7 @@ This is borrowed from the [NixOS manual](https://nixos.org/nixos/manual/index.ht
 The following steps are meant to be run on the machine you deploy from, not the machine you deploy to.
 You can also build Nix from source by following the instructions at https://nixos.org/nix/manual/#ch-installing-source.
 
-1. Install Dependencies (Debian 9 stretch)
+1. Install Dependencies (Debian 10 Buster)
 
     ```
     sudo apt-get install curl git gnupg2 dirmngr
@@ -188,11 +188,11 @@ You can also build Nix from source by following the instructions at https://nixo
 2. Install latest Nix in "multi-user mode" with GPG Verification according to https://nixos.org/nix/download.html
 
     ```
-    curl -o install-nix-2.3.3 https://releases.nixos.org/nix/nix-2.3.3/install
-    curl -o install-nix-2.3.3.asc https://releases.nixos.org/nix/nix-2.3.3/install.asc
+    curl -o install-nix-2.3.10 https://releases.nixos.org/nix/nix-2.3.10/install
+    curl -o install-nix-2.3.10.asc https://releases.nixos.org/nix/nix-2.3.10/install.asc
     gpg2 --recv-keys B541D55301270E0BCF15CA5D8170B4726D7198DE
-    gpg2 --verify ./install-nix-2.3.3.asc
-    sh ./install-nix-2.3.3 --daemon
+    gpg2 --verify ./install-nix-2.3.10.asc
+    sh ./install-nix-2.3.10 --daemon
     ```
 
     Then follow the instructions. Open a new terminal window when you're done.
