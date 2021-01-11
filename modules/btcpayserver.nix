@@ -118,7 +118,7 @@ in {
         network=${config.services.bitcoind.network}
         btcrpcuser=${cfg.bitcoind.rpc.users.btcpayserver.name}
         btcrpcurl=http://${config.services.bitcoind.rpc.address}:${toString cfg.bitcoind.rpc.port}
-        btcnodeendpoint=${config.services.bitcoind.address}:8333
+        btcnodeendpoint=${config.services.bitcoind.address}:${toString config.services.bitcoind.port}
         bind=${cfg.nbxplorer.address}
         port=${toString cfg.nbxplorer.port}
       '';
