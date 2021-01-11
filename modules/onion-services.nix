@@ -96,5 +96,19 @@ in {
         getPublicAddressCmd = "cat ${config.nix-bitcoin.onionAddresses.dataDir}/${service}/${service}";
       });
     }
+
+    # Set sensible defaults for some services
+    {
+      nix-bitcoin.onionServices = {
+        spark-wallet = {
+          externalPort = 80;
+          # Show the onion address in the web interface
+          public = true;
+        };
+        btcpayserver = {
+          externalPort = 80;
+        };
+      };
+    }
   ];
 }
