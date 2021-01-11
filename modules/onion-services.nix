@@ -73,7 +73,7 @@ in {
         genAttrs publicServices singleton
       ) // {
         # Allow the operator user to access onion addresses for all active services
-        operator = mkIf config.nix-bitcoin.operator.enable activeServices;
+        ${config.nix-bitcoin.operator.name} = mkIf config.nix-bitcoin.operator.enable activeServices;
       };
       systemd.services = let
         onionAddresses = [ "onion-addresses.service" ];
