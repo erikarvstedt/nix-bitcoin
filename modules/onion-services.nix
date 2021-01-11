@@ -1,6 +1,6 @@
 # This module creates onion-services for NixOS services.
 # An onion service can be enabled for every service that defines
-# options 'address', 'port' and optionally 'getAnnounceAddressCmd'.
+# options 'address', 'port' and optionally 'getPublicAddressCmd'.
 #
 # See it in use at ./presets/enable-tor.nix
 
@@ -17,7 +17,7 @@ let
     config.services.${service}.enable && cfg.${service}.enable
   ) services;
 
-  announcingServices = builtins.filter (service: cfg.${service}.announce) activeServices;
+  publicServices = builtins.filter (service: cfg.${service}.public) activeServices;
 in {
   options.nix-bitcoin.onionServices = mkOption {
     default = {};
@@ -31,12 +31,12 @@ in {
             The service must define options 'address' and 'port'.
           '';
         };
-        announce = mkOption {
+        public = mkOption {
           type = types.bool;
           default = false;
           description = ''
-            Configure the service to announce its onion address.
-            Only available for services that define the option `getAnnounceAddressCmd`.
+            Make the onion address accessible to the service.
+            Only available for services that define option `getPublicAddressCmd`.
           '';
         };
         externalPort = mkOption {
@@ -68,32 +68,32 @@ in {
         );
       };
 
-      # Enable announcing services to access their own onion addresses
+      # Enable public services to access their own onion addresses
       nix-bitcoin.onionAddresses.access = (
-        genAttrs announcingServices singleton
+        genAttrs publicServices singleton
       ) // {
-        # The operator user can access onion addresses for all active services
+        # Allow the operator user to access onion addresses for all active services
         operator = mkIf config.nix-bitcoin.operator.enable activeServices;
       };
       systemd.services = let
         onionAddresses = [ "onion-addresses.service" ];
-      in genAttrs announcingServices (service: {
+      in genAttrs publicServices (service: {
         requires = onionAddresses;
         after = onionAddresses;
       });
     })
 
-    # Set getAnnounceAddressCmd for announcing services
+    # Set getPublicAddressCmd for public services
     {
       services = let
-        # announcingServices' doesn't depend on config.services.*.enable,
+        # publicServices' doesn't depend on config.services.*.enable,
         # so we can use it to define config.services without causing infinite recursion
-        announcingServices' = builtins.filter (service:
+        publicServices' = builtins.filter (service:
           let srv = cfg.${service};
-          in srv.announce && srv.enable
+          in srv.public && srv.enable
         ) services;
-      in genAttrs announcingServices' (service: {
-        getAnnounceAddressCmd = "cat ${config.nix-bitcoin.onionAddresses.dataDir}/${service}/${service}";
+      in genAttrs publicServices' (service: {
+        getPublicAddressCmd = "cat ${config.nix-bitcoin.onionAddresses.dataDir}/${service}/${service}";
       });
     }
   ];

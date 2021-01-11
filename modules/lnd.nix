@@ -136,7 +136,15 @@ in {
       '';
       description = "Binary to connect with the lnd instance.";
     };
-    inherit (nix-bitcoin-services) enforceTor getAnnounceAddressCmd;
+    getPublicAddressCmd = mkOption {
+      type = types.str;
+      default = "";
+      description = ''
+        Bash expression which outputs the public service address to announce to peers.
+        If left empty, no address is announced.
+      '';
+    };
+    inherit (nix-bitcoin-services) enforceTor;
   };
 
   config = mkIf cfg.enable {
@@ -173,8 +181,8 @@ in {
         install -m600 ${configFile} '${cfg.dataDir}/lnd.conf'
         {
           echo "bitcoind.rpcpass=$(cat ${secretsDir}/bitcoin-rpcpassword-public)"
-          ${optionalString (cfg.getAnnounceAddressCmd != "") ''
-            echo "externalip=$(${cfg.getAnnounceAddressCmd})"
+          ${optionalString (cfg.getPublicAddressCmd != "") ''
+            echo "externalip=$(${cfg.getPublicAddressCmd})"
           ''}
         } >> '${cfg.dataDir}/lnd.conf'
       '';

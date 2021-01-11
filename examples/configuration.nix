@@ -41,7 +41,7 @@
   # Enable this option to announce our Tor Hidden Service. By default clightning
   # offers outgoing functionality, but doesn't announce the Tor Hidden Service
   # under which peers can reach us.
-  # nix-bitcoin.onionServices.clightning.announce = true;
+  # nix-bitcoin.onionServices.clightning.public = true;
   # == Plugins
   # See ../docs/usage.md for the list of available plugins.
   # services.clightning.plugins.prometheus.enable = true;
@@ -55,7 +55,7 @@
   # Enable this option to announce our Tor Hidden Service. By default lnd
   # offers outgoing functionality, but doesn't announce the Tor Hidden Service
   # under which peers can reach us.
-  # nix-bitcoin.onionServices.lnd.announce = true;
+  # nix-bitcoin.onionServices.lnd.public = true;
   ## WARNING
   # If you use lnd, you should manually backup your wallet mnemonic
   # seed. This will allow you to recover on-chain funds. You can run the

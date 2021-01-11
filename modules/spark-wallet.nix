@@ -10,8 +10,8 @@ let
   # connections through Tor
   torRateProvider = "--rate-provider wasabi --proxy socks5h://${config.services.tor.client.socksListenAddress}";
   startScript = ''
-    ${optionalString (cfg.getAnnounceAddressCmd != "") ''
-      publicURL="--public-url http://$(${cfg.getAnnounceAddressCmd})"
+    ${optionalString (cfg.getPublicAddressCmd != "") ''
+      publicURL="--public-url http://$(${cfg.getPublicAddressCmd})"
     ''}
     exec ${config.nix-bitcoin.pkgs.spark-wallet}/bin/spark-wallet \
       --ln-path '${config.services.clightning.networkDir}'  \
@@ -45,7 +45,15 @@ in {
       default = "";
       description = "Extra command line arguments passed to spark-wallet.";
     };
-    inherit (nix-bitcoin-services) enforceTor getAnnounceAddressCmd;
+    getPublicAddressCmd = mkOption {
+      type = types.str;
+      default = "";
+      description = ''
+        Bash expression which outputs the public service address to display in the web interface.
+        If left empty, the local address is displayed.
+      '';
+    };
+    inherit (nix-bitcoin-services) enforceTor;
   };
 
   config = mkIf cfg.enable {

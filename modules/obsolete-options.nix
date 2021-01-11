@@ -5,7 +5,7 @@ let
   mkRenamedAnnounceTorOption = service:
     # use mkRemovedOptionModule because mkRenamedOptionModule fails with an infinite recursion error
     mkRemovedOptionModule [ "services" service "announce-tor" ] ''
-      Use option `nix-bitcoin.onionServices.${service}.announce` instead.
+      Use option `nix-bitcoin.onionServices.${service}.public` instead.
     '';
 in {
   imports = [

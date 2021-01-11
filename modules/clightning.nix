@@ -83,7 +83,15 @@ in {
       '';
       description = "Binary to connect with the clightning instance.";
     };
-    inherit (nix-bitcoin-services) enforceTor getAnnounceAddressCmd;
+    getPublicAddressCmd = mkOption {
+      type = types.str;
+      default = "";
+      description = ''
+        Bash expression which outputs the public service address to announce to peers.
+        If left empty, no address is announced.
+      '';
+    };
+    inherit (nix-bitcoin-services) enforceTor;
   };
 
   config = mkIf cfg.enable {
@@ -121,8 +129,8 @@ in {
         chmod 640 ${cfg.dataDir}/config
         {
           echo "bitcoin-rpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-public)"
-          ${optionalString (cfg.getAnnounceAddressCmd != "") ''
-            echo "announce-addr=$(${cfg.getAnnounceAddressCmd})"
+          ${optionalString (cfg.getPublicAddressCmd != "") ''
+            echo "announce-addr=$(${cfg.getPublicAddressCmd})"
           ''}
         } >> '${cfg.dataDir}/config'
 
