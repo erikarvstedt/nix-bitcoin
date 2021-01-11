@@ -37,11 +37,14 @@
   # Enable this module to use clightning, a Lightning Network implementation
   # in C.
   services.clightning.enable = true;
-  # == TOR
-  # Enable this option to announce our Tor Hidden Service. By default clightning
-  # offers outgoing functionality, but doesn't announce the Tor Hidden Service
-  # under which peers can reach us.
+  #
+  # Set this to create an onion service by which clightning can accept incoming
+  # connections via Tor.
+  # nix-bitcoin.onionServices.clightning.enable = true;
+  #
+  # Set this to enable clightning to announce the onion service to other peers.
   # nix-bitcoin.onionServices.clightning.public = true;
+  #
   # == Plugins
   # See ../docs/usage.md for the list of available plugins.
   # services.clightning.plugins.prometheus.enable = true;
@@ -52,10 +55,14 @@
   # you must disable clightning or change the services.clightning.port or
   # services.lnd.port to a port other than 9735.
   # services.lnd.enable = true;
-  # Enable this option to announce our Tor Hidden Service. By default lnd
-  # offers outgoing functionality, but doesn't announce the Tor Hidden Service
-  # under which peers can reach us.
+  #
+  # Set this to create an onion service by which lnd can accept incoming connections
+  # via Tor.
+  # nix-bitcoin.onionServices.lnd.enable = true;
+  #
+  # Set this to enable lnd to announce the onion service to other peers.
   # nix-bitcoin.onionServices.lnd.public = true;
+  #
   ## WARNING
   # If you use lnd, you should manually backup your wallet mnemonic
   # seed. This will allow you to recover on-chain funds. You can run the
@@ -93,6 +100,12 @@
   # The lightning backend service automatically enabled.
   # Afterwards you need to go into Store > General Settings > Lightning Nodes
   # and click to use "the internal lightning node of this BTCPay Server".
+  #
+  # Set this to create an onion service to make the btcpayserver web interface
+  # accessible via Tor.
+  # Security WARNING: Create a bitcpayserver administrator account before allowing
+  # public access to the web interface.
+  # nix-bitcoin.onionServices.bitcpayserver.enable = true;
 
   ### LIQUIDD
   # Enable this module to use Liquid, a sidechain for an inter-exchange
@@ -198,5 +211,5 @@
   # The nix-bitcoin release version that your config is compatible with.
   # When upgrading to a backwards-incompatible release, nix-bitcoin will display an
   # an error and provide hints for migrating your config to the new release.
-  nix-bitcoin.configVersion = "0.0.26";
+  nix-bitcoin.configVersion = "0.0.29";
 }
