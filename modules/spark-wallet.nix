@@ -49,8 +49,9 @@ in {
       type = types.str;
       default = "";
       description = ''
-        Bash expression which outputs the public service address to display in the web interface.
-        If left empty, the local address is displayed.
+        Bash expression which outputs the public service address.
+        If set, spark-wallet prints a QR code to the systemd journal which
+        encodes an URL for accessing the web interface.
       '';
     };
     inherit (nix-bitcoin-services) enforceTor;
