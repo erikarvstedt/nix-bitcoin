@@ -38,11 +38,9 @@
   # in C.
   services.clightning.enable = true;
   #
-  # Set this to create an onion service by which clightning can accept incoming
-  # connections via Tor.
-  # nix-bitcoin.onionServices.clightning.enable = true;
-  #
-  # Set this to enable clightning to announce the onion service to other peers.
+  # Set this to create an onion service by which clightning can accept incoming connections
+  # via Tor.
+  # The onion service is automatically announced to peers.
   # nix-bitcoin.onionServices.clightning.public = true;
   #
   # == Plugins
@@ -58,9 +56,7 @@
   #
   # Set this to create an onion service by which lnd can accept incoming connections
   # via Tor.
-  # nix-bitcoin.onionServices.lnd.enable = true;
-  #
-  # Set this to enable lnd to announce the onion service to other peers.
+  # The onion service is automatically announced to peers.
   # nix-bitcoin.onionServices.lnd.public = true;
   #
   ## WARNING

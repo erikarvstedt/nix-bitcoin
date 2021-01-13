@@ -21,31 +21,34 @@ let
 in {
   options.nix-bitcoin.onionServices = mkOption {
     default = {};
-    type = with types; attrsOf (submodule {
-      options = {
-        enable = mkOption {
-          type = types.bool;
-          default = false;
-          description = ''
-            Create an onion service for the given service.
-            The service must define options 'address' and 'port'.
-          '';
+    type = with types; attrsOf (submodule (
+      { config, ... }: {
+        options = {
+          enable = mkOption {
+            type = types.bool;
+            default = config.public;
+            description = ''
+              Create an onion service for the given service.
+              The service must define options 'address' and 'port'.
+            '';
+          };
+          public = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              Make the onion address accessible to the service.
+              If set, the onion service is automatically enabled.
+              Only available for services that define option `getPublicAddressCmd`.
+            '';
+          };
+          externalPort = mkOption {
+            type = types.nullOr types.port;
+            default = null;
+            description = "Override the external port of the onion service.";
+          };
         };
-        public = mkOption {
-          type = types.bool;
-          default = false;
-          description = ''
-            Make the onion address accessible to the service.
-            Only available for services that define option `getPublicAddressCmd`.
-          '';
-        };
-        externalPort = mkOption {
-          type = types.nullOr types.port;
-          default = null;
-          description = "Override the external port of the onion service.";
-        };
-      };
-    });
+      }
+    ));
   };
 
   config = mkMerge [
@@ -102,8 +105,11 @@ in {
       nix-bitcoin.onionServices = {
         spark-wallet = {
           externalPort = 80;
-          # Show the onion address in the web interface
+          # Enable 'public', but don't auto-enable the onion service.
+          # 'public' lets spark-wallet generate a QR code for accessing the web interface.
           public = true;
+          # Low priority so we can override this with mkDefault in ./presets/enable-tor.nix
+          enable = mkOverride 1400 false;
         };
         btcpayserver = {
           externalPort = 80;
