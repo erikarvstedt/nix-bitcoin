@@ -7,7 +7,7 @@ let
   # Sorted by increasing version numbers
   changes = let
     mkOnionServiceChange = service: {
-      version = "0.0.29";
+      version = "0.0.30";
       condition = config.services.${service}.enable;
       message = ''
         The onion service for ${service} has been disabled in the default
