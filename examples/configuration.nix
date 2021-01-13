@@ -99,9 +99,9 @@
   #
   # Set this to create an onion service to make the btcpayserver web interface
   # accessible via Tor.
-  # Security WARNING: Create a bitcpayserver administrator account before allowing
+  # Security WARNING: Create a btcpayserver administrator account before allowing
   # public access to the web interface.
-  # nix-bitcoin.onionServices.bitcpayserver.enable = true;
+  # nix-bitcoin.onionServices.btcpayserver.enable = true;
 
   ### LIQUIDD
   # Enable this module to use Liquid, a sidechain for an inter-exchange
