@@ -37,6 +37,7 @@ task:
 
   # This script is run as root
   build_script:
+    - echo "csk: '$CACHIX_SIGNING_KEY'"
     - echo "sandbox = true" >> /etc/nix/nix.conf
     - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix $nixpkgs)"
     - nix run -f '<nixpkgs>' bash cachix -c ./ci/build.sh
