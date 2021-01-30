@@ -7,6 +7,7 @@ let
   nbLib = config.nix-bitcoin.lib;
   nbPkgs = config.nix-bitcoin.pkgs;
   secretsDir = config.nix-bitcoin.secretsDir;
+  runAsUser = config.nix-bitcoin.runAsUserCmd;
 
   inherit (config.services) bitcoind;
   torAddress = builtins.head (builtins.split ":" config.services.tor.client.socksListenAddress);
@@ -84,7 +85,7 @@ let
      for bin in jm-*; do
        {
          echo "#!${pkgs.bash}/bin/bash";
-         echo "cd '${cfg.dataDir}' && ${cfg.cliExec} sudo -u ${cfg.user} $jm/$bin --datadir='${cfg.dataDir}' \"\$@\"";
+         echo "cd '${cfg.dataDir}' && ${cfg.cliExec} ${runAsUser} ${cfg.user} $jm/$bin --datadir='${cfg.dataDir}' \"\$@\"";
        } > $out/bin/$bin
      done
      chmod -R +x $out/bin
@@ -155,7 +156,7 @@ in {
     users.groups.${cfg.group} = {};
     nix-bitcoin.operator = {
       groups = [ cfg.group ];
-      sudoUsers = [ cfg.group ];
+      allowRunAsUsers = [ cfg.group ];
     };
 
     systemd.tmpfiles.rules = [
