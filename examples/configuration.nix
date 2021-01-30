@@ -8,6 +8,8 @@
 
     # FIXME: The hardened kernel profile improves security but
     # decreases performance by ~50%.
+    # It enables USBGuard, which blocks all newly connected USB devices.
+    # Use `services.usbguard.rules` to whitelist select devices.
     # Turn it off when not needed.
     <nix-bitcoin/modules/presets/hardened.nix>
 

@@ -143,4 +143,6 @@
     "firewire-core"
     "firewire-core"
   ];
+
+  services.usbguard.enable = true;
 }
