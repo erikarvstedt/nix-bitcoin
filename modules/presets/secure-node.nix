@@ -59,7 +59,10 @@ in {
     services.backups.frequency = "daily";
 
     # operator
-    nix-bitcoin.operator.enable = true;
+    nix-bitcoin.operator = {
+      enable = true;
+      allowServiceControl = true;
+    };
     users.users.${operatorName} = {
       openssh.authorizedKeys.keys = config.users.users.root.openssh.authorizedKeys.keys;
     };

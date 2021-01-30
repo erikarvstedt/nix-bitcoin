@@ -94,8 +94,13 @@ def _():
             "runuser -u electrs -- systemctl status bitcoind 2>&1 >/dev/null",
             "Failed to dump process list for 'bitcoind.service', ignoring: Access denied",
         )
-        # The 'operator' with group 'proc' has full access
+        # The operator user with group 'proc' has full access
         assert_full_match("runuser -u operator -- systemctl status bitcoind 2>&1 >/dev/null", "")
+
+        # Operator can control nix-bitcoin-related services
+        machine.succeed("runuser -u operator -- systemctl start bitcoind")
+        # ... but is denied control of other services
+        machine.fail("runuser -u operator -- systemctl start tor")
 
 
 @test("bitcoind")
