@@ -176,7 +176,6 @@ in {
       wantedBy = [ "multi-user.target" ];
       requires = [ "bitcoind.service" ];
       after = [ "bitcoind.service" ];
-      path = [ pkgs.sudo ];
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         ExecStartPre = nix-bitcoin-services.privileged ''
           install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
@@ -194,7 +193,7 @@ in {
             # Use bash variables so commands don't proceed on previous failures
             # (like with pipes)
             cd ${cfg.dataDir} && \
-              out=$(sudo -u ${cfg.user} \
+              out=$(${pkgs.utillinux}/bin/runuser -u ${cfg.user} -- \
               ${nbPkgs.joinmarket}/bin/jm-genwallet \
               --datadir=${cfg.dataDir} $walletname $pw)
             recoveryseed=$(echo "$out" | grep 'recovery_seed')
