@@ -168,29 +168,30 @@ in {
       after = [ "bitcoind.service" ];
       path = [ pkgs.sudo ];
       serviceConfig = nix-bitcoin-services.defaultHardening // {
-        ExecStartPre = nix-bitcoin-services.privileged ''
+        ExecStartPre = nix-bitcoin-services.privileged "joinmarket-create-config" ''
           install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
           sed -i \
              "s|@@RPC_PASSWORD@@|rpc_password = $(cat ${secretsDir}/bitcoin-rpcpassword-privileged)|" \
              '${cfg.dataDir}/joinmarket.cfg'
         '';
         # Generating wallets (jmclient/wallet.py) is only supported for mainnet or testnet
-        ExecStartPost = mkIf (bitcoind.network == "mainnet") (nix-bitcoin-services.privileged ''
-          walletname=wallet.jmdat
-          wallet=${cfg.dataDir}/wallets/$walletname
-          if [[ ! -f $wallet ]]; then
-            echo "Create wallet"
-            pw=$(cat "${secretsDir}"/jm-wallet-password)
-            cd ${cfg.dataDir}
-            if ! sudo -u ${cfg.user} ${nbPkgs.joinmarket}/bin/jm-genwallet --datadir=${cfg.dataDir} $walletname $pw \
-                   | grep 'recovery_seed' \
-                   | cut -d ':' -f2 > "${secretsDir}/jm-wallet-seed"; then
-              echo "recovery seed extraction failed"
-              rm -f "$wallet" "${secretsDir}/jm-wallet-seed"
-              exit 1
+        ExecStartPost = mkIf (bitcoind.network == "mainnet")
+          (nix-bitcoin-services.privileged "joinmarket-create-wallet" ''
+            walletname=wallet.jmdat
+            wallet=${cfg.dataDir}/wallets/$walletname
+            if [[ ! -f $wallet ]]; then
+              echo "Create wallet"
+              pw=$(cat "${secretsDir}"/jm-wallet-password)
+              cd ${cfg.dataDir}
+              if ! sudo -u ${cfg.user} ${nbPkgs.joinmarket}/bin/jm-genwallet --datadir=${cfg.dataDir} $walletname $pw \
+                     | grep 'recovery_seed' \
+                     | cut -d ':' -f2 > "${secretsDir}/jm-wallet-seed"; then
+                echo "recovery seed extraction failed"
+                rm -f "$wallet" "${secretsDir}/jm-wallet-seed"
+                exit 1
+              fi
             fi
-          fi
-        '');
+          '');
         ExecStart = "${nbPkgs.joinmarket}/bin/joinmarketd";
         WorkingDirectory = cfg.dataDir; # The service creates 'commitmentlist' in the working dir
         User = cfg.user;
