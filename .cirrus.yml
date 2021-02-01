@@ -26,14 +26,6 @@ task:
       matrix:
         - environment:
             scenario: default
-        - environment:
-            scenario: netns
-        - environment:
-            scenario: netnsRegtest
-
-    - name: pkgs_unstable
-      environment:
-        nixpkgs: nixpkgs-unstable
 
   # This script is run as root
   build_script:
