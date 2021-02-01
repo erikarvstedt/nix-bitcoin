@@ -194,7 +194,7 @@ in {
             # Use bash variables so commands don't proceed on previous failures
             # (like with pipes)
             cd ${cfg.dataDir} && \
-              out=$(${pkgs.utillinux}/bin/runuser -u ${cfg.user} -- \
+              out=$(${pkgs.daemontools}/bin/setuidgid ${cfg.user} \
               ${nbPkgs.joinmarket}/bin/jm-genwallet \
               --datadir=${cfg.dataDir} $walletname $pw)
             recoveryseed=$(echo "$out" | grep 'recovery_seed')

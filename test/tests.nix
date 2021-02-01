@@ -17,7 +17,10 @@ let testEnv = rec {
         # Features required by the Python test suite
         nix-bitcoin.secretsDir = "/secrets";
         nix-bitcoin.operator.enable = true;
-        environment.systemPackages = with pkgs; [ jq ];
+        environment.systemPackages = with pkgs; [
+          daemontools # for setuidgid
+          jq
+        ];
       }
     ];
 

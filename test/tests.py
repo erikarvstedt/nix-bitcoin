@@ -91,16 +91,16 @@ def _():
         machine.wait_for_unit("bitcoind")
         # `systemctl status` run by unprivileged users shouldn't leak cgroup info
         assert_matches(
-            "runuser -u electrs -- systemctl status bitcoind 2>&1 >/dev/null",
+            "setuidgid electrs systemctl status bitcoind 2>&1 >/dev/null",
             "Failed to dump process list for 'bitcoind.service', ignoring: Access denied",
         )
         # The operator user with group 'proc' has full access
-        assert_full_match("runuser -u operator -- systemctl status bitcoind 2>&1 >/dev/null", "")
+        assert_full_match("setuidgid operator systemctl status bitcoind 2>&1 >/dev/null", "")
 
         # Operator can control nix-bitcoin-related services
-        machine.succeed("runuser -u operator -- systemctl start bitcoind")
+        machine.succeed("setuidgid operator systemctl start bitcoind")
         # ... but is denied control of other services
-        machine.fail("runuser -u operator -- systemctl start tor")
+        machine.fail("setuidgid operator systemctl start tor")
 
 
 @test("bitcoind")
@@ -191,7 +191,7 @@ def _():
     wait_for_open_port(ip("btcpayserver"), 23000)
     # test lnd custom macaroon
     assert_matches(
-        "runuser -u btcpayserver -- curl -s --cacert /secrets/lnd-cert "
+        "setuidgid btcpayserver curl -s --cacert /secrets/lnd-cert "
         '--header "Grpc-Metadata-macaroon: $(xxd -ps -u -c 1000 /run/lnd/btcpayserver.macaroon)" '
         f"-X GET https://{ip('lnd')}:8080/v1/getinfo | jq",
         '"version"',
@@ -232,7 +232,7 @@ def _():
     status, _ = machine.execute("systemctl is-enabled --quiet onion-addresses 2> /dev/null")
     if status == 0:
         machine.wait_for_unit("onion-addresses")
-    json_info = succeed("runuser -u operator -- nodeinfo")
+    json_info = succeed("setuidgid operator nodeinfo")
     info = json.loads(json_info)
     assert info["bitcoind"]["local_address"]
 
@@ -285,7 +285,7 @@ def _():
         machine.fail("netns-exec nb-clightning ip a")
 
         # netns-exec should only be executable by the operator user
-        machine.fail("runuser -u clightning -- netns-exec nb-bitcoind ip a")
+        machine.fail("setuidgid clightning netns-exec nb-bitcoind ip a")
 
 
 # Impure: stops bitcoind (and dependent services)
@@ -340,17 +340,17 @@ def _():
         assert_full_match(get_block_height_cmd, "10\n")
     if "clightning" in enabled_tests:
         machine.wait_until_succeeds(
-            "[[ $(runuser -u operator -- lightning-cli getinfo | jq -M .blockheight) == 10 ]]"
+            "[[ $(setuidgid operator lightning-cli getinfo | jq -M .blockheight) == 10 ]]"
         )
     if "lnd" in enabled_tests:
         machine.wait_until_succeeds(
-            "[[ $(runuser -u operator -- lncli getinfo | jq -M .block_height) == 10 ]]"
+            "[[ $(setuidgid operator lncli getinfo | jq -M .block_height) == 10 ]]"
         )
     if "lightning-loop" in enabled_tests:
         machine.wait_until_succeeds(
             log_has_string("lightning-loop", "Starting event loop at height 10")
         )
-        succeed("runuser -u operator -- loop getparams")
+        succeed("setuidgid operator loop getparams")
 
 
 if "netns-isolation" in enabled_tests:
