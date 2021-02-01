@@ -381,10 +381,7 @@ in {
       } // nix-bitcoin-services.allowTor;
     };
 
-    users.users.${cfg.user} = {
-      group = cfg.group;
-      description = "Bitcoin daemon user";
-    };
+    users.users.${cfg.user}.group = cfg.group;
     users.groups.${cfg.group} = {};
     users.groups.bitcoinrpc = {};
     nix-bitcoin.operator.groups = [ cfg.group ];
