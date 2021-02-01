@@ -233,12 +233,12 @@ in {
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         Type = "simple";
-        User = "${cfg.user}";
-        Group = "${cfg.group}";
+        User = cfg.user;
+        Group = cfg.group;
         ExecStart = "${nbPkgs.elementsd}/bin/elementsd ${cmdlineOptions}";
-        PIDFile = "${pidFile}";
+        PIDFile = pidFile;
         Restart = "on-failure";
-        ReadWritePaths = "${cfg.dataDir}";
+        ReadWritePaths = cfg.dataDir;
       } // (if cfg.enforceTor
           then nix-bitcoin-services.allowTor
           else nix-bitcoin-services.allowAnyIP

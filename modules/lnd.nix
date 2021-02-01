@@ -193,7 +193,7 @@ in {
         User = "lnd";
         Restart = "on-failure";
         RestartSec = "10s";
-        ReadWritePaths = "${cfg.dataDir}";
+        ReadWritePaths = cfg.dataDir;
         ExecStartPost = let
           restUrl = "https://${cfg.restAddress}:${toString cfg.restPort}/v1";
         in [
@@ -215,7 +215,7 @@ in {
             fi
             chown lnd: "$mnemonic"
           ''}"
-          "${nix-bitcoin-services.script ''
+          (nix-bitcoin-services.script ''
             if [[ ! -f ${networkDir}/wallet.db ]]; then
               echo Create lnd wallet
 
@@ -246,7 +246,7 @@ in {
               sleep 0.1
             done
 
-          ''}"
+          '')
           # Run fully privileged for chown
           "+${nix-bitcoin-services.script ''
             umask ug=r,o=
