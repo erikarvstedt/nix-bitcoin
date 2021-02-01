@@ -203,7 +203,7 @@ in {
         '';
         description = "Binary for managing liquid swaps.";
       };
-      enforceTor =  nix-bitcoin-services.enforceTor;
+      enforceTor = nix-bitcoin-services.enforceTor;
     };
   };
 

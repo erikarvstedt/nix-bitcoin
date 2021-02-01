@@ -75,7 +75,7 @@ in {
       preStart = ''
         echo "cookie = \"${bitcoind.rpc.users.public.name}:$(cat ${secretsDir}/bitcoin-rpcpassword-public)\"" \
           > electrs.toml
-        '';
+      '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         RuntimeDirectory = "electrs";
         RuntimeDirectoryMode = "700";

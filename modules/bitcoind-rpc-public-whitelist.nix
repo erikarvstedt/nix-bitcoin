@@ -57,5 +57,5 @@
   "validateaddress"
   "verifymessage"
   # Zmq
- "getzmqnotifications"
+  "getzmqnotifications"
 ]

@@ -75,7 +75,7 @@ in {
         Random delay to add to scheduled time for donation. Default is one day.
       '';
     };
-    enforceTor =  nix-bitcoin-services.enforceTor;
+    enforceTor = nix-bitcoin-services.enforceTor;
   };
 
   config = mkIf cfg.enable {
