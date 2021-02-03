@@ -61,10 +61,10 @@ in {
     };
     cli = mkOption {
       default = pkgs.writeScriptBin "pool" ''
-        ${cfg.package}/bin/pool \
-        --rpcserver ${rpclisten} \
-        --network ${network} \
-        --basedir ${cfg.dataDir} "$@"
+        exec ${cfg.package}/bin/pool \
+          --rpcserver ${rpclisten} \
+          --network ${network} \
+          --basedir ${cfg.dataDir} "$@"
       '';
       description = "Binary to connect with the lightning-pool instance.";
     };
