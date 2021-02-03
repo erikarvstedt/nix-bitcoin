@@ -68,7 +68,6 @@ in {
       '';
       description = "Binary to connect with the lightning-pool instance.";
     };
-    enforceTor = nix-bitcoin-services.enforceTor;
   };
 
   config = mkIf cfg.enable {
@@ -104,9 +103,7 @@ in {
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;
-      } // (if cfg.enforceTor
-            then nix-bitcoin-services.allowTor
-            else nix-bitcoin-services.allowAnyIP);
+      } // nix-bitcoin-services.allowAnyIP;
     };
   };
 }
