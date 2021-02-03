@@ -46,7 +46,7 @@ in {
       default = config.nix-bitcoin.pkgs.lightning-pool;
       description = "The package providing lightning-pool binaries.";
     };
-    baseDir = mkOption {
+    dataDir = mkOption {
       type = types.path;
       default = "/var/lib/lightning-pool";
       description = "The data directory for lightning-pool.";
@@ -64,7 +64,7 @@ in {
         ${cfg.package}/bin/pool \
         --rpcserver ${rpclisten} \
         --network ${network} \
-        --basedir ${cfg.baseDir} "$@"
+        --basedir ${cfg.dataDir} "$@"
       '';
       description = "Binary to connect with the lightning-pool instance.";
     };
@@ -86,7 +86,7 @@ in {
     environment.systemPackages = [ cfg.package (hiPrio cfg.cli) ];
 
     systemd.tmpfiles.rules = [
-      "d '${cfg.baseDir}' 0770 lnd lnd - -"
+      "d '${cfg.dataDir}' 0770 lnd lnd - -"
     ];
 
     systemd.services.lightning-pool = {
@@ -94,16 +94,16 @@ in {
       requires = [ "lnd.service" ];
       after = [ "lnd.service" ];
       preStart = ''
-        mkdir -p ${cfg.baseDir}/${network}
-        chown -R 'lnd:lnd' '${cfg.baseDir}'
-        install -m 640 ${configFile} '${cfg.baseDir}/${network}/poold.conf'
+        mkdir -p ${cfg.dataDir}/${network}
+        chown -R 'lnd:lnd' '${cfg.dataDir}'
+        install -m 640 ${configFile} '${cfg.dataDir}/${network}/poold.conf'
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
-        ExecStart = "${cfg.package}/bin/poold --basedir=${cfg.baseDir} --network=${network}";
+        ExecStart = "${cfg.package}/bin/poold --basedir=${cfg.dataDir} --network=${network}";
         User = "lnd";
         Restart = "on-failure";
         RestartSec = "10s";
-        ReadWritePaths = cfg.baseDir;
+        ReadWritePaths = cfg.dataDir;
       } // (if cfg.enforceTor
             then nix-bitcoin-services.allowTor
             else nix-bitcoin-services.allowAnyIP);
