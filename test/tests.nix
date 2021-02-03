@@ -48,6 +48,9 @@ let testEnv = rec {
 
       tests.lightning-loop = cfg.lightning-loop.enable;
 
+      tests.lightning-pool = cfg.lightning-pool.enable;
+      nix-bitcoin.onionServices.lnd.public=true;
+
       tests.electrs = cfg.electrs.enable;
 
       tests.liquidd = cfg.liquidd.enable;
@@ -116,6 +119,7 @@ let testEnv = rec {
       services.spark-wallet.enable = true;
       services.lnd.enable = true;
       services.lightning-loop.enable = true;
+      services.lightning-pool.enable = true;
       services.electrs.enable = true;
       services.liquidd.enable = true;
       services.btcpayserver.enable = true;
@@ -157,6 +161,7 @@ let testEnv = rec {
       services.spark-wallet.enable = true;
       services.lnd.enable = true;
       services.lightning-loop.enable = true;
+      services.lightning-pool.enable = true;
       services.electrs.enable = true;
       services.btcpayserver.enable = true;
       services.joinmarket.enable = true;
@@ -196,6 +201,12 @@ let testEnv = rec {
       # Add a dummy definition.
       services.lightning-loop.extraConfig = ''
         server.host=localhost
+      '';
+
+      # lightning-pool contains no builtin auction server for regtest.
+      # Add a dummy definition
+      services.lightning-pool.extraConfig = ''
+        auctionserver=localhost
       '';
 
       # Needs wallet support which is unavailable for regtest

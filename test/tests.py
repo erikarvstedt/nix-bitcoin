@@ -176,6 +176,20 @@ def _():
     )
 
 
+@test("lightning-pool")
+def _():
+    assert_running("lightning-pool")
+    assert_matches("su operator -c 'pool --version'", "version")
+    # Check that lightning-pool fails with the right error, making sure
+    # lightning-pool can connect to lnd
+    machine.wait_until_succeeds(
+        log_has_string(
+            "lightning-pool",
+            "Waiting for lnd to be fully synced to its chain backend, this might take a while",
+        )
+    )
+
+
 @test("btcpayserver")
 def _():
     assert_running("nbxplorer")
@@ -323,7 +337,9 @@ def _():
     pre_restart = succeed("date +%s.%6N").rstrip()
 
     # Sanity-check system by restarting all services
-    succeed("systemctl restart bitcoind clightning lnd lightning-loop spark-wallet liquidd")
+    succeed(
+        "systemctl restart bitcoind clightning lnd lightning-loop lightning-pool spark-wallet liquidd"
+    )
 
     # Now that the bitcoind restart triggered a banlist import restart, check that
     # re-importing already banned addresses works
@@ -355,6 +371,11 @@ def _():
             log_has_string("lightning-loop", "Starting event loop at height 10")
         )
         succeed("sudo -u operator loop getparams")
+    if "lightning-pool" in enabled_tests:
+        machine.wait_until_succeeds(
+            log_has_string("lightning-pool", "lnd is now fully synced to its chain backend")
+        )
+        succeed("sudo -u operator pool orders list")
 
 
 if "netns-isolation" in enabled_tests:
