@@ -93,8 +93,8 @@ in {
       requires = [ "lnd.service" ];
       after = [ "lnd.service" ];
       preStart = ''
-        mkdir -p ${cfg.dataDir}/${network}
-        install -m 640 ${configFile} '${cfg.dataDir}/${network}/poold.conf'
+        mkdir -p '${cfg.dataDir}/${network}'
+        ln -sfn ${configFile} '${cfg.dataDir}/${network}/poold.conf'
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
         ExecStart = "${cfg.package}/bin/poold --basedir=${cfg.dataDir} --network=${network}";
