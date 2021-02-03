@@ -49,7 +49,7 @@ let testEnv = rec {
       tests.lightning-loop = cfg.lightning-loop.enable;
 
       tests.lightning-pool = cfg.lightning-pool.enable;
-      nix-bitcoin.onionServices.lnd.public=true;
+      nix-bitcoin.onionServices.lnd.public = true;
 
       tests.electrs = cfg.electrs.enable;
 

@@ -15,7 +15,9 @@ buildGoModule rec {
   vendorSha256 = "190qy3cz18ipv8ilpqhbaaxfi9j2isxpwhagzzspa3pwcpssrv52";
 
   meta = with lib; {
-    description = "Lightning Pool: a non-custodial batched uniform clearing-price auction for Lightning Channel Leases (LCL)";
+    description = ''
+      A non-custodial batched uniform clearing-price auction for Lightning Channel Leases (LCL)
+    '';
     homepage = "https://github.com/lightninglabs/pool";
     license = lib.licenses.mit;
     maintainers = with maintainers; [ sputn1ck ];

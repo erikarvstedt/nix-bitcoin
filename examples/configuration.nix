@@ -154,11 +154,10 @@
   # services.lightning-loop.enable = true;
 
   ### lightning-pool
-  # Enable this module to use lightninglab's non-custodial batched uniform
-  # clearing-price auction for Lightning Channel Leases. pool (lightning-pool
-  # daemon) will be started automatically. Users can interact with it using
-  # `pool`.
-  # Privacy Warning: Lightning-pool currently connects to the
+  # Enable this module to use Lightning Lab's non-custodial batched uniform
+  # clearing-price auction for Lightning Channel Leases.
+  # Use the `pool` command to interact with the lightning-pool service.
+  # Privacy Warning: lightning-pool currently connects to the
   # auction server without proxying through Tor.
   # Automatically enables lnd.
   # services.lightning-pool.enable = true;

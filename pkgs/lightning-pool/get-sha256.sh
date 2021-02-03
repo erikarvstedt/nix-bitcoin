@@ -14,9 +14,9 @@ echo "Latest release is ${latest}"
 
 # GPG verification
 export GNUPGHOME=$TMPDIR
-echo "Fetching Olaoluwa Osuntokun's Key"
+echo "Fetching Olaoluwa Osuntokun's key"
 gpg --keyserver hkps://keys.openpgp.org --recv-keys 60A1FA7DA5BFF08BDCBBE7903BBD59E99B280306 2> /dev/null
-echo "Fetching Oliver Gugger's Key"
+echo "Fetching Oliver Gugger's key"
 gpg --keyserver hkps://keys.openpgp.org --recv-keys F4FC70F07310028424EFC20A8E4256593F177720 2> /dev/null
 
 echo "Verifying latest release"
