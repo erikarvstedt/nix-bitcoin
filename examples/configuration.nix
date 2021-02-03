@@ -153,6 +153,16 @@
   # Automatically enables lnd.
   # services.lightning-loop.enable = true;
 
+  ### lightning-pool
+  # Enable this module to use lightninglab's non-custodial batched uniform
+  # clearing-price auction for Lightning Channel Leases. pool (lightning-pool
+  # daemon) will be started automatically. Users can interact with it using
+  # `pool`.
+  # Privacy Warning: Lightning-pool currently connects to the
+  # auction server without proxying through Tor.
+  # Automatically enables lnd.
+  # services.lightning-pool.enable = true;
+
   ### Backups
   # Enable this module to use nix-bitcoin's own backups module. By default, it
   # uses duplicity to incrementally back up all important files in /var/lib to
