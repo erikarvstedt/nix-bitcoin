@@ -102,7 +102,7 @@ def _():
 def _():
     assert_running("bitcoind")
     machine.wait_until_succeeds("bitcoin-cli getnetworkinfo")
-    assert_matches("su operator -c 'bitcoin-cli getnetworkinfo' | jq", '"version"')
+    assert_matches("runuser -u operator -- bitcoin-cli getnetworkinfo | jq", '"version"')
     # RPC access for user 'public' should be restricted
     machine.fail(
         "bitcoin-cli -rpcuser=public -rpcpassword=$(cat /secrets/bitcoin-rpcpassword-public) stop"
@@ -131,14 +131,14 @@ def _():
 def _():
     assert_running("liquidd")
     machine.wait_until_succeeds("elements-cli getnetworkinfo")
-    assert_matches("su operator -c 'elements-cli getnetworkinfo' | jq", '"version"')
-    succeed("su operator -c 'liquidswap-cli --help'")
+    assert_matches("runuser -u operator -- elements-cli getnetworkinfo | jq", '"version"')
+    succeed("runuser -u operator -- liquidswap-cli --help")
 
 
 @test("clightning")
 def _():
     assert_running("clightning")
-    assert_matches("su operator -c 'lightning-cli getinfo' | jq", '"id"')
+    assert_matches("runuser -u operator -- lightning-cli getinfo | jq", '"id"')
     if test_data["clightning-plugins"]:
         plugin_list = succeed("lightning-cli plugin list")
         plugins = json.loads(plugin_list)["plugins"]
@@ -158,14 +158,14 @@ def _():
 @test("lnd")
 def _():
     assert_running("lnd")
-    assert_matches("su operator -c 'lncli getinfo' | jq", '"version"')
+    assert_matches("runuser -u operator -- lncli getinfo | jq", '"version"')
     assert_no_failure("lnd")
 
 
 @test("lightning-loop")
 def _():
     assert_running("lightning-loop")
-    assert_matches("su operator -c 'loop --version'", "version")
+    assert_matches("runuser -u operator -- loop --version", "version")
     # Check that lightning-loop fails with the right error, making sure
     # lightning-loop can connect to lnd
     machine.wait_until_succeeds(
@@ -272,7 +272,8 @@ def _():
     if "joinmarket" in enabled_tests:
         # netns-exec should drop capabilities
         assert_full_match(
-            "su operator -c 'netns-exec nb-joinmarket capsh --print | grep Current'", "Current: =\n"
+            "runuser -u operator -- netns-exec nb-joinmarket capsh --print | grep Current",
+            "Current: =\n",
         )
 
     if "clightning" in enabled_tests:
