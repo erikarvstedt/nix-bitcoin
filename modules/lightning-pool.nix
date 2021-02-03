@@ -64,7 +64,7 @@ in {
         exec ${cfg.package}/bin/pool \
           --rpcserver ${rpclisten} \
           --network ${network} \
-          --basedir ${cfg.dataDir} "$@"
+          --basedir '${cfg.dataDir}' "$@"
       '';
       description = "Binary to connect with the lightning-pool instance.";
     };
@@ -97,7 +97,7 @@ in {
         ln -sfn ${configFile} '${cfg.dataDir}/${network}/poold.conf'
       '';
       serviceConfig = nix-bitcoin-services.defaultHardening // {
-        ExecStart = "${cfg.package}/bin/poold --basedir=${cfg.dataDir} --network=${network}";
+        ExecStart = "${cfg.package}/bin/poold --basedir='${cfg.dataDir}' --network=${network}";
         User = "lnd";
         Restart = "on-failure";
         RestartSec = "10s";
