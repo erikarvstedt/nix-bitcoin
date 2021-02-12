@@ -104,6 +104,38 @@ let
 in {
   options.services.joinmarket = {
     enable = mkEnableOption "JoinMarket";
+    dataDir = mkOption {
+      type = types.path;
+      default = "/var/lib/joinmarket";
+      description = "The data directory for JoinMarket.";
+    };
+    user = mkOption {
+      type = types.str;
+      default = "joinmarket";
+      description = "The user as which to run JoinMarket.";
+    };
+    group = mkOption {
+      type = types.str;
+      default = cfg.user;
+      description = "The group as which to run JoinMarket.";
+    };
+    rpcWalletFile = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Name of the watch-only bitcoind wallet the JoinMarket addresses are imported to.
+      '';
+    };
+    cli = mkOption {
+      default = cli;
+    };
+    # This option is only used by netns-isolation
+    enforceTor = mkOption {
+      readOnly = true;
+      default = true;
+    };
+    inherit (nbLib) cliExec;
+
     yieldgenerator = {
       enable = mkEnableOption "yield generator bot";
       ordertype = mkOption {
@@ -163,37 +195,6 @@ in {
         '';
       };
     };
-    dataDir = mkOption {
-      type = types.path;
-      default = "/var/lib/joinmarket";
-      description = "The data directory for JoinMarket.";
-    };
-    user = mkOption {
-      type = types.str;
-      default = "joinmarket";
-      description = "The user as which to run JoinMarket.";
-    };
-    group = mkOption {
-      type = types.str;
-      default = cfg.user;
-      description = "The group as which to run JoinMarket.";
-    };
-    rpcWalletFile = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = ''
-        Name of the watch-only bitcoind wallet the JoinMarket addresses are imported to.
-      '';
-    };
-    cli = mkOption {
-      default = cli;
-    };
-    # This option is only used by netns-isolation
-    enforceTor = mkOption {
-      readOnly = true;
-      default = true;
-    };
-    inherit (nbLib) cliExec;
   };
 
   config = mkIf cfg.enable (mkMerge [{
