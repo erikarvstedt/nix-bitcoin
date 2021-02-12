@@ -11,6 +11,7 @@ let
   inherit (config.services) bitcoind;
   torAddress = builtins.head (builtins.split ":" config.services.tor.client.socksListenAddress);
   # Based on https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/jmclient/jmclient/configure.py
+  yg = cfg.yieldgenerator;
   configFile = builtins.toFile "config" ''
     [DAEMON]
     no_daemon = 0
@@ -76,14 +77,14 @@ let
     hidden_service_ssl = false
 
     [YIELDGENERATOR]
-    ordertype = ${cfg.yieldgenerator.ordertype}
-    cjfee_a = ${toString cfg.yieldgenerator.cjfee_a}
-    cjfee_r = ${toString cfg.yieldgenerator.cjfee_r}
-    cjfee_factor = ${toString cfg.yieldgenerator.cjfee_factor}
-    txfee = ${toString cfg.yieldgenerator.txfee}
-    txfee_factor = ${toString cfg.yieldgenerator.txfee_factor}
-    minsize = ${toString cfg.yieldgenerator.minsize}
-    size_factor = ${toString cfg.yieldgenerator.size_factor}
+    ordertype = ${yg.ordertype}
+    cjfee_a = ${toString yg.cjfee_a}
+    cjfee_r = ${toString yg.cjfee_r}
+    cjfee_factor = ${toString yg.cjfee_factor}
+    txfee = ${toString yg.txfee}
+    txfee_factor = ${toString yg.txfee_factor}
+    minsize = ${toString yg.minsize}
+    size_factor = ${toString yg.size_factor}
     gaplimit = 6
   '';
 
