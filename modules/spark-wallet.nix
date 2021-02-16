@@ -24,16 +24,6 @@ let
 in {
   options.services.spark-wallet = {
     enable = mkEnableOption "spark-wallet";
-    user = mkOption {
-      type = types.str;
-      default = "spark-wallet";
-      description = "The user as which to run bitcoind.";
-    };
-    group = mkOption {
-      type = types.str;
-      default = cfg.user;
-      description = "The group as which to run bitcoind.";
-    };
     address = mkOption {
       type = types.str;
       default = "localhost";
@@ -57,6 +47,16 @@ in {
         If set, spark-wallet prints a QR code to the systemd journal which
         encodes an URL for accessing the web interface.
       '';
+    };
+    user = mkOption {
+      type = types.str;
+      default = "spark-wallet";
+      description = "The user as which to run spark-wallet.";
+    };
+    group = mkOption {
+      type = types.str;
+      default = cfg.user;
+      description = "The group as which to run spark-wallet.";
     };
     inherit (nbLib) enforceTor;
   };
