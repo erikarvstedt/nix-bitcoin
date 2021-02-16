@@ -44,16 +44,6 @@ in {
       default = "/var/lib/lnd";
       description = "The data directory for LND.";
     };
-    user = mkOption {
-      type = types.str;
-      default = "lnd";
-      description = "The user as which to run LND.";
-    };
-    group = mkOption {
-      type = types.str;
-      default = cfg.user;
-      description = "The group as which to run LND.";
-    };
     networkDir = mkOption {
       readOnly = true;
       default = networkDir;
@@ -148,6 +138,16 @@ in {
         Bash expression which outputs the public service address to announce to peers.
         If left empty, no address is announced.
       '';
+    };
+    user = mkOption {
+      type = types.str;
+      default = "lnd";
+      description = "The user as which to run LND.";
+    };
+    group = mkOption {
+      type = types.str;
+      default = cfg.user;
+      description = "The group as which to run LND.";
     };
     inherit (nbLib) enforceTor;
   };
