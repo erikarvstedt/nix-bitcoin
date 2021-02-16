@@ -84,7 +84,9 @@ in {
         ${concatMapStrings (service: ''
           onionFile=/var/lib/tor/onion/${service}/hostname
           if [[ -e $onionFile ]]; then
-            install -o ${config.systemd.services.${service}.serviceConfig.User} -m 400 $onionFile ${service}
+            mkdir -p -m 0700 ${config.services.${service}.user}
+            chown ${config.services.${service}.user} ${config.services.${service}.user}
+            install -o ${config.services.${service}.user} -m 400 $onionFile ${config.services.${service}.user}/${service}
           fi
         '') cfg.services}
       '';
