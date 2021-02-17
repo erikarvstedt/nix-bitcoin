@@ -265,7 +265,7 @@ in {
 
     users.users.lnd = {
       group = "lnd";
-      extraGroups = [ "bitcoinrpc" ];
+      extraGroups = [ "bitcoinrpc-public" ];
       home = cfg.dataDir; # lnd creates .lnd dir in HOME
     };
     users.groups.lnd = {};

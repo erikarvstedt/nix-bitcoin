@@ -110,7 +110,7 @@ in {
 
     users.users.${cfg.user} = {
       group = cfg.group;
-      extraGroups = [ "bitcoinrpc" ] ++ optionals cfg.high-memory [ "bitcoin" ];
+      extraGroups = [ "bitcoinrpc-public" ] ++ optionals cfg.high-memory [ "bitcoin" ];
     };
     users.groups.${cfg.group} = {};
   };

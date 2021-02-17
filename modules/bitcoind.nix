@@ -384,13 +384,13 @@ in {
 
     users.users.${cfg.user}.group = cfg.group;
     users.groups.${cfg.group} = {};
-    users.groups.bitcoinrpc = {};
+    users.groups.bitcoinrpc-public = {};
     nix-bitcoin.operator.groups = [ cfg.group ];
 
     nix-bitcoin.secrets.bitcoin-rpcpassword-privileged.user = "bitcoin";
     nix-bitcoin.secrets.bitcoin-rpcpassword-public = {
       user = "bitcoin";
-      group = "bitcoinrpc";
+      group = "bitcoinrpc-public";
     };
 
     nix-bitcoin.secrets.bitcoin-HMAC-privileged.user = "bitcoin";
