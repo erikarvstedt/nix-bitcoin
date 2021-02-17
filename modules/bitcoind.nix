@@ -338,7 +338,7 @@ in {
         fi
       '';
       postStart = ''
-        chmod g=r ${cfg.dataDir}/${optionalString cfg.regtest "regtest/"}.cookie
+        chmod 640 "${cfg.dataDir}"/${optionalString cfg.regtest "regtest/"}.cookie
       '';
       serviceConfig = nbLib.defaultHardening // {
         Type = "notify";
