@@ -4,7 +4,7 @@ with lib;
 
 let
   cfg = config.services.lightning-pool;
-  inherit (config) nix-bitcoin-services;
+  nbLib = config.nix-bitcoin.lib;
   secretsDir = config.nix-bitcoin.secretsDir;
   network = config.services.bitcoind.network;
   rpclisten = "${cfg.rpcAddress}:${toString cfg.rpcPort}";
@@ -96,13 +96,13 @@ in {
         mkdir -p '${cfg.dataDir}/${network}'
         ln -sfn ${configFile} '${cfg.dataDir}/${network}/poold.conf'
       '';
-      serviceConfig = nix-bitcoin-services.defaultHardening // {
+      serviceConfig = nbLib.defaultHardening // {
         ExecStart = "${cfg.package}/bin/poold --basedir='${cfg.dataDir}' --network=${network}";
         User = "lnd";
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;
-      } // nix-bitcoin-services.allowAnyIP;
+      } // nbLib.allowAnyIP;
     };
   };
 }
