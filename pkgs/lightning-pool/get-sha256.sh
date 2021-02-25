@@ -9,7 +9,7 @@ cd $TMPDIR
 echo "Fetching latest release"
 git clone https://github.com/lightninglabs/pool 2> /dev/null
 cd pool
-latest=v0.4.3-alpha
+latest=$(git describe --tags `git rev-list --tags --max-count=1`)
 echo "Latest release is ${latest}"
 
 # GPG verification

@@ -2,12 +2,12 @@
 
 buildGoModule rec {
   pname = "lightning-pool";
-  version = "0.4.3-alpha";
+  version = "0.4.4-alpha";
 
   src = fetchurl {
     url = "https://github.com/lightninglabs/pool/archive/v${version}.tar.gz";
     # Use ./get-sha256.sh to fetch latest (verified) sha256
-    sha256 = "0d4c36d119f5fc49cb56b107da46b28a3fd5bf0786c84d812a0c3b49f6f8a781";
+    sha256 = "c50f3b10a4fa7ce1afd6a00fd6c44474f44c8c773de34261e62ae805540ab140";
   };
 
   subPackages = [ "cmd/pool" "cmd/poold" ];
