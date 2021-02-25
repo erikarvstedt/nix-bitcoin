@@ -71,15 +71,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    assertions = [
-      { assertion = config.services.lnd.getPublicAddressCmd != "";
-        message = ''
-          Pool requires a publicly reachable uri. Enable
-          nix-bitcoin.onionServices.lnd.public to announce a v3 onion service.
-        '';
-      }
-    ];
-
     services.lnd.enable = true;
 
     environment.systemPackages = [ cfg.package (hiPrio cfg.cli) ];

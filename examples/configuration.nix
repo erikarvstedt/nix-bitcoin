@@ -166,7 +166,9 @@
   # Privacy Warning: lightning-pool currently connects to the
   # auction server without proxying through Tor.
   # Automatically enables lnd.
+  # Requires a publicly reachable Uri e.g. nix-bitcoin.onionServices.lnd.public
   # services.lightning-pool.enable = true;
+  # nix-bitcoin.onionServices.lnd.public=true;
 
   ### Backups
   # Enable this module to use nix-bitcoin's own backups module. By default, it
