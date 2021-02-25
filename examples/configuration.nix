@@ -164,9 +164,11 @@
   # clearing-price auction for Lightning Channel Leases.
   # Use the `pool` command to interact with the lightning-pool service.
   # Automatically enables lnd.
-  # Requires a publicly reachable Uri e.g. nix-bitcoin.onionServices.lnd.public
   # services.lightning-pool.enable = true;
-  # nix-bitcoin.onionServices.lnd.public=true;
+  #
+  # lightning-pool requires that lnd has a publicly reachable address.
+  # Set this to create a public onion service for lnd.
+  # nix-bitcoin.onionServices.lnd.public = true;
 
   ### Backups
   # Enable this module to use nix-bitcoin's own backups module. By default, it
