@@ -20,9 +20,7 @@ in {
     nbxplorer.enforceTor = true;
     spark-wallet.enforceTor = true;
     recurring-donations.enforceTor = true;
-    # disable Tor enforcement until lightning-pool can connect to auction servers
-    # over Tor https://github.com/lightninglabs/pool/issues/215
-    # lightning-pool.enforceTor = true;
+    lightning-pool.enforceTor = true;
   };
 
   # Add onion services for incoming connections

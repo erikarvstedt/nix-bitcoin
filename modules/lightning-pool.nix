@@ -16,6 +16,8 @@ let
     lnd.macaroondir=${config.services.lnd.networkDir}
     lnd.tlspath=${secretsDir}/lnd-cert
 
+    ${optionalString (cfg.proxy != null) "proxy=${cfg.proxy}"}
+
     ${cfg.extraConfig}
   '';
 in {
@@ -51,6 +53,11 @@ in {
       default = "/var/lib/lightning-pool";
       description = "The data directory for lightning-pool.";
     };
+    proxy = mkOption {
+      type = types.nullOr types.str;
+      default = if cfg.enforceTor then config.services.tor.client.socksListenAddress else null;
+      description = "host:port of SOCKS5 proxy for connnecting to the pool auction server.";
+    };
     extraConfig = mkOption {
       type = types.lines;
       default = "";
@@ -68,6 +75,7 @@ in {
       '';
       description = "Binary to connect with the lightning-pool instance.";
     };
+    enforceTor = nbLib.enforceTor;
   };
 
   config = mkIf cfg.enable {
@@ -93,7 +101,9 @@ in {
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;
-      } // nbLib.allowAnyIP;
+      } // (if cfg.enforceTor
+            then nbLib.allowTor
+            else nbLib.allowAnyIP);
     };
   };
 }

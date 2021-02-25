@@ -163,8 +163,6 @@
   # Enable this module to use Lightning Lab's non-custodial batched uniform
   # clearing-price auction for Lightning Channel Leases.
   # Use the `pool` command to interact with the lightning-pool service.
-  # Privacy Warning: lightning-pool currently connects to the
-  # auction server without proxying through Tor.
   # Automatically enables lnd.
   # Requires a publicly reachable Uri e.g. nix-bitcoin.onionServices.lnd.public
   # services.lightning-pool.enable = true;
