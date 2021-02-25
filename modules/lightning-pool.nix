@@ -11,12 +11,11 @@ let
   configFile = builtins.toFile "pool.conf" ''
     rpclisten=${rpclisten}
     restlisten=${cfg.restAddress}:${toString cfg.restPort}
+    ${optionalString (cfg.proxy != null) "proxy=${cfg.proxy}"}
 
     lnd.host=${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}
     lnd.macaroondir=${config.services.lnd.networkDir}
     lnd.tlspath=${secretsDir}/lnd-cert
-
-    ${optionalString (cfg.proxy != null) "proxy=${cfg.proxy}"}
 
     ${cfg.extraConfig}
   '';
