@@ -26,6 +26,10 @@ By default, [`configuration.nix`](configuration.nix) enables `bitcoind` and `cli
   Also shows how to use nix-bitcoin in an existing NixOS config.\
   Requires: [Nix](https://nixos.org/), a systemd-based Linux distro and root privileges
 
+- [`./deploy-krops.sh`](deploy-krops.sh) creates a QEMU VM and deploys
+  nix-bitcoin to it using krops.\
+  Requires: [Nix](https://nixos.org/nix/)
+
 Run the examples with option `--interactive` or `-i` to start a shell for interacting with
 the node:
 ```bash
