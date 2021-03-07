@@ -27,6 +27,8 @@ cleanup() {
     set +eu
     kill -9 $qemuPID
     rm -rf $tmpDir
+    rm $node
+    rm $nixos_config
 }
 trap "cleanup" EXIT
 
@@ -108,9 +110,9 @@ common.nixBitcoinPkgs.krops.pkgs.krops.writeCommand "deploy" {
   inherit target;
   # Avoid having to create the sentinel file
   force = true;
+  # Don't "switch" to the config because that would install a bootloader which
+  # is not possible in this VM.
   command = targetPath: ''
-    # Don't "switch" to the config because that would install a bootloader which
-    # is not possible in this VM.
     nixos-rebuild test -I /var/src
   '';
 }
