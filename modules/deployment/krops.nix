@@ -39,11 +39,19 @@ in {
       default = {};
     };
   };
+
   config = lib.mkIf (cfg.files != {}) {
-    system.activationScripts.setup-secrets = let
-      files = unique (map (flip removeAttrs ["_module"])
+    systemd.targets.nix-bitcoin-secrets = {
+      requires = [ "setup-secrets.service" ];
+      after = [ "setup-secrets.service" ];
+    };
+
+    systemd.services.setup-secrets = {
+      serviceConfig.Type = "oneshot";
+      script = let
+        files = unique (map (flip removeAttrs ["_module"])
                           (attrValues cfg.files));
-      script = ''
+        in ''
         echo setting up secrets...
         mkdir -p ${config.nix-bitcoin.secretsDir}
         chmod 0755 ${config.nix-bitcoin.secretsDir}
@@ -61,6 +69,6 @@ in {
           || echo "failed to copy ${file.source-path} to ${file.path}"
         '') files}
       '';
-    in stringAfter [ "users" "groups" ] "source ${pkgs.writeText "setup-secrets.sh" script}";
+    };
   };
 }
