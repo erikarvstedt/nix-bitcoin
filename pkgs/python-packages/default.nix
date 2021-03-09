@@ -16,7 +16,7 @@ in {
   joinmarketbase = joinmarketPkg ./jmbase;
   joinmarketclient = joinmarketPkg ./jmclient;
   joinmarketbitcoin = joinmarketPkg ./jmbitcoin;
-  joinmarketdaemon = joinmarketPkg ./jmdaemon;
+  joinmarketdaemon = callPackage ./jmdaemon { inherit (nbPkgs.joinmarket) version src; inherit (nbPkgs.pinned) cryptography; };
 
   pyln-client = clightningPkg ./pyln-client;
   pyln-proto = clightningPkg ./pyln-proto;
