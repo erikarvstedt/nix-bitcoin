@@ -12,6 +12,8 @@ in {
   urldecode = callPackage ./urldecode {};
   chromalog = callPackage ./chromalog {};
   txzmq = callPackage ./txzmq {};
+  cryptography = callPackage ./cryptography {};
+  cryptography_vectors = callPackage ./cryptography/vectors.nix {};
 
   joinmarketbase = joinmarketPkg ./jmbase;
   joinmarketclient = joinmarketPkg ./jmclient;
