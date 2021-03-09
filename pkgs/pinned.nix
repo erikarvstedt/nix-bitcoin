@@ -13,8 +13,7 @@ in
     lnd
     lndconnect
     nbxplorer
-    btcpayserver
-    cryptography;
+    btcpayserver;
 
   stable = nixBitcoinPkgsStable;
   unstable = nixBitcoinPkgsUnstable;
