@@ -1,3 +1,6 @@
+# This file has been copied from nixpkgs rev c7d0dbe094c988209edac801eb2a0cc21aa498d8 (2021-02-22)
+# pkgs/development/python-modules/cryptography/default.nix
+
 { lib, stdenv
 , buildPythonPackage
 , fetchurl

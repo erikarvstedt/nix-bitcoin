@@ -12,6 +12,7 @@ in {
   urldecode = callPackage ./urldecode {};
   chromalog = callPackage ./chromalog {};
   txzmq = callPackage ./txzmq {};
+  # cryptography version 3.3.2, required by joinmarketdaemon
   cryptography = callPackage ./cryptography {};
   cryptography_vectors = callPackage ./cryptography/vectors.nix {};
 
