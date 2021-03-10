@@ -15,10 +15,7 @@ in {
   chromalog = callPackage ./chromalog {};
   txzmq = callPackage ./txzmq {};
 
-  # Cryptography from nixpkgs-unstable (v3.3.2)
-  # v3.3.2 is pinned by joinmarket for reasons not relevant to this system.
-  # TODO: Add `patchPhase` removing the Cryptography version pin from
-  # `jmdaemon/setup.py` when updating nixpkgs-unstable.
+  # cryptography 3.3.2, required by joinmarketdaemon
   cryptography = callPackage "${unstable}/pkgs/development/python-modules/cryptography" {};
   cryptography_vectors = callPackage "${unstable}/pkgs/development/python-modules/cryptography/vectors.nix" {};
 
