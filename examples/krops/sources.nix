@@ -1,7 +1,7 @@
 { extraSources, krops }:
 
 krops.lib.evalSource [({
-  nixos-config.file = toString ../krops-configuration.nix;
+  nixos-config.file = toString ./krops-configuration.nix;
 
   "configuration.nix".file = toString ../configuration.nix;
 

@@ -52,8 +52,8 @@ let
     # This works because /nix/store is shared with the target VM.
     nixpkgs.symlink = toString <nixpkgs>;
 
-    nixos-config.file = toString <krops-vm-configuration.nix>;
-    "krops-configuration.nix".file = toString ./krops-configuration.nix;
+    nixos-config.file = toString <krops/krops-vm-configuration.nix>;
+    "krops-configuration.nix".file = toString ./krops/krops-configuration.nix;
 
     qemu-vm.file = toString <qemu-vm>;
   };
@@ -84,7 +84,7 @@ echo "Building the nix-bitcoin node"
 # Pre-build the nix-bitcoin node outside of the VM to save some time
 nix-build --out-link $tmpDir/store-paths -E '
 let
-  system = (import <nixpkgs/nixos> { configuration = <krops-vm-configuration.nix>; }).system;
+  system = (import <nixpkgs/nixos> { configuration = <krops/krops-vm-configuration.nix>; }).system;
   pkgsUnstable = (import <nix-bitcoin/pkgs/nixpkgs-pinned.nix>).nixpkgs-unstable;
   pkgs = import <nixpkgs> {};
 in
