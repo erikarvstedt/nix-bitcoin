@@ -284,7 +284,7 @@ You can also build Nix from source by following the instructions at https://nixo
     ```
 
     If the build process fails for some reason when deploying with `krops-deploy` (see later step), it may be difficult to find the cause due to the missing output.
-    In that case, it is possible to SSH into the target machine and run
+    To see the build output, SSH into the target machine and run
     ```
     nixos-rebuild -I /var/src switch
     ```
