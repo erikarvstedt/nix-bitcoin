@@ -35,6 +35,16 @@ stdenv.mkDerivation rec {
       $(nix-build --no-out-link ${toString ./krops/deploy.nix})
     }
 
+    krops-build() {
+      nix-build --no-out-link -I nixos-config=${toString ./krops/krops-configuration.nix} \
+        '<nixpkgs/nixos>' -A system "$@"
+    }
+
+    krops-eval() {
+      nix-instantiate --eval -I nixos-config=${toString ./krops/krops-configuration.nix} \
+        '<nixpkgs/nixos>' -A system.outPath "$@"
+    }
+
     figlet "nix-bitcoin"
     (mkdir -p secrets; cd secrets; env -i ${nix-bitcoin.generate-secrets})
 
