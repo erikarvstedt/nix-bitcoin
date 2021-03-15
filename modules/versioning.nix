@@ -88,10 +88,6 @@ let
           if [[ -e ${secretsDir}/jm-wallet-seed ]]; then
             install -o ${jm.user} -g ${jm.group} -m400 "${secretsDir}/jm-wallet-seed" "${jm.dataDir}"
           fi
-
-
-        After deploying your new nix-bitcoin configuration the old secrets files can be deleted:
-
           rm -f "${secretsDir}"/{lnd-seed-mnemonic,jm-wallet-seed}
       '';
     }

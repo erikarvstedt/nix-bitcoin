@@ -207,18 +207,17 @@ in {
                   sleep 0.1
             done
 
-            mnemonic="${cfg.dataDir}/lnd-seed-mnemonic"
-            if [[ ! -f "$mnemonic" ]]; then
-              echo Create lnd seed
-              umask u=r,go=
-              ${pkgs.curl}/bin/curl -s \
-                --cacert ${secretsDir}/lnd-cert \
-                -X GET ${restUrl}/genseed | ${pkgs.jq}/bin/jq -c '.cipher_seed_mnemonic' > "$mnemonic"
-            fi
-
             if [[ ! -f ${networkDir}/wallet.db ]]; then
-              echo Create lnd wallet
+              mnemonic="${cfg.dataDir}/lnd-seed-mnemonic"
+              if [[ ! -f "$mnemonic" ]]; then
+                echo Create lnd seed
+                umask u=r,go=
+                ${pkgs.curl}/bin/curl -s \
+                  --cacert ${secretsDir}/lnd-cert \
+                  -X GET ${restUrl}/genseed | ${pkgs.jq}/bin/jq -c '.cipher_seed_mnemonic' > "$mnemonic"
+              fi
 
+              echo Create lnd wallet
               ${pkgs.curl}/bin/curl -s --output /dev/null --show-error \
                 --cacert ${secretsDir}/lnd-cert \
                 -X POST -d "{\"wallet_password\": \"$(cat ${secretsDir}/lnd-wallet-password | tr -d '\n' | base64 -w0)\", \
