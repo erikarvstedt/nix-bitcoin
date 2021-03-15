@@ -21,7 +21,7 @@ fi
 source qemu-vm/run-vm.sh
 
 echo "Building the target VM"
-# Build the initial VM to which the nix-bitcoin node is deployed to via krops
+# Build the initial VM to which the nix-bitcoin node is deployed via krops
 nix-build --out-link $tmpDir/vm - <<'EOF'
 (import <nixpkgs/nixos> {
   configuration = { lib, ... }: {
