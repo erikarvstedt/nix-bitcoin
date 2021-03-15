@@ -125,7 +125,6 @@
 10. You can remove the remaining traces of nixops as follows:
     ```
     nix-shell
-    export PATH=$(nix-build '<nix-bitcoin>' -A nixops19_09)/bin:$PATH
-    nixops delete -d bitcoin-node --force
+    nix run -f '<nix-bitcoin>' nixops19_09 -c nixops delete -d bitcoin-node --force
     git rm -r nixops
     ```
