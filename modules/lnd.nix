@@ -262,9 +262,7 @@ in {
             '') (attrNames cfg.macaroons)}
           '')
         ];
-      } // (if cfg.enforceTor
-          then nbLib.allowTor
-          else nbLib.allowAnyIP);
+      } // nbLib.allowedIPAddresses cfg.enforceTor;
     };
 
     users.users.${cfg.user} = {
