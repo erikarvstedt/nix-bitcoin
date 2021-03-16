@@ -1,7 +1,7 @@
 pkgs:
 let
   pythonTesting = import "${pkgs.path}/nixos/lib/testing-python.nix" {
-    system = builtins.currentSystem;
+    system = pkgs.stdenv.hostPlatform.system;
     inherit pkgs;
   };
 in
