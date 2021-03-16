@@ -264,8 +264,7 @@ in {
         ];
       } // (if cfg.enforceTor
           then nbLib.allowTor
-          else nbLib.allowAnyIP
-        ) // nbLib.allowAnyProtocol;  # For ZMQ
+          else nbLib.allowAnyIP);
     };
 
     users.users.${cfg.user} = {

@@ -359,8 +359,7 @@ in {
         ReadWritePaths = cfg.dataDir;
       } // (if cfg.enforceTor
             then nbLib.allowTor
-            else nbLib.allowAnyIP)
-        // optionalAttrs (cfg.zmqpubrawblock != null || cfg.zmqpubrawtx != null) nbLib.allowAnyProtocol;
+            else nbLib.allowAnyIP);
     };
 
     # Use this to update the banlist:

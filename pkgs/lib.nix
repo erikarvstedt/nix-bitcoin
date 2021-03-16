@@ -16,7 +16,8 @@ let self = {
       ProtectKernelTunables = "true";
       ProtectKernelModules = "true";
       ProtectControlGroups = "true";
-      RestrictAddressFamilies = "AF_UNIX AF_INET AF_INET6";
+      # AF_NETLINK is required by network libraries used in bitcoind and lightning-pool
+      RestrictAddressFamilies = "AF_UNIX AF_INET AF_INET6 AF_NETLINK";
       RestrictNamespaces = "true";
       LockPersonality = "true";
       IPAddressDeny = "any";
@@ -41,7 +42,6 @@ let self = {
   };
   # Allow any traffic
   allowAnyIP = { IPAddressAllow = "any"; };
-  allowAnyProtocol = { RestrictAddressFamilies = "~"; };
 
   enforceTor = mkOption {
     type = types.bool;
