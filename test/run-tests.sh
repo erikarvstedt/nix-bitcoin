@@ -157,7 +157,7 @@ debug() {
 }
 
 evalTest() {
-    nix eval --raw "($(vmTestNixExpr)).outPath"
+    nix eval --raw --show-trace "($(vmTestNixExpr)).outPath"
     echo # nix eval doesn't print a newline
 }
 
