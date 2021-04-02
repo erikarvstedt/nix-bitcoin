@@ -13,7 +13,7 @@
     #
     # You can enable the hardened-extended preset instead to further improve security
     # at the cost of functionality and performance.
-    # See the comments at the top `hardened-extended.nix` for further details.
+    # See the comments at the top of `hardened-extended.nix` for further details.
     # <nix-bitcoin/modules/presets/hardened-extended.nix>
 
     # FIXME: Uncomment next line to import your hardware configuration. If so,

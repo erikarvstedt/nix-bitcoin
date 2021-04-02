@@ -31,7 +31,7 @@
     # in the time-wait state
     "net.ipv4.tcp_rfc1337" = "1";
 
-    # Disable accpeting IPv6 router advertisements
+    # Disable accepting IPv6 router advertisements
     "net.ipv6.conf.all.accept_ra" = "0";
     "net.ipv6.default.accept_ra" = "0";
 
