@@ -47,8 +47,11 @@ let
       test.data.clightning-plugins = let
         plugins = config.services.clightning.plugins;
         enabled = builtins.filter (plugin: plugins.${plugin}.enable) (builtins.attrNames plugins);
-        pluginPkgs = config.nix-bitcoin.pkgs.clightning-plugins;
-      in map (plugin: pluginPkgs.${plugin}.path) enabled;
+        nbpkgs = config.nix-bitcoin.pkgs;
+        pluginPaths = mapAttrs (name: value: value.path) nbpkgs.clightning-plugins // {
+          clboss = toString nbpkgs.clboss + "/bin/clboss";
+        };
+      in map (plugin: pluginPaths.${plugin}) enabled;
 
       tests.spark-wallet = cfg.spark-wallet.enable;
 
@@ -95,7 +98,6 @@ let
     }
     (mkIf config.test.features.clightningPlugins {
       services.clightning.plugins = {
-        # TODO: add clboss when https://github.com/ZmnSCPxj/clboss/issues/49 is closed
         helpme.enable = true;
         monitor.enable = true;
         prometheus.enable = true;
@@ -112,6 +114,7 @@ let
           sendpay-success = tcpEndpoint;
           sendpay-failure = tcpEndpoint;
         };
+        clboss.enable = true;
       };
     })
     ];
