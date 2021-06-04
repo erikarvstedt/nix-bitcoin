@@ -110,7 +110,7 @@ in
         User = user;
         Group = group;
         StateDirectory = "charge-lnd";
-      } // nbLib.allowedIPAddresses true;
+      } // nbLib.allowLocalIPAddresses;
     };
 
     systemd.timers.charge-lnd = {
