@@ -35,15 +35,16 @@ in
       default = "*-*-* 04:00:00";
       example = "hourly";
       description = ''
-        Systemd calendar expression when to adjust fees. See
-        <citerefentry><refentrytitle>systemd.time</refentrytitle>
-        <manvolnum>7</manvolnum></citerefentry>.
+        Systemd calendar expression when to adjust fees.
+
+        See <citerefentry><refentrytitle>systemd.time</refentrytitle>
+        <manvolnum>7</manvolnum></citerefentry> for possible values.
 
         Default is once a day.
       '';
     };
 
-    randomizedDelaySec = mkOption {
+    randomDelay = mkOption {
       type = str;
       default = "1h";
       description = ''
@@ -131,7 +132,7 @@ in
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnCalendar = cfg.interval;
-        RandomizedDelaySec = cfg.randomizedDelaySec;
+        RandomizedDelaySec = cfg.randomDelay;
       };
     };
 
