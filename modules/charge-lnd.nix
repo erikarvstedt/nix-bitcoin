@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, options, lib, pkgs, ... }:
 
 with lib;
 
@@ -6,6 +6,9 @@ let
   cfg = config.services.charge-lnd;
   nbLib = config.nix-bitcoin.lib;
   lnd = config.services.lnd;
+  electrs = if (options ? services.electrs) && config.services.electrs.enable
+            then config.services.electrs
+            else null;
 
   user = "charge-lnd";
   group = user;
@@ -100,8 +103,9 @@ in
         ExecStart = ''
           ${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
             --lnddir ${dataDir}/lnddir-proxy \
-            --grpc "${lnd.rpcAddress}:${toString lnd.rpcPort}" \
+            --grpc ${lnd.rpcAddress}:${toString lnd.rpcPort} \
             --config ${builtins.toFile "lnd-charge.config" cfg.policies} \
+            ${optionalString (electrs != null) "--electrum-server ${electrs.address}:${toString electrs.port}"} \
             ${escapeShellArgs cfg.extraFlags}
         '';
         User = user;
