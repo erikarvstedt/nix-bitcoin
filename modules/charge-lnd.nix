@@ -82,12 +82,6 @@ in
       permissions = ''{"entity":"info","action":"read"},{"entity":"onchain","action":"read"},{"entity":"offchain","action":"read"},{"entity":"offchain","action":"write"}'';
     };
 
-    users.users.${user} = {
-      group = group;
-      isSystemUser = true;
-    };
-    users.groups.${group} = {};
-
     systemd.tmpfiles.rules = [
       "d ${dataDir}                            0700 ${user} ${group} - -"
       "L ${dataDir}/tls.cert                   -    -       -        - ${config.nix-bitcoin.secretsDir}/lnd-cert"
@@ -122,5 +116,11 @@ in
         RandomizedDelaySec = cfg.randomDelay;
       };
     };
+
+    users.users.${user} = {
+      group = group;
+      isSystemUser = true;
+    };
+    users.groups.${group} = {};
   };
 }
