@@ -110,6 +110,7 @@ in
             ${optionalString (electrs != null) "--electrum-server ${electrs.address}:${toString electrs.port}"} \
             ${escapeShellArgs cfg.extraFlags}
         '';
+        Type = "oneshot";
         User = user;
         Group = group;
         StateDirectory = "charge-lnd";
