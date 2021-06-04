@@ -81,9 +81,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.lnd.macaroons.charge-lnd = {
-      user = user;
-      permissions = ''{"entity":"info","action":"read"},{"entity":"onchain","action":"read"},{"entity":"offchain","action":"read"},{"entity":"offchain","action":"write"}'';
+    services.lnd = {
+      enable = true;
+      macaroons.charge-lnd = {
+        user = user;
+        permissions = ''{"entity":"info","action":"read"},{"entity":"onchain","action":"read"},{"entity":"offchain","action":"read"},{"entity":"offchain","action":"write"}'';
+      };
     };
 
     systemd.services.charge-lnd = {
