@@ -5,7 +5,6 @@ with lib;
 let
   nbLib = config.nix-bitcoin.lib;
   cfg = config.services.charge-lnd;
-  pkg = pkgs.callPackage ../pkgs/charge-lnd.nix { };
   user = "charge-lnd";
   group = "charge-lnd";
   dataDir = "/var/lib/charge-lnd";
@@ -115,7 +114,7 @@ in
       after = [ "lnd.service" ];
       requires = [ "lnd.service" ];
       serviceConfig = nbLib.defaultHardening // {
-        ExecStart = ''${pkg}/bin/charge-lnd \
+        ExecStart = ''${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
           --lnddir ${dataDir} \
           --grpc "${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}" \
           --config ${pkgs.writeText "lnd-charge.config" configStr} \

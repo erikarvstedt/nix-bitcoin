@@ -10,6 +10,7 @@ let self = {
   netns-exec = pkgs.callPackage ./netns-exec { };
   lightning-loop = pkgs.callPackage ./lightning-loop { };
   lightning-pool = pkgs.callPackage ./lightning-pool { };
+  charge-lnd = pkgs.callPackage ./charge-lnd { };
   extra-container = pkgs.callPackage ./extra-container { };
   clightning-plugins = import ./clightning-plugins pkgs self.nbPython3Packages;
   clboss = pkgs.callPackage ./clboss { };
