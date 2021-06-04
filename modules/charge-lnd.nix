@@ -87,7 +87,6 @@ in
     };
 
     systemd.services.charge-lnd = {
-      description = "Adjust LND routing fees";
       documentation = [ "https://github.com/accumulator/charge-lnd/blob/master/README.md" ];
       after = [ "lnd.service" ];
       requires = [ "lnd.service" ];
