@@ -5,6 +5,7 @@ with lib;
 let
   cfg = config.services.charge-lnd;
   nbLib = config.nix-bitcoin.lib;
+  lnd = config.services.lnd;
 
   user = "charge-lnd";
   group = user;
@@ -99,7 +100,7 @@ in
         ExecStart = ''
           ${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
             --lnddir ${dataDir}/lnddir-proxy \
-            --grpc "${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}" \
+            --grpc "${lnd.rpcAddress}:${toString lnd.rpcPort}" \
             --config ${builtins.toFile "lnd-charge.config" cfg.policies} \
             ${escapeShellArgs cfg.extraFlags}
         '';
