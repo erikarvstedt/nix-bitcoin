@@ -8,16 +8,6 @@ let
   user = "charge-lnd";
   group = "charge-lnd";
   dataDir = "/var/lib/charge-lnd";
-  mkValue = value:
-    if isBool value then (if value then "true" else "false")
-    else if isList value then (concatMapStringsSep ", " toString value)
-    else toString value;
-  mkKeyValue = k: v: "${k} = ${mkValue v}\n";
-  formatPolicy = pol: ''
-    [${pol.name}]
-    ${strings.concatStrings (attrsets.mapAttrsToList mkKeyValue (builtins.removeAttrs pol [ "name" ]))}
-  '';
-  configStr = strings.concatMapStringsSep "\n" formatPolicy cfg.policies;
 in
 {
   options.services.charge-lnd = with types; {
@@ -53,38 +43,34 @@ in
     };
 
     policies = mkOption {
-      type = listOf attrs;
-      default = [];
+      type = types.lines;
+      default = "";
       example = literalExample ''
-        [
-          {
-            name = "discourage-routing-out-of-balance";
-            "chan.max_ratio" = 0.1;
-            "chan.min_capacity" = 250000;
-            strategy = "static";
-            base_fee_msat = 10000;
-            fee_ppm = 1000;
-          }
-          {
-            name = "encourage-routing-to-balance";
-            "chan.min_ratio" = 0.9;
-            "chan.min_capacity" = 250000;
-            strategy = "static";
-            base_fee_msat = 1;
-            fee_ppm = 20;
-          }
-          {
-            name = "default";
-            strategy = "ignore";
-          }
-        ]
+        [discourage-routing-out-of-balance]
+        chan.max_ratio = 0.1
+        chan.min_capacity = 250000
+        strategy = static
+        base_fee_msat = 10000
+        fee_ppm = 500
+
+        [encourage-routing-to-balance]
+        chan.min_ratio = 0.9
+        chan.min_capacity = 250000
+        strategy = static
+        base_fee_msat = 1
+        fee_ppm = 2
+
+        [default]
+        strategy = ignore
       '';
       description = ''
-        List of policies evaluated for each channel. Each policy must have a name attribute.
-        Policy named `default` will be applied if no other policy matches.
+        Policy definitions in INI format.
 
         See https://github.com/accumulator/charge-lnd/blob/master/README.md#usage
         for possible properties and parameters.
+
+        Policies are evaluated from top to bottom.
+        The first matching policy (or `default`) is applied.
       '';
     };
 
@@ -118,7 +104,7 @@ in
         ExecStart = ''${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
           --lnddir ${dataDir} \
           --grpc "${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}" \
-          --config ${pkgs.writeText "lnd-charge.config" configStr} \
+          --config ${builtins.toFile "lnd-charge.config" cfg.policies} \
           ${escapeShellArgs cfg.extraFlags}
         '';
         User = user;
@@ -135,11 +121,5 @@ in
         RandomizedDelaySec = cfg.randomDelay;
       };
     };
-
-    assertions = [
-      { assertion = all (pol: pol ? "name") cfg.policies;
-        message = "Attribute 'name' required for every policy.";
-      }
-    ];
   };
 }
