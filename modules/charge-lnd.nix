@@ -82,22 +82,23 @@ in
       permissions = ''{"entity":"info","action":"read"},{"entity":"onchain","action":"read"},{"entity":"offchain","action":"read"},{"entity":"offchain","action":"write"}'';
     };
 
-    systemd.tmpfiles.rules = [
-      "d ${dataDir}                            0700 ${user} ${group} - -"
-      "L ${dataDir}/tls.cert                   -    -       -        - ${config.nix-bitcoin.secretsDir}/lnd-cert"
-      "d ${dataDir}/data/chain/bitcoin         0700 ${user} ${group} - -"
-      "L ${dataDir}/data/chain/bitcoin/mainnet -    -       -        - ${config.services.lnd.dataDir}"
-    ];
-
     systemd.services.charge-lnd = {
       description = "Adjust LND routing fees";
       documentation = [ "https://github.com/accumulator/charge-lnd/blob/master/README.md" ];
       after = [ "lnd.service" ];
       requires = [ "lnd.service" ];
+      # lnd's data directory (--lnddir) is not accessible to charge-lnd.
+      # Instead use directory "lnddir-proxy" as lnddir and link relevant files to it.
+      preStart = ''
+        macaroonDir=${dataDir}/lnddir-proxy/data/chain/bitcoin/mainnet
+        mkdir -p $macaroonDir
+        ln -sf /run/lnd/charge-lnd.macaroon $macaroonDir
+        ln -sf ${config.nix-bitcoin.secretsDir}/lnd-cert ${dataDir}/lnddir-proxy/tls.cert
+      '';
       serviceConfig = nbLib.defaultHardening // {
         ExecStart = ''
           ${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
-            --lnddir ${dataDir} \
+            --lnddir ${dataDir}/lnddir-proxy \
             --grpc "${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}" \
             --config ${builtins.toFile "lnd-charge.config" cfg.policies} \
             ${escapeShellArgs cfg.extraFlags}
