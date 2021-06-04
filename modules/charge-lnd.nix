@@ -3,10 +3,11 @@
 with lib;
 
 let
-  nbLib = config.nix-bitcoin.lib;
   cfg = config.services.charge-lnd;
+  nbLib = config.nix-bitcoin.lib;
+
   user = "charge-lnd";
-  group = "charge-lnd";
+  group = user;
   dataDir = "/var/lib/charge-lnd";
 in
 {
@@ -73,7 +74,6 @@ in
         The first matching policy (or `default`) is applied.
       '';
     };
-
   };
 
   config = mkIf cfg.enable {
@@ -101,11 +101,12 @@ in
       after = [ "lnd.service" ];
       requires = [ "lnd.service" ];
       serviceConfig = nbLib.defaultHardening // {
-        ExecStart = ''${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
-          --lnddir ${dataDir} \
-          --grpc "${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}" \
-          --config ${builtins.toFile "lnd-charge.config" cfg.policies} \
-          ${escapeShellArgs cfg.extraFlags}
+        ExecStart = ''
+          ${config.nix-bitcoin.pkgs.charge-lnd}/bin/charge-lnd \
+            --lnddir ${dataDir} \
+            --grpc "${config.services.lnd.rpcAddress}:${toString config.services.lnd.rpcPort}" \
+            --config ${builtins.toFile "lnd-charge.config" cfg.policies} \
+            ${escapeShellArgs cfg.extraFlags}
         '';
         User = user;
         Group = group;
