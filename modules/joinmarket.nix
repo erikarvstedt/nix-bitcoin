@@ -245,9 +245,10 @@ in {
             wallet=${cfg.dataDir}/wallets/$walletname
             if [[ ! -f $wallet ]]; then
               ${optionalString (cfg.rpcWalletFile != null) ''
-                echo "Create wallet"
-                ${config.services.bitcoind.cli}/bin/bitcoin-cli \
-                   createwallet "${cfg.rpcWalletFile}"
+                echo "Create watch-only wallet ${cfg.rpcWalletFile}"
+                ${bitcoind.cli}/bin/bitcoin-cli -named createwallet \
+                  wallet_name="${cfg.rpcWalletFile}" \
+                  disable_private_keys=true
               ''}
               pw=$(cat "${secretsDir}"/jm-wallet-password)
               cd ${cfg.dataDir}
