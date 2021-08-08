@@ -27,7 +27,7 @@ let
     rpc_port = ${toString bitcoind.rpc.port}
     rpc_user = ${bitcoind.rpc.users.privileged.name}
     @@RPC_PASSWORD@@
-    ${optionalString (cfg.rpcWalletFile != null) "rpc_wallet_file=${cfg.rpcWalletFile}"}
+    ${optionalString (cfg.rpcWalletFile != null) "rpc_wallet_file = ${cfg.rpcWalletFile}"}
 
     [MESSAGING:server1]
     host = darkirc6tqgpnwd3blln3yfv5ckl47eg7llfxkmtovrv7c7iwohhb6ad.onion
@@ -129,7 +129,7 @@ in {
     };
     rpcWalletFile = mkOption {
       type = types.nullOr types.str;
-      default = null;
+      default = "jm_wallet";
       description = ''
         Name of the watch-only bitcoind wallet the JoinMarket addresses are imported to.
       '';
@@ -244,7 +244,11 @@ in {
             walletname=wallet.jmdat
             wallet=${cfg.dataDir}/wallets/$walletname
             if [[ ! -f $wallet ]]; then
-              echo "Create wallet"
+              ${optionalString (cfg.rpcWalletFile != null) ''
+                echo "Create wallet"
+                ${config.services.bitcoind.cli}/bin/bitcoin-cli \
+                   createwallet "${cfg.rpcWalletFile}"
+              ''}
               pw=$(cat "${secretsDir}"/jm-wallet-password)
               cd ${cfg.dataDir}
               if ! ${nbPkgs.joinmarket}/bin/jm-genwallet --datadir=${cfg.dataDir} $walletname $pw \
