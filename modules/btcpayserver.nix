@@ -62,7 +62,7 @@ in {
       package = mkOption {
         type = types.package;
         default = if cfg.btcpayserver.lbtc then
-                    (nbPkgs.btcpayserver.override { altcoinSupport = true; })
+                    nbPkgs.btcpayserver.override { altcoinSupport = true; }
                   else
                     nbPkgs.btcpayserver;
         description = "The package providing btcpayserver binaries.";
@@ -90,7 +90,7 @@ in {
       lbtc = mkOption {
         type = types.bool;
         default = false;
-        description = "Enable liquid support in btcpayserver";
+        description = "Enable liquid support in btcpayserver.";
       };
       rootpath = mkOption {
         type = types.nullOr types.str;
