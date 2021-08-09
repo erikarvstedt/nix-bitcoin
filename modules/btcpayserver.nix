@@ -178,21 +178,23 @@ in {
     };
 
     systemd.services.btcpayserver = let
+      nbExplorerUrl = "http://${cfg.nbxplorer.address}:${toString cfg.nbxplorer.port}/";
+      nbExplorerCookie = "${cfg.nbxplorer.dataDir}/${config.services.bitcoind.makeNetworkName "Main" "RegTest"}/.cookie";
       configFile = builtins.toFile "config" (''
         network=${config.services.bitcoind.network}
         bind=${cfg.btcpayserver.address}
         port=${toString cfg.btcpayserver.port}
         socksendpoint=${cfg.tor.client.socksListenAddress}
-        btcexplorerurl=http://${cfg.nbxplorer.address}:${toString cfg.nbxplorer.port}/
-        btcexplorercookiefile=${cfg.nbxplorer.dataDir}/${config.services.bitcoind.makeNetworkName "Main" "RegTest"}/.cookie
+        btcexplorerurl=${nbExplorerUrl}
+        btcexplorercookiefile=${nbExplorerCookie}
         postgres=User ID=${cfg.btcpayserver.user};Host=/run/postgresql;Database=btcpaydb
         ${optionalString (cfg.btcpayserver.rootpath != null) "rootpath=${cfg.btcpayserver.rootpath}"}
       '' + optionalString (cfg.btcpayserver.lightningBackend == "clightning") ''
         btclightning=type=clightning;server=unix:///${cfg.clightning.dataDir}/bitcoin/lightning-rpc
       '' + optionalString cfg.btcpayserver.lbtc ''
         chains=btc,lbtc
-        lbtcexplorerurl=http://${cfg.nbxplorer.address}:${toString cfg.nbxplorer.port}/
-        lbtcexplorercookiefile=${cfg.nbxplorer.dataDir}/${config.services.bitcoind.makeNetworkName "Main" "RegTest"}/.cookie
+        lbtcexplorerurl=${nbExplorerUrl}
+        lbtcexplorercookiefile=${nbExplorerCookie}
       '');
       lndConfig =
         "btclightning=type=lnd-rest;" +
