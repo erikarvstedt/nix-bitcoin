@@ -157,10 +157,12 @@ in {
       after = [ "bitcoind.service" ];
       preStart = ''
         install -m 600 ${configFile} '${cfg.nbxplorer.dataDir}/settings.config'
-        echo "btcrpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-btcpayserver)" \
-          >> '${cfg.nbxplorer.dataDir}/settings.config'
-        echo "lbtcrpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/liquid-rpcpassword)" \
-          >> '${cfg.nbxplorer.dataDir}/settings.config'
+        {
+          echo "btcrpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-btcpayserver)"
+          ${optionalString cfg.btcpayserver.lbtc ''
+            echo "lbtcrpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/liquid-rpcpassword)"
+          ''}
+        } >> '${cfg.nbxplorer.dataDir}/settings.config'
       '';
       serviceConfig = nbLib.defaultHardening // {
         ExecStart = ''
