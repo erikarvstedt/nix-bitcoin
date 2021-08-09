@@ -9,7 +9,10 @@ let
   secretsDir = config.nix-bitcoin.secretsDir;
   pidFile = "${cfg.dataDir}/liquidd.pid";
   configFile = pkgs.writeText "elements.conf" ''
-    chain=${config.services.bitcoind.makeNetworkName "liquidv1" "regtest \n[regtest]"}
+    chain=${config.services.bitcoind.makeNetworkName "liquidv1" ''
+      regtest
+      [regtest]'' # Add [regtest] config section
+    }
     ${optionalString (cfg.dbCache != null) "dbcache=${toString cfg.dbCache}"}
     ${optionalString (cfg.prune != null) "prune=${toString cfg.prune}"}
     ${optionalString (cfg.validatepegin != null) "validatepegin=${if cfg.validatepegin then "1" else "0"}"}
