@@ -352,13 +352,32 @@ See [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master
     '';
     ```
 
-2. Check service status
+2. Optional: If you want to use Fidelity Bonds as a maker follow the instruction [here](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/fidelity-bonds.md#adding-fidelity-bond-support-to-an-existing-wallet). Modify your existing `wallet.jmdat` with
+
+   ```console
+   mv wallet.jmdat wallet.jmdat.bak
+   jm-wallet-tool recover
+   User data location: /var/lib/joinmarket
+   Input mnemonic recovery phrase: <jm-wallet-seed>
+   Input mnemonic extension, leave blank if there isnt one:
+   Enter new passphrase to encrypt wallet:
+   Reenter new passphrase to encrypt wallet:
+   Input wallet file name (default: wallet.jmdat):
+   Write down this wallet recovery mnemonic
+
+   <jm-wallet-seed>
+
+   Recovered wallet OK
+
+   ```
+
+3. Check service status
 
     ```console
     systemctl status joinmarket-yieldgenerator
     ```
 
-3. Profit
+4. Profit
 
 clightning
 ---
