@@ -47,7 +47,7 @@ stdenv.mkDerivation {
     patchShebangs $out/bin
 
     # These files must be placed in the same dir as ob-watcher
-    cp scripts/obwatch/orderbook.html $out/bin/orderbook.html
+    cp scripts/obwatch/{orderbook.html,sybil_attack_calculations.py} $out/bin/
     cp -r scripts/obwatch/vendor $out/bin/vendor
   '';
 }
