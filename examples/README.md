@@ -68,3 +68,11 @@ c systemctl status bitcoind
 }' container --run c nodeinfo
 ```
 See [`run-tests.sh`](../test/run-tests.sh) for a complete documentation.
+
+### Flakes
+
+Flakes make it easy to include `nix-bitcoin` in an existing NixOS config.
+The [flakes example](./flakes/flake.nix) shows how to use `nix-bitcoin` as an input to a system flake.
+
+Run `nix run` or `nix run .#vm` to start an example nix-bitcoin node VM.
+This command is defined by the nix-bitcoin flake (in [flake.nix](../flake.nix)).
