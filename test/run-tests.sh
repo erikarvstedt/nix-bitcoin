@@ -281,9 +281,18 @@ examples() {
     (cd "$scriptDir/../examples" && nix-shell --run "$script")
 }
 
+flake() {
+    if nix flake --help >/dev/null 2>&1; then
+        nix --experimental-features "nix-command flakes" flake check "$scriptDir/.."
+    else
+        echo "Skipping flake test. The installed nix version doesn't implement flakes."
+    fi
+}
+
 all() {
     buildable
     examples
+    flake
 }
 
 # An alias for buildTest
