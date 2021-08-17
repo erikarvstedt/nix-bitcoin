@@ -23,7 +23,9 @@ task:
       matrix:
         - name: "flake"
           build_script:
-            - echo foo
+            - echo flake
+            - ls -al /dev/kvm
         - name: "flake2"
           build_script:
-            - echo foo
+            - echo flake2
+            - ls -al /dev/kvm
