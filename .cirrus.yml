@@ -21,7 +21,8 @@ task:
         kvm: false
         memory: 2G
         nixpkgs: nixpkgs-unstable
-      build_script: nix --experimental-features "nix-command flakes" flake check
+      build_script:
+        - echo foo
 
   # This script is run as root
   build_script:
