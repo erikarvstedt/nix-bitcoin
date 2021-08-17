@@ -33,7 +33,13 @@ task:
 
     - name: pkgs_unstable
       environment:
+
+    - name: flake
+      container:
+        kvm: false
+        memory: 2G
         nixpkgs: nixpkgs-unstable
+      build_script: nix --experimental-features "nix-command flakes" flake check
 
   # This script is run as root
   build_script:
