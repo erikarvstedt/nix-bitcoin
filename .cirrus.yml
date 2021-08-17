@@ -16,10 +16,14 @@ task:
   timeout_in: 120m
 
   matrix:
-    - name: flake
-      container:
+    - container:
         kvm: false
         memory: 2G
         nixpkgs: nixpkgs-unstable
-      build_script:
-        - echo foo
+      matrix:
+        - name: "flake"
+          build_script:
+            - echo foo
+        - name: "flake2"
+          build_script:
+            - echo foo
