@@ -11,7 +11,7 @@ task:
   timeout_in: 120m
 
   matrix:
-    - container
+    - container:
         # Besides virtualization, this also enables privileged containers which are required for
         # sandboxed builds
         kvm: true
