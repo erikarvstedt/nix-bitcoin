@@ -23,9 +23,3 @@ task:
         nixpkgs: nixpkgs-unstable
       build_script:
         - echo foo
-
-  # This script is run as root
-  build_script:
-    - echo "sandbox = true" >> /etc/nix/nix.conf
-    - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix $nixpkgs)"
-    - nix run -f '<nixpkgs>' bash coreutils cachix -c ./ci/build.sh
