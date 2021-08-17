@@ -17,7 +17,6 @@ task:
         kvm: true
         # Needed for package builds
         memory: 8G
-        name: modules_test
 
       # This script is run as root
       build_script:
@@ -47,4 +46,3 @@ task:
 
     - name: flake
       build_script: nix --experimental-features "nix-command flakes" flake check
-
