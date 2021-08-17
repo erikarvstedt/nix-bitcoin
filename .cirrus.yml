@@ -26,6 +26,10 @@ task:
             - echo flake
             - ls -al /dev/kvm
         - name: "flake2"
+          container:
+            kvm: true
+            memory: 4G
+            nixpkgs: nixpkgs-unstable
           build_script:
             - echo flake2
             - ls -al /dev/kvm
