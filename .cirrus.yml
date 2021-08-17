@@ -1,10 +1,5 @@
 container:
   image: nixos/nix
-  # Besides virtualization, this also enables privileged containers which are required for
-  # sandboxed builds
-  kvm: true
-  # Needed for package builds
-  memory: 8G
 
 environment:
   CACHIX_SIGNING_KEY: ENCRYPTED[!cec502ed813cbcd0237697d2031f750186ff20eed5815b1ad950ad2f2d701702ae6ba2f0cb4cb1985687a696c8ee492c!]
@@ -16,20 +11,40 @@ task:
   timeout_in: 120m
 
   matrix:
-    - container:
-        kvm: false
-        memory: 2G
-        nixpkgs: nixpkgs-unstable
+    - container
+        # Besides virtualization, this also enables privileged containers which are required for
+        # sandboxed builds
+        kvm: true
+        # Needed for package builds
+        memory: 8G
+        name: modules_test
+
+      # This script is run as root
+      build_script:
+        - echo "sandbox = true" >> /etc/nix/nix.conf
+        - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix $nixpkgs)"
+        - nix run -f '<nixpkgs>' bash coreutils cachix -c ./ci/build.sh
+
       matrix:
-        - name: "flake"
-          build_script:
-            - echo flake
-            - ls -al /dev/kvm
-        - name: "flake2"
+        - name: modules_test
+          environment:
+            nixpkgs: nixpkgs
           container:
-            kvm: true
-            memory: 4G
+            # A maximum of 16 CPUs is shared among all concurrent tasks.
+            # https://cirrus-ci.org/faq/#are-there-any-limits
+            cpu: 4
+          matrix:
+            - environment:
+                scenario: default
+            - environment:
+                scenario: netns
+            - environment:
+                scenario: netnsRegtest
+
+        - name: pkgs_unstable
+          environment:
             nixpkgs: nixpkgs-unstable
-          build_script:
-            - echo flake2
-            - ls -al /dev/kvm
+
+    - name: flake
+      build_script: nix --experimental-features "nix-command flakes" flake check
+
