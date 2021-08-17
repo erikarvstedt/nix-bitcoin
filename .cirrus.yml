@@ -10,39 +10,40 @@ task:
   # Use the maximum timeout. Needed when rebuilding packages on a channel update.
   timeout_in: 120m
 
-  matrix:
-    - container:
-        # Besides virtualization, this also enables privileged containers which are required for
-        # sandboxed builds
-        kvm: true
-        # Needed for package builds
-        memory: 8G
+matrix:
+  - container:
+      # Besides virtualization, this also enables privileged containers which are required for
+      # sandboxed builds
+      kvm: true
+      # Needed for package builds
+      memory: 8G
 
-      # This script is run as root
-      build_script:
-        - echo "sandbox = true" >> /etc/nix/nix.conf
-        - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix $nixpkgs)"
-        - nix run -f '<nixpkgs>' bash coreutils cachix -c ./ci/build.sh
+    # This script is run as root
+    build_script:
+      - echo "sandbox = true" >> /etc/nix/nix.conf
+      - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix $nixpkgs)"
+      - nix run -f '<nixpkgs>' bash coreutils cachix -c ./ci/build.sh
 
-      matrix:
-        - name: modules_test
-          environment:
-            nixpkgs: nixpkgs
-          container:
-            # A maximum of 16 CPUs is shared among all concurrent tasks.
-            # https://cirrus-ci.org/faq/#are-there-any-limits
-            cpu: 4
-          matrix:
-            - environment:
-                scenario: default
-            - environment:
-                scenario: netns
-            - environment:
-                scenario: netnsRegtest
+    matrix:
+      - name: modules_test
+        environment:
+          nixpkgs: nixpkgs
+        container:
+          # A maximum of 16 CPUs is shared among all concurrent tasks.
+          # https://cirrus-ci.org/faq/#are-there-any-limits
+          cpu: 4
+        matrix:
+          - environment:
+              scenario: default
+          - environment:
+              scenario: netns
+          - environment:
+              scenario: netnsRegtest
 
-        - name: pkgs_unstable
-          environment:
-            nixpkgs: nixpkgs-unstable
+      - name: pkgs_unstable
+        environment:
+          nixpkgs: nixpkgs-unstable
 
-    - name: flake
-      build_script: nix --experimental-features "nix-command flakes" flake check
+  - name: flake
+    build_script: nix --experimental-features "nix-command flakes" flake check
+
