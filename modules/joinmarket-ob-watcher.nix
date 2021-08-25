@@ -5,16 +5,25 @@ let
   cfg = config.services.joinmarket-ob-watcher;
   nbLib = config.nix-bitcoin.lib;
   nbPkgs = config.nix-bitcoin.pkgs;
+  secretsDir = config.nix-bitcoin.secretsDir;
 
+  torAddress = config.services.tor.client.socksListenAddress;
   socks5Settings = with config.services.tor.client.socksListenAddress; ''
     socks5 = true
     socks5_host = ${addr}
     socks5_port = ${toString port}
   '';
 
+  inherit (config.services) bitcoind;
+
   configFile = builtins.toFile "config" ''
     [BLOCKCHAIN]
-    blockchain_source = no-blockchain
+    blockchain_source = bitcoin-rpc
+    network = ${bitcoind.network}
+    rpc_host = ${bitcoind.rpc.address}
+    rpc_port = ${toString bitcoind.rpc.port}
+    rpc_user = ${bitcoind.rpc.users.joinmarket-ob-watcher.name}
+    @@RPC_PASSWORD@@
 
     [MESSAGING:server1]
     host = darkirc6tqgpnwd3blln3yfv5ckl47eg7llfxkmtovrv7c7iwohhb6ad.onion
@@ -48,6 +57,16 @@ in {
       default = "/var/lib/joinmarket-ob-watcher";
       description = "The data directory for JoinMarket orderbook watcher.";
     };
+    user = mkOption {
+      type = types.str;
+      default = "joinmarket-ob-watcher";
+      description = "The user as which to run JoinMarket.";
+    };
+    group = mkOption {
+      type = types.str;
+      default = cfg.user;
+      description = "The group as which to run JoinMarket.";
+    };
     # This option is only used by netns-isolation
     enforceTor = mkOption {
       readOnly = true;
@@ -56,11 +75,22 @@ in {
   };
 
   config = mkIf cfg.enable {
+    services.bitcoind.rpc.users.joinmarket-ob-watcher = {
+      passwordHMACFromFile = true;
+      rpcwhitelist = config.services.bitcoind.rpc.users.public.rpcwhitelist ++ [
+        "listwallets"
+      ];
+    };
+
     # Joinmarket is Tor-only
     services.tor = {
       enable = true;
       client.enable = true;
     };
+
+    systemd.tmpfiles.rules = [
+      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
+    ];
 
     systemd.services.joinmarket-ob-watcher = {
       wantedBy = [ "multi-user.target" ];
@@ -69,13 +99,16 @@ in {
       # The service writes to HOME/.config/matplotlib
       environment.HOME = cfg.dataDir;
       preStart = ''
-        ln -snf ${configFile} ${cfg.dataDir}/joinmarket.cfg
+        install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
+          sed -i \
+            "s|@@RPC_PASSWORD@@|rpc_password = $(cat ${secretsDir}/bitcoin-rpcpassword-joinmarket-ob-watcher)|" \
+            '${cfg.dataDir}/joinmarket.cfg'
       '';
       serviceConfig = nbLib.defaultHardening // rec {
-        DynamicUser = true;
         StateDirectory = "joinmarket-ob-watcher";
         StateDirectoryMode = "770";
         WorkingDirectory = cfg.dataDir; # The service creates dir 'logs' in the working dir
+        User = cfg.user;
         ExecStart = ''
           ${nbPkgs.joinmarket}/bin/jm-ob-watcher --datadir=${cfg.dataDir} \
             --host=${cfg.address} --port=${toString cfg.port}
@@ -84,6 +117,21 @@ in {
         Restart = "on-failure";
         RestartSec = "10s";
       } // nbLib.allowTor;
+    };
+
+    users.users.${cfg.user} = {
+      isSystemUser = true;
+      group = cfg.group;
+      home = cfg.dataDir;
+    };
+    users.groups.${cfg.group} = {};
+
+    nix-bitcoin.secrets = {
+      bitcoin-rpcpassword-joinmarket-ob-watcher = {
+        user = config.services.bitcoind.user;
+        group = cfg.group;
+      };
+      bitcoin-HMAC-joinmarket-ob-watcher.user = config.services.bitcoind.user;
     };
   };
 }
