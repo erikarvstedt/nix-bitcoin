@@ -7,14 +7,14 @@ let
   nbPkgs = config.nix-bitcoin.pkgs;
   secretsDir = config.nix-bitcoin.secretsDir;
 
+  inherit (config.services) bitcoind;
+
   torAddress = config.services.tor.client.socksListenAddress;
   socks5Settings = with config.services.tor.client.socksListenAddress; ''
     socks5 = true
     socks5_host = ${addr}
     socks5_port = ${toString port}
   '';
-
-  inherit (config.services) bitcoind;
 
   configFile = builtins.toFile "config" ''
     [BLOCKCHAIN]
@@ -77,7 +77,7 @@ in {
   config = mkIf cfg.enable {
     services.bitcoind.rpc.users.joinmarket-ob-watcher = {
       passwordHMACFromFile = true;
-      rpcwhitelist = config.services.bitcoind.rpc.users.public.rpcwhitelist ++ [
+      rpcwhitelist = bitcoind.rpc.users.public.rpcwhitelist ++ [
         "listwallets"
       ];
     };
@@ -128,10 +128,10 @@ in {
 
     nix-bitcoin.secrets = {
       bitcoin-rpcpassword-joinmarket-ob-watcher = {
-        user = config.services.bitcoind.user;
+        user = bitcoind.user;
         group = cfg.group;
       };
-      bitcoin-HMAC-joinmarket-ob-watcher.user = config.services.bitcoind.user;
+      bitcoin-HMAC-joinmarket-ob-watcher.user = bitcoind.user;
     };
   };
 }
