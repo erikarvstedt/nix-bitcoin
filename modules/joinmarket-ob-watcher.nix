@@ -23,7 +23,6 @@ let
     rpc_host = ${bitcoind.rpc.address}
     rpc_port = ${toString bitcoind.rpc.port}
     rpc_user = ${bitcoind.rpc.users.joinmarket-ob-watcher.name}
-    @@RPC_PASSWORD@@
 
     [MESSAGING:server1]
     host = darkirc6tqgpnwd3blln3yfv5ckl47eg7llfxkmtovrv7c7iwohhb6ad.onion
@@ -99,10 +98,12 @@ in {
       # The service writes to HOME/.config/matplotlib
       environment.HOME = cfg.dataDir;
       preStart = ''
-        install -o '${cfg.user}' -g '${cfg.group}' -m 640 ${configFile} ${cfg.dataDir}/joinmarket.cfg
-          sed -i \
-            "s|@@RPC_PASSWORD@@|rpc_password = $(cat ${secretsDir}/bitcoin-rpcpassword-joinmarket-ob-watcher)|" \
-            '${cfg.dataDir}/joinmarket.cfg'
+        {
+          cat ${configFile}
+          echo
+          echo '[BLOCKCHAIN]'
+          echo "rpc_password = $(cat ${secretsDir}/bitcoin-rpcpassword-joinmarket-ob-watcher)"
+        } > '${cfg.dataDir}/joinmarket.cfg'
       '';
       serviceConfig = nbLib.defaultHardening // rec {
         StateDirectory = "joinmarket-ob-watcher";
