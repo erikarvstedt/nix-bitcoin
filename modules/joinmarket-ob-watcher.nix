@@ -128,10 +128,7 @@ in {
     users.groups.${cfg.group} = {};
 
     nix-bitcoin.secrets = {
-      bitcoin-rpcpassword-joinmarket-ob-watcher = {
-        user = bitcoind.user;
-        group = cfg.group;
-      };
+      bitcoin-rpcpassword-joinmarket-ob-watcher.user = cfg.user;
       bitcoin-HMAC-joinmarket-ob-watcher.user = bitcoind.user;
     };
   };
