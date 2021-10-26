@@ -119,7 +119,7 @@ in {
         {
           echo "bitcoin-rpcpassword=$(cat ${config.nix-bitcoin.secretsDir}/bitcoin-rpcpassword-public)"
           ${optionalString (cfg.getPublicAddressCmd != "") ''
-            echo "announce-addr=$(${cfg.getPublicAddressCmd})"
+            echo "announce-addr=$(${cfg.getPublicAddressCmd}):${toString cfg.port}"
           ''}
         } >> '${cfg.dataDir}/config'
       '';
