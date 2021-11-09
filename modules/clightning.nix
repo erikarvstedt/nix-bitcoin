@@ -137,6 +137,19 @@ in {
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;
+
+        # WORKAROUND:
+        # Disable SystemCallFilter.
+        # Without this, lightningd fails with a system call violation.
+        # Audit log excerpt:
+        # SECCOMP ... sig=31 arch=c000003e syscall=436
+        #
+        # syscall 436 is `close_range`, which is already part of the whitelisted
+        # `@system-service` syscall set. Explicit whitelisting also doesn't work:
+        # SystemCallFilter = [ "@system-service" "close_range" ]
+        # This is might be a seccomp bug:
+        # https://github.com/containers/podman/issues/10337#issuecomment-875526380
+        SystemCallFilter = [];
       } // nbLib.allowedIPAddresses cfg.enforceTor;
       # Wait until the rpc socket appears
       postStart = ''
