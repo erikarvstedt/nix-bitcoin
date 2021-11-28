@@ -31,10 +31,6 @@ task:
         - environment:
             scenario: netnsRegtest
 
-    - name: pkgs_unstable
-      environment:
-        nixpkgs: nixpkgs-unstable
-
   # This script is run as root
   build_script:
     - echo "sandbox = true" >> /etc/nix/nix.conf
