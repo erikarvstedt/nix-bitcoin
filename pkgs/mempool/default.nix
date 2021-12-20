@@ -50,6 +50,21 @@ rec {
     '';
 
     inherit meta;
+
+    passthru.workaround = backend-workaround;
+  });
+
+  backend-workaround = mempool-backend.overrideAttrs (old: {
+    postInstall = old.postInstall + ''
+      # See ./README.md
+      cp mempool-config.sample.json mempool-config.json
+      mkdir -p ../.git/refs/heads
+      echo 0000000000000000000000000000000000000000 > ../.git/refs/heads/master
+
+      makeWrapper ${nodejsRuntime}/bin/node $out/bin/mempool-backend \
+        --add-flags $out/lib/node_modules/mempool-backend/dist/index.js \
+        --run "cd $out/lib/node_modules/mempool-backend"
+    '';
   });
 
   mempool-frontend =
