@@ -1,0 +1,65 @@
+{ pkgs, lib, fetchFromGitHub, fetchurl, makeWrapper, rsync }:
+rec {
+  nodejs = pkgs.nodejs-16_x;
+  nodejsRuntime = pkgs.nodejs-slim-16_x;
+
+  src = fetchFromGitHub {
+    owner = "mempool";
+    repo = "mempool";
+    rev = "eeb0f403a3aa7ea39c033ed89d662fde0edb16d8";
+    hash = "sha256-ltUcjLaEZbIZriRdOVv7Bq1w40Erf0pmDvcqwz1zMOE=";
+  };
+
+  # node2nix requires that the backend and frontend are available as distinct node
+  # packages
+  srcBackend = pkgs.runCommand "mempool-backend" {} ''
+    cp -r ${src}/backend $out
+  '';
+  srcFrontend = pkgs.runCommand "mempool-frontend" {} ''
+    cp -r ${src}/frontend $out
+  '';
+
+  nodeEnv = import "${toString pkgs.path}/pkgs/development/node-packages/node-env.nix" {
+    inherit (pkgs) stdenv lib python2 runCommand writeTextFile writeShellScript;
+    inherit pkgs nodejs;
+    libtool = if pkgs.stdenv.isDarwin then pkgs.darwin.cctools else null;
+  };
+
+  nodePkgs = file: import file {
+    inherit (pkgs) fetchurl nix-gitignore stdenv lib fetchgit;
+    inherit nodeEnv;
+  };
+  backendPkgs = nodePkgs ./node-packages-backend.nix;
+  frontendPkgs = nodePkgs ./node-packages-frontend.nix;
+
+  mempool-backend = nodeEnv.buildNodePackage (backendPkgs.args // {
+    src = srcBackend;
+
+    nativeBuildInputs = (backendPkgs.args.nativeBuildInputs or []) ++ [
+      makeWrapper
+    ];
+
+    postInstall = ''
+      npm run build
+
+      # Remove unneeded src and cache files
+      rm -r src cache .[!.]*
+
+      makeWrapper ${nodejsRuntime}/bin/node $out/bin/mempool-backend \
+        --add-flags $out/lib/node_modules/mempool-backend/dist/index.js
+    '';
+
+    inherit meta;
+  });
+
+  mempool-frontend =
+    import ./frontend.nix srcFrontend nodeEnv frontendPkgs nodejs meta fetchurl rsync;
+
+  meta = with lib; {
+    description = "Bitcoin blockchain and mempool explorer";
+    homepage = "https://github.com/mempool/mempool/";
+    license = licenses.agpl3Plus;
+    maintainers = with maintainers; [ nixbitcoin earvstedt ];
+    platforms = platforms.unix;
+  };
+}
