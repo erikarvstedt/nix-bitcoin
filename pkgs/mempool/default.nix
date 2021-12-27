@@ -13,7 +13,9 @@ rec {
   # node2nix requires that the backend and frontend are available as distinct node
   # packages
   srcBackend = pkgs.runCommand "mempool-backend" {} ''
-    cp -r ${src}/backend $out
+    cp -r --no-preserve=mode ${src}/backend $out
+    cd $out
+    patch -p2 <${./fix-config-path.patch} 
   '';
   srcFrontend = pkgs.runCommand "mempool-frontend" {} ''
     cp -r ${src}/frontend $out
