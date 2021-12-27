@@ -23,6 +23,8 @@
   # FIXME: Enable modules by uncommenting their respective line. Disable
   # modules by commenting out their respective line.
 
+  services.mempool.enable = true;
+
   ### BITCOIND
   # Bitcoind is enabled by default via secure-node.nix.
   #
