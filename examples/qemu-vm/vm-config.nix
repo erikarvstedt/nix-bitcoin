@@ -4,6 +4,7 @@
 
   config = {
     virtualisation.graphics = false;
+    virtualisation.diskSize = 4000;
     services.getty.autologinUser = "root";
     users.users.root = {
       openssh.authorizedKeys.keyFiles = [ ./id-vm.pub ];

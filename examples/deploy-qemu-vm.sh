@@ -34,31 +34,14 @@ nix-build --out-link $tmpDir/vm - <<'EOF'
 }).vm
 EOF
 
-vmNumCPUs=4
-vmMemoryMiB=2048
+vmNumCPUs=8
+vmMemoryMiB=4096
 sshPort=60734
 runVM $tmpDir/vm $vmNumCPUs $vmMemoryMiB $sshPort
 
 vmWaitForSSH
 printf "Waiting until services are ready"
-c "
-$(cat qemu-vm/wait-until.sh)
-waitUntil 'systemctl is-active clightning &> /dev/null' 100
-"
 echo
-
-echo
-echo "Bitcoind service:"
-c systemctl status bitcoind
-echo
-echo "Bitcoind network:"
-c bitcoin-cli getnetworkinfo
-echo
-echo "lightning-cli state:"
-c lightning-cli getinfo
-echo
-echo "Node info:"
-c nodeinfo
 
 case ${1:-} in
     -i|--interactive)

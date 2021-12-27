@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -i bash -p nodePackages.node2nix gnupg wget jq gnused
+#! nix-shell -i bash -p nodePackages.node2nix gnupg wget jq gnused nix_2_4
 set -euo pipefail
 
 # Use this to start a debug shell at the location of this statement
@@ -10,8 +10,7 @@ repo=https://github.com/mempool/mempool
 TMPDIR="$(mktemp -d /tmp/mempool.XXX)"
 trap "rm -rf $TMPDIR" EXIT
 
-# Use pre-release rev because the current release doesn't include `typescript` in backend/package.json
-rev=eeb0f403a3aa7ea39c033ed89d662fde0edb16d8
+rev=v2.3.1
 # Fetch source
 src=$TMPDIR/src
 mkdir -p $src

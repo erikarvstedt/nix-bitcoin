@@ -292,13 +292,13 @@ let
         sha512 = "aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==";
       };
     };
-    "follow-redirects-1.14.6" = {
+    "follow-redirects-1.14.7" = {
       name = "follow-redirects";
       packageName = "follow-redirects";
-      version = "1.14.6";
+      version = "1.14.7";
       src = fetchurl {
-        url = "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.14.6.tgz";
-        sha512 = "fhUl5EwSJbbl8AR+uYL2KQDxLkdSjZGR36xy46AO7cOMTrCMON6Sa28FmAnC2tRTDbd/Uuzz3aJBv7EBN7JH8A==";
+        url = "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.14.7.tgz";
+        sha512 = "+hbxoLbFMbRKDwohX8GkTataGqO6Jb7jGwpAlwgy2bIz25XtRm7KEzJM76R1WiNT5SwZkX4Y75SwBolkpmE7iQ==";
       };
     };
     "forwarded-0.1.2" = {
@@ -863,7 +863,7 @@ let
   args = {
     name = "mempool-backend";
     packageName = "mempool-backend";
-    version = "2.3.0-dev";
+    version = "2.3.1";
     dependencies = [
       sources."@mempool/bitcoin-3.0.3"
       sources."@mempool/electrum-client-1.1.8"
@@ -905,7 +905,7 @@ let
         ];
       })
       sources."finalhandler-1.1.2"
-      sources."follow-redirects-1.14.6"
+      sources."follow-redirects-1.14.7"
       sources."forwarded-0.1.2"
       sources."fresh-0.5.2"
       sources."generate-function-2.3.1"

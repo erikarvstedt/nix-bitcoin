@@ -23,6 +23,16 @@
   # FIXME: Enable modules by uncommenting their respective line. Disable
   # modules by commenting out their respective line.
 
+  services.nginx.logError = "stderr debug";
+  services.mempool.enable = true;
+  services.mempool.port = 80;
+  systemd.services.bitcoind.postStart = ''
+    cli=${config.services.bitcoind.cli}/bin/bitcoin-cli
+    $cli -named createwallet  wallet_name=test load_on_startup=true
+    address=$($cli -rpcwallet=test getnewaddress)
+    $cli generatetoaddress 100 $address
+  '';
+
   ### BITCOIND
   # Bitcoind is enabled by default via secure-node.nix.
   #
@@ -40,10 +50,11 @@
   # services.bitcoind.extraConfig = ''
   #   maxorphantx=110
   # '';
+  services.bitcoind.regtest = true;
 
   ### CLIGHTNING
   # Enable clightning, a Lightning Network implementation in C.
-  services.clightning.enable = true;
+  # services.clightning.enable = true;
   #
   # Set this to create an onion service by which clightning can accept incoming connections
   # via Tor.
@@ -252,6 +263,8 @@
   # FIXME: add packages you need in your system
   environment.systemPackages = with pkgs; [
     vim
+    git
+    nodejs-16_x
   ];
 
   # FIXME: Add custom options (like boot options, output of
