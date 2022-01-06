@@ -3,7 +3,7 @@ let
   inherit (self) callPackage;
 
   joinmarketPkg = pkg: callPackage pkg { inherit (nbPkgs.joinmarket) version src; };
-  clightningPkg = pkg: callPackage pkg { inherit (nbPkgs.pinned) clightning; };
+  clightningPkg = pkg: callPackage pkg { inherit (nbPkgs) clightning; };
 in {
   bencoderpyx = callPackage ./bencoderpyx {};
   coincurve = callPackage ./coincurve {};

@@ -5,7 +5,6 @@ pkgs: pkgsUnstable:
     bitcoin
     bitcoind
     charge-lnd
-    clightning
     electrs
     extra-container
     hwi

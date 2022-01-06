@@ -6,6 +6,7 @@ in
 , pkgsUnstable ? import nixpkgsPinned.nixpkgs-unstable { config = {}; overlays = []; }
 }:
 let self = {
+  clightning = pkgs.callPackage ./clightning { };
   rtl = pkgs.callPackage ./rtl { };
   cl-rest = pkgs.callPackage ./cl-rest { };
   spark-wallet = pkgs.callPackage ./spark-wallet { };
