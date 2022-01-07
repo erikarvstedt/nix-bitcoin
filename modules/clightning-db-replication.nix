@@ -3,67 +3,129 @@
 with lib;
 let
   options.services.clightning.replication = {
-    enable =  mkEnableOption "Native SQLITE3 database replication.";
-    dataDir = mkOption {
-      type = types.path;
-      default = "/var/backup/clightning";
-      description = "The data directory for clightning database replication.";
+    enable =  mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable live replication of the clightning database.
+        This ensures that funds are safe at all times by immediately backing up
+        each channel update.
+
+        For setting the destination, you can either define option `sshfs.destination`
+        or `localDirectory`.
+
+        When `encrypt` is `false`, file `lightningd.sqlite3` is written to the destination.
+        When `encrypt` is `true`, directory `lightningd-db` is written to the destination.
+        It includes the encrypted database file name and contents, and gocryptfs metadata.
+
+        See also: https://github.com/ElementsProject/lightning/blob/master/doc/BACKUP.md
+      '';
     };
-    sshfsDestination = mkOption {
-      type = types.nullOr types.str;
+    sshfs = {
+      destination = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "user@10.0.0.1:directory";
+        description = ''
+          The SSH destination for which a SSHFS will be mounted.
+          `directory` is relative to the home of `user`.
+
+          A SSH key is automatically generated and stored in file
+          `$secretsDir/clightning-replication-ssh`.
+          The SSH server must allow logins via this key.
+          I.e., the `authorized_keys` file of `user` must contain
+          `$secretsDir/clightning-replication-ssh.pub`.
+        '';
+      };
+      port = mkOption {
+        type = types.port;
+        default = 22;
+        description = "SSH port of the remote server.";
+      };
+    };
+    localDirectory = mkOption {
+      type = types.nullOr types.path;
       default = null;
-      example = "user@10.0.0.1:";
+      example = "/var/backup/clightning";
       description = ''
-          The SSH destination for which an SSHFS should be mounted. SSH key is
-          automatically generated and stored in secretsDir as
-          `clightning-replication-ssh-key`. If this option is not specified,
-          replication will simply be saved locally to replication.dataDir.
-        '';
-    };
-    sshfsPort = mkOption {
-      type = types.port;
-      default = 22;
-      description = ''
-          Port of sshfsDestination for SSHFS mount.
-        '';
+        This option can be specified instead of `sshfs.destination` to enable
+        replication to a local directory.
+        The directory
+          - must already exist when `clightning.service` (or `clightning-replication-mounts.service`
+            if `encrypt` is `true`) starts.
+          - must have write permissions for the `clightning` user.
+
+        This option is also useful if you want to use a custom remote destination,
+        like a NFS or SMB share.
+      '';
     };
     encrypt = mkOption {
       type = types.bool;
       default = false;
       description = ''
-          Whether to encrypt the replication with gocryptfs. Passwordfile is
-          automatically generated and stored in secretsDir as
-          `clightning-replication-password`.
-        '';
+        Whether to encrypt the replicated database with gocryptfs.
+        The encryption password is automatically generated and stored
+        in file `$secretsDir/clightning-replication-password`.
+      '';
     };
   };
 
   cfg = config.services.clightning.replication;
   inherit (config.services) clightning;
 
+  secretsDir = config.nix-bitcoin.secretsDir;
   network = config.services.bitcoind.makeNetworkName "bitcoin" "regtest";
   user = clightning.user;
-  group = clightning.group;
+
+  useSshfs = cfg.sshfs.destination != null;
+  useMounts = useSshfs || cfg.encrypt;
+
+  mountsDir = "/var/lib/clightning-replication";
+  sshfsDir = "${mountsDir}/sshfs";
+  plaintextDir = "${mountsDir}/plaintext";
+  destDir =
+    if cfg.encrypt then
+      plaintextDir
+    else if useSshfs then
+      sshfsDir
+    else
+      cfg.localDirectory;
 in {
   inherit options;
 
   config = mkIf cfg.enable {
+    assertions = [
+      { assertion = useSshfs || (cfg.localDirectory != null);
+        message = ''
+          services.clightning.replication: One of `sshfs.destination` or
+          `localDirectory` must be set.
+        '';
+      }
+      { assertion = !useSshfs || (cfg.localDirectory == null);
+        message = ''
+          services.clightning.replication: Only one of `sshfs.destination` and
+          `localDirectory` must be set.
+        '';
+      }
+    ];
 
     services.clightning.extraConfig = let
-      mainDB = "/${clightning.dataDir}/${network}/lightningd.sqlite3";
-      replicaDB = "${cfg.dataDir}/${if cfg.encrypt then "md" else "bd"}/lightningd.sqlite3";
+      mainDB = "${clightning.dataDir}/${network}/lightningd.sqlite3";
+      replicaDB = "${destDir}/lightningd.sqlite3";
     in ''
       wallet=sqlite3://${mainDB}:${replicaDB}
     '';
 
-    systemd.tmpfiles.rules =
-         optional cfg.enable "d '${cfg.dataDir}' 0770 ${user} ${group} - -"
-      ++ optional cfg.enable "d '${cfg.dataDir}/bd' 0770 ${user} ${group} - -"
-      ++ optional cfg.encrypt "d '${cfg.dataDir}/md' 0770 ${user} ${group} - -";
+    systemd.services.clightning.serviceConfig.ReadWritePaths = [
+      # We can't simply set `destDir` here because it might point to
+      # a FUSE mount.
+      # FUSE mounts can only be set up as `ReadWritePaths` by systemd when they
+      # are accessible by root. This would require FUSE-mounting with option
+      # `allow_other`.
+      (if useMounts then mountsDir else cfg.localDirectory)
+    ];
 
-    systemd.services.clightning.serviceConfig.ReadWritePaths = [ cfg.dataDir ];
-
-    systemd.services.clightning-prepare-replication = mkIf (cfg.sshfsDestination != null || cfg.encrypt) {
+    systemd.services.clightning-replication-mounts = mkIf useMounts {
       requiredBy = [ "clightning.service" ];
       before = [ "clightning.service" ];
       after = [ "setup-secrets.service" ];
@@ -76,24 +138,26 @@ in {
         pkgs.util-linux
       ];
 
-      script = ''
-        ${optionalString (cfg.sshfsDestination != null) ''
-          ${pkgs.sshfs}/bin/sshfs ${cfg.sshfsDestination} -p ${toString cfg.sshfsPort} ${cfg.dataDir}/bd \
-          -o reconnect,ServerAliveInterval=15,IdentityFile=${config.nix-bitcoin.secretsDir}/clightning-replication-ssh-key
-        ''}
-        ${optionalString cfg.encrypt ''
-          cryptLock='${cfg.dataDir}/bd/gocryptfs.conf'
-          if [[ ! -e $cryptLock ]]; then
-            ${pkgs.gocryptfs}/bin/gocryptfs \
-            -init -passfile ${config.nix-bitcoin.secretsDir}/clightning-replication-password \
-            ${cfg.dataDir}/bd
+      script =
+        optionalString useSshfs ''
+          mkdir -p ${sshfsDir}
+          ${pkgs.sshfs}/bin/sshfs ${cfg.sshfs.destination} -p ${toString cfg.sshfs.port} ${sshfsDir} \
+            -o reconnect,ServerAliveInterval=15,IdentityFile='${secretsDir}'/clightning-replication-ssh-key
+        '' +
+        optionalString cfg.encrypt ''
+          cipherDir="${if useSshfs then sshfsDir else cfg.localDirectory}/lightningd-db"
+          mkdir -p "$cipherDir" ${plaintextDir}
+          gocryptfs=(${pkgs.gocryptfs}/bin/gocryptfs -passfile '${secretsDir}'/clightning-replication-password)
+          # 1. init
+          if [[ ! -e $cipherDir/gocryptfs.conf ]]; then
+            "''${gocryptfs[@]}" -init "$cipherDir"
           fi
-          ${pkgs.gocryptfs}/bin/gocryptfs \
-          -passfile ${config.nix-bitcoin.secretsDir}/clightning-replication-password \
-          ${cfg.dataDir}/bd ${cfg.dataDir}/md
-        ''}
-      '';
+          # 2. mount
+          "''${gocryptfs[@]}" "$cipherDir" ${plaintextDir}
+        '';
       serviceConfig = {
+        StateDirectory = "clightning-replication";
+        StateDirectoryMode = "770";
         User = user;
         RemainAfterExit = "yes";
         Type = "oneshot";
