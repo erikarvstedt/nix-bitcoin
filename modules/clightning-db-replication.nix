@@ -44,7 +44,7 @@ let
       };
       sshOptions = mkOption {
         type = with types; listOf str;
-        default = [ "reconnect" "ServerAliveInterval=15" ];
+        default = [ "reconnect" "ServerAliveInterval=50" ];
         description = "SSH options used for mounting the SSHFS.";
       };
     };
