@@ -189,7 +189,7 @@ in {
           permissions = "0400";
         };
         generateSecretsCmds.clightning-replication-ssh-key = ''
-          ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -f clightning-replication-ssh-key -q -N ""
+          ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -q -N "" -C "" -f -clightning-replication-ssh-key
         '';
       })
 
