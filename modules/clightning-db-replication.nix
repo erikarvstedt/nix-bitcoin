@@ -164,14 +164,23 @@ in {
       };
     };
 
-    nix-bitcoin.secrets.clightning-replication-password.user = user;
-    nix-bitcoin.generateSecretsCmds.clightning-replication-password = ''
-      makePasswordSecret clightning-replication-password
-    '';
-    nix-bitcoin.secrets.clightning-replication-ssh-key.user = user;
-    nix-bitcoin.secrets.clightning-replication-ssh-key.permissions = "0400";
-    nix-bitcoin.generateSecretsCmds.clightning-replication-ssh-key = ''
-      ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -f clightning-replication-ssh-key -q -N ""
-    '';
+    nix-bitcoin = mkMerge [
+      (mkIf useSshfs {
+        secrets.clightning-replication-ssh-key = {
+          user = user;
+          permissions = "0400";
+        };
+        generateSecretsCmds.clightning-replication-ssh-key = ''
+          ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -f clightning-replication-ssh-key -q -N ""
+        '';
+      })
+
+      (mkIf cfg.encrypt {
+        secrets.clightning-replication-password.user = user;
+        generateSecretsCmds.clightning-replication-password = ''
+          makePasswordSecret clightning-replication-password
+        '';
+      })
+    ];
   };
 }
