@@ -42,6 +42,11 @@ let
         default = 22;
         description = "SSH port of the remote server.";
       };
+      sshOptions = mkOption {
+        type = with types; listOf str;
+        default = [ "reconnect" "ServerAliveInterval=15" ];
+        description = "SSH options used for mounting the SSHFS.";
+      };
     };
     localDirectory = mkOption {
       type = types.nullOr types.path;
@@ -144,7 +149,9 @@ in {
         optionalString useSshfs ''
           mkdir -p ${sshfsDir}
           ${pkgs.sshfs}/bin/sshfs ${cfg.sshfs.destination} -p ${toString cfg.sshfs.port} ${sshfsDir} \
-            -o reconnect,ServerAliveInterval=15,IdentityFile='${secretsDir}'/clightning-replication-ssh-key
+            -o ${builtins.concatStringsSep "," [
+              "IdentityFile='${secretsDir}'/clightning-replication-ssh-key"
+            ] ++ cfg.sshfs.sshOptions}
         '' +
         optionalString cfg.encrypt ''
           cipherDir="${if useSshfs then sshfsDir else cfg.localDirectory}/lightningd-db"
