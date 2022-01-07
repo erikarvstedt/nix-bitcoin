@@ -64,32 +64,37 @@ in {
     systemd.services.clightning.serviceConfig.ReadWritePaths = [ cfg.dataDir ];
 
     systemd.services.clightning-prepare-replication = mkIf (cfg.sshfsDestination != null || cfg.encrypt) {
-      description = "Prepare volume for clightning direct SQLITE3 replication.";
-      wantedBy = [ "clightning.service" ];
       requiredBy = [ "clightning.service" ];
       before = [ "clightning.service" ];
       after = [ "setup-secrets.service" ];
-      path = [ pkgs.util-linux ];
+      path = [
+        # This includes the SUID-wrapped `fusermount` binary which enables FUSE
+        # for non-root users
+        "/run/wrappers"
+      ] ++ optionals cfg.encrypt [
+        # Includes `logger`, required by gocryptfs
+        pkgs.util-linux
+      ];
+
       script = ''
         ${optionalString (cfg.sshfsDestination != null) ''
           ${pkgs.sshfs}/bin/sshfs ${cfg.sshfsDestination} -p ${toString cfg.sshfsPort} ${cfg.dataDir}/bd \
-          -o allow_other,reconnect,ServerAliveInterval=15,IdentityFile=${config.nix-bitcoin.secretsDir}/clightning-replication-ssh
+          -o reconnect,ServerAliveInterval=15,IdentityFile=${config.nix-bitcoin.secretsDir}/clightning-replication-ssh
         ''}
         ${optionalString cfg.encrypt ''
           cryptLock='${cfg.dataDir}/bd/gocryptfs.conf'
-          uid=$(id -u ${user})
-          gid=$(id -g ${user})
           if [[ ! -e $cryptLock ]]; then
-            ${pkgs.gocryptfs}/bin/gocryptfs -allow_other -force_owner "$uid:$gid" \
+            ${pkgs.gocryptfs}/bin/gocryptfs \
             -init -passfile ${config.nix-bitcoin.secretsDir}/clightning-replication-password \
             ${cfg.dataDir}/bd
           fi
-          ${pkgs.gocryptfs}/bin/gocryptfs -allow_other -force_owner "$uid:$gid" \
+          ${pkgs.gocryptfs}/bin/gocryptfs \
           -passfile ${config.nix-bitcoin.secretsDir}/clightning-replication-password \
           ${cfg.dataDir}/bd ${cfg.dataDir}/md
         ''}
       '';
       serviceConfig = {
+        User = user;
         RemainAfterExit = "yes";
         Type = "oneshot";
       };
