@@ -130,8 +130,10 @@ in {
       before = [ "clightning.service" ];
       after = [ "setup-secrets.service" ];
       path = [
-        # This includes the SUID-wrapped `fusermount` binary which enables FUSE
-        # for non-root users
+        # Includes
+        # - The SUID-wrapped `fusermount` binary which enables FUSE
+        #   for non-root users
+        # - The SUID-wrapped `mount` binary, used for unmounting
         "/run/wrappers"
       ] ++ optionals cfg.encrypt [
         # Includes `logger`, required by gocryptfs
@@ -155,6 +157,15 @@ in {
           # 2. mount
           "''${gocryptfs[@]}" "$cipherDir" ${plaintextDir}
         '';
+
+      preStop =
+        optionalString cfg.encrypt ''
+          umount ${plaintextDir} || true
+        '' +
+        optionalString useSshfs ''
+          umount ${sshfsDir}
+        '';
+
       serviceConfig = {
         StateDirectory = "clightning-replication";
         StateDirectoryMode = "770";
