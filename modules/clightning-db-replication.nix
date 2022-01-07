@@ -16,7 +16,7 @@ let
       description = ''
           The SSH destination for which an SSHFS should be mounted. SSH key is
           automatically generated and stored in secretsDir as
-          `clightning-replication-ssh`. If this option is not specified,
+          `clightning-replication-ssh-key`. If this option is not specified,
           replication will simply be saved locally to replication.dataDir.
         '';
     };
@@ -79,7 +79,7 @@ in {
       script = ''
         ${optionalString (cfg.sshfsDestination != null) ''
           ${pkgs.sshfs}/bin/sshfs ${cfg.sshfsDestination} -p ${toString cfg.sshfsPort} ${cfg.dataDir}/bd \
-          -o reconnect,ServerAliveInterval=15,IdentityFile=${config.nix-bitcoin.secretsDir}/clightning-replication-ssh
+          -o reconnect,ServerAliveInterval=15,IdentityFile=${config.nix-bitcoin.secretsDir}/clightning-replication-ssh-key
         ''}
         ${optionalString cfg.encrypt ''
           cryptLock='${cfg.dataDir}/bd/gocryptfs.conf'
@@ -104,10 +104,10 @@ in {
     nix-bitcoin.generateSecretsCmds.clightning-replication-password = ''
       makePasswordSecret clightning-replication-password
     '';
-    nix-bitcoin.secrets.clightning-replication-ssh.user = user;
-    nix-bitcoin.secrets.clightning-replication-ssh.permissions = "0400";
-    nix-bitcoin.generateSecretsCmds.clightning-replication-ssh = ''
-      ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -f clightning-replication-ssh -q -N ""
+    nix-bitcoin.secrets.clightning-replication-ssh-key.user = user;
+    nix-bitcoin.secrets.clightning-replication-ssh-key.permissions = "0400";
+    nix-bitcoin.generateSecretsCmds.clightning-replication-ssh-key = ''
+      ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -f clightning-replication-ssh-key -q -N ""
     '';
   };
 }
