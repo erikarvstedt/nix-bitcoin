@@ -20,6 +20,10 @@
     # add the hardware configuration file to the same directory as this file.
     #./hardware-configuration.nix
   ];
+
+  boot.loader.systemd-boot.enable = true;
+  fileSystems."/".device = "_";
+
   # FIXME: Enable modules by uncommenting their respective line. Disable
   # modules by commenting out their respective line.
 
