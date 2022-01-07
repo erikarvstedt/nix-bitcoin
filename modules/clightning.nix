@@ -80,41 +80,6 @@ let
         If left empty, no address is announced.
       '';
     };
-    replication = {
-      enable =  mkEnableOption "Native SQLITE3 database replication.";
-      dataDir = mkOption {
-        type = types.path;
-        default = "/var/backup/clightning";
-        description = "The data directory for clightning database replication.";
-      };
-      sshfsDestination = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        example = "user@10.0.0.1:";
-        description = ''
-          The SSH destination for which an SSHFS should be mounted. SSH key is
-          automatically generated and stored in secretsDir as
-          `clightning-replication-ssh`. If this option is not specified,
-          replication will simply be saved locally to replication.dataDir.
-        '';
-      };
-      sshfsPort = mkOption {
-        type = types.port;
-        default = 22;
-        description = ''
-          Port of sshfsDestination for SSHFS mount.
-        '';
-      };
-      encrypt = mkOption {
-        type = types.bool;
-        default = false;
-        description = ''
-          Whether to encrypt the replication with gocryptfs. Passwordfile is
-          automatically generated and stored in secretsDir as
-          `clightning-replication-password`.
-        '';
-      };
-    };
     tor = nbLib.tor;
   };
 
@@ -134,7 +99,6 @@ let
     bitcoin-rpcuser=${config.services.bitcoind.rpc.users.public.name}
     rpc-file-mode=0660
     log-timestamps=false
-    ${optionalString cfg.replication.enable "wallet=sqlite3:///${cfg.dataDir}/${network}/lightningd.sqlite3:${cfg.replication.dataDir}/${if cfg.replication.encrypt then "md" else "bd"}/lightningd.sqlite3"}
     ${cfg.extraConfig}
   '';
 
@@ -160,10 +124,7 @@ in {
 
     systemd.tmpfiles.rules = [
       "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ]
-    ++ optional cfg.replication.enable "d '${cfg.replication.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ++ optional cfg.replication.enable "d '${cfg.replication.dataDir}/bd' 0770 ${cfg.user} ${cfg.group} - -"
-    ++ optional cfg.replication.encrypt "d '${cfg.replication.dataDir}/md' 0770 ${cfg.user} ${cfg.group} - -";
+    ];
 
     systemd.services.clightning = {
       path  = [ nbPkgs.bitcoind ];
@@ -187,7 +148,7 @@ in {
         User = cfg.user;
         Restart = "on-failure";
         RestartSec = "10s";
-        ReadWritePaths = [ cfg.dataDir ] ++ optional cfg.replication.enable "${cfg.replication.dataDir}";
+        ReadWritePaths = [ cfg.dataDir ];
       } // nbLib.allowedIPAddresses cfg.tor.enforce;
       # Wait until the rpc socket appears
       postStart = ''
@@ -199,38 +160,6 @@ in {
       '';
     };
 
-    systemd.services.clightning-prepare-replication = mkIf (cfg.replication.sshfsDestination != null || cfg.replication.encrypt) {
-      description = "Prepare volume for clightning direct SQLITE3 replication.";
-      wantedBy = [ "clightning.service" ];
-      requiredBy = [ "clightning.service" ];
-      before = [ "clightning.service" ];
-      after = [ "setup-secrets.service" ];
-      path = [ pkgs.util-linux ];
-      script = ''
-        ${optionalString (cfg.replication.sshfsDestination != null) ''
-          ${pkgs.sshfs}/bin/sshfs ${cfg.replication.sshfsDestination} -p ${toString cfg.replication.sshfsPort} ${cfg.replication.dataDir}/bd \
-          -o allow_other,reconnect,ServerAliveInterval=15,IdentityFile=${config.nix-bitcoin.secretsDir}/clightning-replication-ssh
-        ''}
-        ${optionalString cfg.replication.encrypt ''
-          cryptLock='${cfg.replication.dataDir}/bd/gocryptfs.conf'
-          uid=$(id -u ${cfg.user})
-          gid=$(id -g ${cfg.user})
-          if [[ ! -e $cryptLock ]]; then
-            ${pkgs.gocryptfs}/bin/gocryptfs -allow_other -force_owner "$uid:$gid" \
-            -init -passfile ${config.nix-bitcoin.secretsDir}/clightning-replication-password \
-            ${cfg.replication.dataDir}/bd
-          fi
-          ${pkgs.gocryptfs}/bin/gocryptfs -allow_other -force_owner "$uid:$gid" \
-          -passfile ${config.nix-bitcoin.secretsDir}/clightning-replication-password \
-          ${cfg.replication.dataDir}/bd ${cfg.replication.dataDir}/md
-        ''}
-      '';
-      serviceConfig = {
-        RemainAfterExit = "yes";
-        Type = "oneshot";
-      };
-    };
-
     users.users.${cfg.user} = {
       isSystemUser = true;
       group = cfg.group;
@@ -238,15 +167,5 @@ in {
     };
     users.groups.${cfg.group} = {};
     nix-bitcoin.operator.groups = [ cfg.group ];
-
-    nix-bitcoin.secrets.clightning-replication-password.user = cfg.user;
-    nix-bitcoin.generateSecretsCmds.clightning-replication-password = ''
-      makePasswordSecret clightning-replication-password
-    '';
-    nix-bitcoin.secrets.clightning-replication-ssh.user = cfg.user;
-    nix-bitcoin.secrets.clightning-replication-ssh.permissions = "0400";
-    nix-bitcoin.generateSecretsCmds.clightning-replication-ssh = ''
-      ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -f clightning-replication-ssh -q -N ""
-    '';
   };
 }
