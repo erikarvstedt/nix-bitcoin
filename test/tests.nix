@@ -42,6 +42,7 @@ let
       };
 
       tests.clightning = cfg.clightning.enable;
+      test.data.clightning-replication = cfg.clightning.replication.enable;
       services.clightning.replication = {
         enable = true;
         encrypt = true;
