@@ -16,7 +16,7 @@ let
 
         When `encrypt` is `false`, file `lightningd.sqlite3` is written to the destination.
         When `encrypt` is `true`, directory `lightningd-db` is written to the destination.
-        It includes the encrypted database file name and contents, and gocryptfs metadata.
+        It includes the encrypted database and gocryptfs metadata.
 
         See also: https://github.com/ElementsProject/lightning/blob/master/doc/BACKUP.md
       '';
