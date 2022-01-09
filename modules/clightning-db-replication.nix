@@ -12,7 +12,7 @@ let
         each channel update.
 
         For setting the destination, you can either define option `sshfs.destination`
-        or `localDirectory`.
+        or `local.directory`.
 
         When `encrypt` is `false`, file `lightningd.sqlite3` is written to the destination.
         When `encrypt` is `true`, directory `lightningd-db` is written to the destination.
@@ -48,21 +48,32 @@ let
         description = "SSH options used for mounting the SSHFS.";
       };
     };
-    localDirectory = mkOption {
-      type = types.nullOr types.path;
-      default = null;
-      example = "/var/backup/clightning";
-      description = ''
-        This option can be specified instead of `sshfs.destination` to enable
-        replication to a local directory.
-        The directory
-          - must already exist when `clightning.service` (or `clightning-replication-mounts.service`
-            if `encrypt` is `true`) starts.
-          - must have write permissions for the `clightning` user.
+    local = {
+      directory = mkOption {
+        type = types.nullOr types.path;
+        default = null;
+        example = "/var/backup/clightning";
+        description = ''
+          This option can be specified instead of `sshfs.destination` to enable
+          replication to a local directory.
 
-        This option is also useful if you want to use a custom remote destination,
-        like a NFS or SMB share.
-      '';
+          If `local.setupDirectory` is disabled, the directory
+            - must already exist when `clightning.service` (or `clightning-replication-mounts.service`
+              if `encrypt` is `true`) starts.
+            - must have write permissions for the `clightning` user.
+
+          This option is also useful if you want to use a custom remote destination,
+          like a NFS or SMB share.
+        '';
+      };
+      setupDirectory = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          Create `local.directory` if it doesn't exist and set write permissions
+          for the `clightning` user.
+        '';
+      };
     };
     encrypt = mkOption {
       type = types.bool;
@@ -81,10 +92,12 @@ let
   secretsDir = config.nix-bitcoin.secretsDir;
   network = config.services.bitcoind.makeNetworkName "bitcoin" "regtest";
   user = clightning.user;
+  group = clightning.group;
 
   useSshfs = cfg.sshfs.destination != null;
   useMounts = useSshfs || cfg.encrypt;
 
+  localDir = cfg.local.directory;
   mountsDir = "/var/lib/clightning-replication";
   sshfsDir = "${mountsDir}/sshfs";
   plaintextDir = "${mountsDir}/plaintext";
@@ -94,25 +107,28 @@ let
     else if useSshfs then
       sshfsDir
     else
-      cfg.localDirectory;
+      localDir;
 in {
   inherit options;
 
   config = mkIf cfg.enable {
     assertions = [
-      { assertion = useSshfs || (cfg.localDirectory != null);
+      { assertion = useSshfs || (localDir != null);
         message = ''
           services.clightning.replication: One of `sshfs.destination` or
-          `localDirectory` must be set.
+          `local.directory` must be set.
         '';
       }
-      { assertion = !useSshfs || (cfg.localDirectory == null);
+      { assertion = !useSshfs || (localDir == null);
         message = ''
           services.clightning.replication: Only one of `sshfs.destination` and
-          `localDirectory` must be set.
+          `local.directory` must be set.
         '';
       }
     ];
+
+    systemd.tmpfiles.rules = optional (localDir != null && cfg.local.setupDirectory)
+      "d '${localDir}' 0770 ${user} ${group} - -";
 
     services.clightning.extraConfig = let
       mainDB = "${clightning.dataDir}/${network}/lightningd.sqlite3";
@@ -127,7 +143,7 @@ in {
       # FUSE mounts can only be set up as `ReadWritePaths` by systemd when they
       # are accessible by root. This would require FUSE-mounting with option
       # `allow_other`.
-      (if useMounts then mountsDir else cfg.localDirectory)
+      (if useMounts then mountsDir else localDir)
     ];
 
     systemd.services.clightning-replication-mounts = mkIf useMounts {
@@ -154,7 +170,7 @@ in {
             ] ++ cfg.sshfs.sshOptions)}
         '' +
         optionalString cfg.encrypt ''
-          cipherDir="${if useSshfs then sshfsDir else cfg.localDirectory}/lightningd-db"
+          cipherDir="${if useSshfs then sshfsDir else localDir}/lightningd-db"
           mkdir -p "$cipherDir" ${plaintextDir}
           gocryptfs=(${pkgs.gocryptfs}/bin/gocryptfs -passfile '${secretsDir}'/clightning-replication-password)
           # 1. init

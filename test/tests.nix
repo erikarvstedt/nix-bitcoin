@@ -45,7 +45,7 @@ let
       services.clightning.replication = {
         enable = true;
         encrypt = true;
-        localDirectory = "/tmp";
+        local.directory = "/var/backup/clightning";
       };
       # When WAN is disabled, DNS bootstrapping slows down service startup by ~15 s.
       services.clightning.extraConfig = mkIf config.test.noConnections "disable-dns";
