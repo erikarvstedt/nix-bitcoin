@@ -149,9 +149,9 @@ in {
         optionalString useSshfs ''
           mkdir -p ${sshfsDir}
           ${pkgs.sshfs}/bin/sshfs ${cfg.sshfs.destination} -p ${toString cfg.sshfs.port} ${sshfsDir} \
-            -o ${builtins.concatStringsSep "," [
+            -o ${builtins.concatStringsSep "," ([
               "IdentityFile='${secretsDir}'/clightning-replication-ssh-key"
-            ] ++ cfg.sshfs.sshOptions}
+            ] ++ cfg.sshfs.sshOptions)}
         '' +
         optionalString cfg.encrypt ''
           cipherDir="${if useSshfs then sshfsDir else cfg.localDirectory}/lightningd-db"
