@@ -137,14 +137,17 @@ in {
       wallet=sqlite3://${mainDB}:${replicaDB}
     '';
 
-    systemd.services.clightning.serviceConfig.ReadWritePaths = [
-      # We can't simply set `destDir` here because it might point to
-      # a FUSE mount.
-      # FUSE mounts can only be set up as `ReadWritePaths` by systemd when they
-      # are accessible by root. This would require FUSE-mounting with option
-      # `allow_other`.
-      (if useMounts then mountsDir else localDir)
-    ];
+    systemd.services.clightning = {
+      bindsTo = mkIf useMounts [ "clightning-replication-mounts.server" ];
+      serviceConfig.ReadWritePaths = [
+        # We can't simply set `destDir` here because it might point to
+        # a FUSE mount.
+        # FUSE mounts can only be set up as `ReadWritePaths` by systemd when they
+        # are accessible by root. This would require FUSE-mounting with option
+        # `allow_other`.
+        (if useMounts then mountsDir else localDir)
+      ];
+    };
 
     systemd.services.clightning-replication-mounts = mkIf useMounts {
       requiredBy = [ "clightning.service" ];
