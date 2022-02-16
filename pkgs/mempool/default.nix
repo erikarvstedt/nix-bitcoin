@@ -70,7 +70,7 @@ rec {
   });
 
   mempool-frontend =
-    import ./frontend.nix srcFrontend nodeEnv frontendPkgs nodejs meta fetchurl rsync;
+    import ./frontend.nix srcFrontend nodeEnv frontendPkgs nodejs meta fetchurl rsync pkgs;
 
   meta = with lib; {
     description = "Bitcoin blockchain and mempool explorer";
