@@ -25,7 +25,6 @@ generatePkg() {
     --lock $src/$component/package-lock.json \
     --output node-packages-$component.nix \
     --composition /dev/null \
-    --strip-optional-dependencies \
     --no-copy-node-env
 
   # Delete reference to temporary src
