@@ -35,6 +35,12 @@ nodeEnv.buildNodePackage (frontendPkgs.args // {
     # internet. Disable this script and instead add the assets manually after building.
     true > sync-assets.js
 
+    # TODO-EXTERNAL:
+    # `npm run build` produces incorrect output if a parent dir of $PWD is named `node_modules`:
+    # https://github.com/mempool/mempool/issues/1256
+    # This is the case here, where $PWD equals $out/lib/node_modules/mempool-frontend
+    mv $PWD $out/lib/tmp
+    cd $out/lib/tmp
     npm run build
 
     # Add assets that would otherwise be downloaded by sync-assets.js
@@ -45,6 +51,7 @@ nodeEnv.buildNodePackage (frontendPkgs.args // {
 
     # Move build to $out
     mv dist/mempool/browser/* $out
+
     # Remove temporary files
     rm -r $out/lib
   '';
