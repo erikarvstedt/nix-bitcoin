@@ -300,18 +300,6 @@ in {
           }
 
           # mainnet API
-          location /api/v1/donations {
-                  proxy_pass https://mempool.space;
-          }
-          location /api/v1/donations/images {
-                  proxy_pass https://mempool.space;
-          }
-          location /api/v1/contributors {
-                  proxy_pass https://mempool.space;
-          }
-          location /api/v1/contributors/images {
-                  proxy_pass https://mempool.space;
-          }
           location /api/v1/ws {
                   proxy_pass http://${cfg.backendAddress}:${toString cfg.backendPort}/;
                   proxy_http_version 1.1;
