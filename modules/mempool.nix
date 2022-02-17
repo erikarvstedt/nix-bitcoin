@@ -59,29 +59,29 @@ let
     (builtins.toJSON
       {
         MEMPOOL = {
-	        NETWORK = "mainnet";
-	        BACKEND = "electrum";
-	        HTTP_PORT = cfg.backendPort;
-	        CACHE_DIR = "/run/mempool";
+          NETWORK = "mainnet";
+          BACKEND = "electrum";
+          HTTP_PORT = cfg.backendPort;
+          CACHE_DIR = "/run/mempool";
         };
         CORE_RPC = {
-	        HOST = bitcoind.rpc.address;
-	        PORT = bitcoind.rpc.port;
-	        USERNAME = bitcoind.rpc.users.public.name;
-	        PASSWORD = "@btcRpcPassword@";
+          HOST = bitcoind.rpc.address;
+          PORT = bitcoind.rpc.port;
+          USERNAME = bitcoind.rpc.users.public.name;
+          PASSWORD = "@btcRpcPassword@";
         };
         ELECTRUM = {
-	        HOST = electrs.address;
-	        PORT = electrs.port;
-	        TLS_ENABLED = false;
+          HOST = electrs.address;
+          PORT = electrs.port;
+          TLS_ENABLED = false;
         };
         DATABASE = {
-	        ENABLED = true;
-	        HOST = mysqlAddress;
-	        PORT = config.services.mysql.port;
-	        DATABASE = "mempool";
-	        USERNAME = cfg.user;
-	        PASSWORD = "@mempoolDbPassword@";
+          ENABLED = true;
+          HOST = mysqlAddress;
+          PORT = config.services.mysql.port;
+          DATABASE = "mempool";
+          USERNAME = cfg.user;
+          PASSWORD = "@mempoolDbPassword@";
         };
       }
     );
@@ -143,118 +143,118 @@ in {
       recommendedTlsSettings = true;
       eventsConfig = ''
         worker_connections 9000;
-	multi_accept on;
+  multi_accept on;
       '';
       appendHttpConfig = ''
-	server_name_in_redirect off;
+  server_name_in_redirect off;
 
-	# reset timed out connections freeing ram
-	reset_timedout_connection on;
-	# maximum time between packets the client can pause when sending nginx any data
-	client_body_timeout 10s;
-	# maximum time the client has to send the entire header to nginx
-	client_header_timeout 10s;
-	# timeout which a single keep-alive client connection will stay open
-	# maximum time between packets nginx is allowed to pause when sending the client data
-	send_timeout 10s;
+  # reset timed out connections freeing ram
+  reset_timedout_connection on;
+  # maximum time between packets the client can pause when sending nginx any data
+  client_body_timeout 10s;
+  # maximum time the client has to send the entire header to nginx
+  client_header_timeout 10s;
+  # timeout which a single keep-alive client connection will stay open
+  # maximum time between packets nginx is allowed to pause when sending the client data
+  send_timeout 10s;
 
-	# number of requests per connection, does not affect SPDY
-	keepalive_requests 100;
+  # number of requests per connection, does not affect SPDY
+  keepalive_requests 100;
 
-	gzip_min_length 1000;
+  gzip_min_length 1000;
 
-	# proxy cache
-	proxy_cache off;
-	proxy_cache_path /var/cache/nginx keys_zone=cache:20m levels=1:2 inactive=600s max_size=500m;
+  # proxy cache
+  proxy_cache off;
+  proxy_cache_path /var/cache/nginx keys_zone=cache:20m levels=1:2 inactive=600s max_size=500m;
 
-	# exempt localhost from rate limit
-	geo $limited_ip {
-		default		1;
-		127.0.0.1	0;
-	}
-	map $limited_ip $limited_ip_key {
-		1 $binary_remote_addr;
-		0 \'\';
-	}
+  # exempt localhost from rate limit
+  geo $limited_ip {
+    default    1;
+    127.0.0.1  0;
+  }
+  map $limited_ip $limited_ip_key {
+    1 $binary_remote_addr;
+    0 \'\';
+  }
 
-	# rate limit requests
-	limit_req_zone $limited_ip_key zone=api:5m rate=200r/m;
-	limit_req_zone $limited_ip_key zone=electrs:5m rate=2000r/m;
-	limit_req_status 429;
+  # rate limit requests
+  limit_req_zone $limited_ip_key zone=api:5m rate=200r/m;
+  limit_req_zone $limited_ip_key zone=electrs:5m rate=2000r/m;
+  limit_req_status 429;
 
-	# rate limit connections
-	limit_conn_zone $limited_ip_key zone=websocket:10m;
-	limit_conn_status 429;
+  # rate limit connections
+  limit_conn_zone $limited_ip_key zone=websocket:10m;
+  limit_conn_status 429;
 
-	map $http_accept_language $header_lang {
-		default en-US;
-		~*^en-US en-US;
-		~*^en en-US;
-	        ~*^ar ar;
-	        ~*^ca ca;
-	        ~*^cs cs;
-	        ~*^de de;
-	        ~*^es es;
-	        ~*^fa fa;
-	        ~*^fr fr;
-	        ~*^ko ko;
-	        ~*^it it;
-	        ~*^he he;
-	        ~*^ka ka;
-	        ~*^hu hu;
-	        ~*^mk mk;
-	        ~*^nl nl;
-	        ~*^ja ja;
-	        ~*^nb nb;
-	        ~*^pl pl;
-	        ~*^pt pt;
-	        ~*^ro ro;
-	        ~*^ru ru;
-	        ~*^sl sl;
-	        ~*^fi fi;
-	        ~*^sv sv;
-	        ~*^th th;
-	        ~*^tr tr;
-	        ~*^uk uk;
-	        ~*^vi vi;
-	        ~*^zh zh;
-	        ~*^hi hi;
-	}
+  map $http_accept_language $header_lang {
+    default en-US;
+    ~*^en-US en-US;
+    ~*^en en-US;
+          ~*^ar ar;
+          ~*^ca ca;
+          ~*^cs cs;
+          ~*^de de;
+          ~*^es es;
+          ~*^fa fa;
+          ~*^fr fr;
+          ~*^ko ko;
+          ~*^it it;
+          ~*^he he;
+          ~*^ka ka;
+          ~*^hu hu;
+          ~*^mk mk;
+          ~*^nl nl;
+          ~*^ja ja;
+          ~*^nb nb;
+          ~*^pl pl;
+          ~*^pt pt;
+          ~*^ro ro;
+          ~*^ru ru;
+          ~*^sl sl;
+          ~*^fi fi;
+          ~*^sv sv;
+          ~*^th th;
+          ~*^tr tr;
+          ~*^uk uk;
+          ~*^vi vi;
+          ~*^zh zh;
+          ~*^hi hi;
+  }
 
-	map $cookie_lang $lang {
-		default $header_lang;
-		~*^en-US en-US;
-		~*^en en-US;
-	        ~*^ar ar;
-	        ~*^ca ca;
-	        ~*^cs cs;
-	        ~*^de de;
-	        ~*^es es;
-	        ~*^fa fa;
-	        ~*^fr fr;
-	        ~*^ko ko;
-	        ~*^it it;
-	        ~*^he he;
-	        ~*^ka ka;
-	        ~*^hu hu;
-	        ~*^mk mk;
-	        ~*^nl nl;
-	        ~*^ja ja;
-	        ~*^nb nb;
-	        ~*^pl pl;
-	        ~*^pt pt;
-	        ~*^ro ro;
-	        ~*^ru ru;
-	        ~*^sl sl;
-	        ~*^fi fi;
-	        ~*^sv sv;
-	        ~*^th th;
-	        ~*^tr tr;
-	        ~*^uk uk;
-	        ~*^vi vi;
-	        ~*^zh zh;
-	        ~*^hi hi;
-	}
+  map $cookie_lang $lang {
+    default $header_lang;
+    ~*^en-US en-US;
+    ~*^en en-US;
+          ~*^ar ar;
+          ~*^ca ca;
+          ~*^cs cs;
+          ~*^de de;
+          ~*^es es;
+          ~*^fa fa;
+          ~*^fr fr;
+          ~*^ko ko;
+          ~*^it it;
+          ~*^he he;
+          ~*^ka ka;
+          ~*^hu hu;
+          ~*^mk mk;
+          ~*^nl nl;
+          ~*^ja ja;
+          ~*^nb nb;
+          ~*^pl pl;
+          ~*^pt pt;
+          ~*^ro ro;
+          ~*^ru ru;
+          ~*^sl sl;
+          ~*^fi fi;
+          ~*^sv sv;
+          ~*^th th;
+          ~*^tr tr;
+          ~*^uk uk;
+          ~*^vi vi;
+          ~*^zh zh;
+          ~*^hi hi;
+  }
       '';
       virtualHosts."mempool" = {
         root = "/var/www/mempool/browser";
