@@ -297,6 +297,13 @@ in {
         id = 31;
         connections = [ "bitcoind" ];
       };
+      mysql = {
+        id = 32;
+      };
+      mempool = {
+        id = 33;
+        connections = [ "bitcoind" "electrs" "fulcrum" "nginx" "mysql" ];
+      };
     };
 
     services.bitcoind = {
@@ -356,6 +363,8 @@ in {
     services.rtl.address = netns.rtl.address;
 
     services.clightning-rest.address = netns.clightning-rest.address;
+
+    services.mempool.backendAddress = netns.mempool.address;
   }
   ]);
 }
