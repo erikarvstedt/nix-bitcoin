@@ -12,6 +12,9 @@ let self = {
   joinmarket = pkgs.callPackage ./joinmarket { inherit (self) nbPython3Packages; };
   liquid-swap = pkgs.python3Packages.callPackage ./liquid-swap { };
   rtl = pkgs.callPackage ./rtl { };
+  inherit (pkgs.callPackage ./mempool { })
+    mempool-backend
+    mempool-frontend;
   secp256k1 = pkgs.callPackage ./secp256k1 { };
   spark-wallet = pkgs.callPackage ./spark-wallet { };
 
