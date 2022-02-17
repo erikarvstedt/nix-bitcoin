@@ -93,8 +93,8 @@ in {
   inherit options;
 
   config = mkIf cfg.enable {
-    services.electrs.enable = true;
     services.bitcoind.txindex = true;
+    services.electrs.enable = true;
     services.mysql = {
       enable = true;
       settings.mysqld.skip_name_resolve = true;
