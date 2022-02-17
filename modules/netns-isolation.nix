@@ -287,6 +287,13 @@ in {
                       ++ optional (config.services.rtl.nodes.lnd) "lnd"
                       ++ optional config.services.rtl.loop "lightning-loop";
       };
+      mempool = {
+        id = 30;
+        connections = [ "bitcoind" "electrs" "nginx" "mysql" ];
+      };
+      mysql = {
+        id = 31;
+      };
     };
 
     services.bitcoind = {
@@ -346,6 +353,8 @@ in {
       requires = [ "netns-rtl.service" ] ;
       after = [ "netns-rtl.service" ];
     };
+
+    services.mempool.backendAddress = netns.mempool.address;
   }
   ]);
 }

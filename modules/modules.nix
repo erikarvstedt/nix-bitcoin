@@ -19,6 +19,7 @@
     ./lightning-pool.nix
     ./charge-lnd.nix
     ./rtl.nix
+    ./mempool.nix
     ./electrs.nix
     ./liquid.nix
     ./btcpayserver.nix

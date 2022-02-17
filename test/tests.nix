@@ -69,6 +69,8 @@ let
       '');
       services.rtl.extraCurrency = mkDefault "CHF";
 
+      tests.mempool = cfg.mempool.enable;
+
       tests.spark-wallet = cfg.spark-wallet.enable;
 
       tests.lnd = cfg.lnd.enable;
@@ -206,6 +208,7 @@ let
       test.features.clightningPlugins = true;
       services.liquidd.enable = true;
       services.rtl.enable = true;
+      services.mempool.enable = true;
       services.spark-wallet.enable = true;
       services.lnd.enable = true;
       services.lightning-loop.enable = true;
