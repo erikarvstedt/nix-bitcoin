@@ -55,35 +55,36 @@ let
   else
     "localhost";
 
-  configFile = builtins.toFile "mempool-config" ''
-    {
-      "MEMPOOL": {
-	"NETWORK": "mainnet",
-	"BACKEND": "electrum",
-	"HTTP_PORT": ${toString cfg.backendPort},
-	"CACHE_DIR": "/run/mempool"
-      },
-      "CORE_RPC": {
-	"HOST": "${bitcoind.rpc.address}",
-	"PORT": ${toString bitcoind.rpc.port},
-	"USERNAME": "${bitcoind.rpc.users.public.name}",
-	"PASSWORD": "@btcRpcPassword@"
-      },
-      "ELECTRUM": {
-	"HOST": "${electrs.address}",
-	"PORT": ${toString electrs.port},
-	"TLS_ENABLED": false
-      },
-      "DATABASE": {
-	"ENABLED": true,
-	"HOST": "${mysqlAddress}",
-	"PORT": ${toString config.services.mysql.port},
-	"DATABASE": "mempool",
-	"USERNAME": "${cfg.user}",
-	"PASSWORD": "@mempoolDbPassword@"
+  configFile = builtins.toFile "mempool-config"
+    (builtins.toJSON
+      {
+        MEMPOOL = {
+	        NETWORK = "mainnet";
+	        BACKEND = "electrum";
+	        HTTP_PORT = cfg.backendPort;
+	        CACHE_DIR = "/run/mempool";
+        };
+        CORE_RPC = {
+	        HOST = bitcoind.rpc.address;
+	        PORT = bitcoind.rpc.port;
+	        USERNAME = bitcoind.rpc.users.public.name;
+	        PASSWORD = "@btcRpcPassword@";
+        };
+        ELECTRUM = {
+	        HOST = electrs.address;
+	        PORT = electrs.port;
+	        TLS_ENABLED = false;
+        };
+        DATABASE = {
+	        ENABLED = true;
+	        HOST = mysqlAddress;
+	        PORT = config.services.mysql.port;
+	        DATABASE = "mempool";
+	        USERNAME = cfg.user;
+	        PASSWORD = "@mempoolDbPassword@";
+        };
       }
-    }
-  '';
+    );
 
   inherit (config.services)
     bitcoind
