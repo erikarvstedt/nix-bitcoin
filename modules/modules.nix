@@ -20,6 +20,7 @@
     ./charge-lnd.nix
     ./rtl.nix
     ./electrs.nix
+    ./fulcrum.nix
     ./liquid.nix
     ./btcpayserver.nix
     ./joinmarket.nix
