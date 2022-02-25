@@ -21,6 +21,7 @@
     ./rtl.nix
     ./mempool.nix
     ./electrs.nix
+    ./fulcrum.nix
     ./liquid.nix
     ./btcpayserver.nix
     ./joinmarket.nix
