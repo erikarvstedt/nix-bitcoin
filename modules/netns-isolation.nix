@@ -289,7 +289,7 @@ in {
       };
       mempool = {
         id = 30;
-        connections = [ "bitcoind" "electrs" "nginx" "mysql" ];
+        connections = [ "bitcoind" "electrs" "fulcrum" "nginx" "mysql" ];
       };
       mysql = {
         id = 31;

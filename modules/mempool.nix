@@ -28,6 +28,11 @@ let
       default = 8999;
       description = "Backend server port.";
     };
+    electrumServer = mkOption {
+      type = types.enum [ "electrs" "fulcrum" ];
+      default = "electrs";
+      description = "Electrum server implementation.";
+    };
     dataDir = mkOption {
       type = types.path;
       default = "/var/lib/mempool";
@@ -71,8 +76,8 @@ let
           PASSWORD = "@btcRpcPassword@";
         };
         ELECTRUM = {
-          HOST = electrs.address;
-          PORT = electrs.port;
+          HOST = "${cfg.electrumServer}.address";
+          PORT = "${cfg.electrumServer}.port";
           TLS_ENABLED = false;
         };
         DATABASE = {
@@ -88,13 +93,15 @@ let
 
   inherit (config.services)
     bitcoind
-    electrs;
+    electrs
+    fulcrum;
 in {
   inherit options;
 
   config = mkIf cfg.enable {
     services.bitcoind.txindex = true;
-    services.electrs.enable = true;
+    services.electrs.enable = mkIf (cfg.electrumServer == "electrs" ) true;
+    services.fulcrum.enable = mkIf (cfg.electrumServer == "fulcrum" ) true;
     services.mysql = {
       enable = true;
       settings.mysqld.skip_name_resolve = true;
@@ -111,8 +118,8 @@ in {
 
     systemd.services.mempool = {
       wantedBy = [ "multi-user.target" ];
-      requires = [ "electrs.service" ];
-      after = [ "electrs.service" "mysql.service" ];
+      requires = [ "${cfg.electrumServer}.service" ];
+      after = [ "${cfg.electrumServer}.service" "mysql.service" ];
       serviceConfig = nbLib.defaultHardening // {
         ExecStartPre = [
           (nbLib.script "mempool-setup-config" ''
