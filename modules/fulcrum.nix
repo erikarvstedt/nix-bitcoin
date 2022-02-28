@@ -69,6 +69,16 @@ in {
       { assertion = bitcoind.prune == 0;
         message = "fulcrum does not support bitcoind pruning.";
       }
+      { assertion =
+          !(config.services ? electrs)
+          || !config.services.electrs.enable
+          || config.services.electrs.port != cfg.port;
+        message = ''
+          Fulcrum and Electrs can't both bind to TCP RPC port 50001. Either
+          disable Fulcrum/Electrs or change services.electrs.port or
+          services.fulcrum.port to a port other than 50001.
+        '';
+      }
     ];
 
     services.bitcoind = {
