@@ -1,7 +1,6 @@
 { mkDerivation, lib, fetchFromGitHub, pkg-config
 , qmake
 , qtbase
-, jemalloc
 , rocksdb
 , zeromq
 }:
@@ -24,7 +23,6 @@ mkDerivation rec {
 
   buildInputs = [
     qtbase
-    jemalloc
     rocksdb
     zeromq
   ];
