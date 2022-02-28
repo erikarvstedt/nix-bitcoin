@@ -75,9 +75,11 @@ let
           USERNAME = bitcoind.rpc.users.public.name;
           PASSWORD = "@btcRpcPassword@";
         };
-        ELECTRUM = {
-          HOST = "${cfg.electrumServer}.address";
-          PORT = "${cfg.electrumServer}.port";
+        ELECTRUM = let
+          server = config.services.${cfg.electrumServer};
+        in {
+          HOST = server.address;
+          PORT = server.port;
           TLS_ENABLED = false;
         };
         DATABASE = {
