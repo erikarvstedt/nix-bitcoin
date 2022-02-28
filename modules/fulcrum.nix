@@ -11,7 +11,7 @@ let
     };
     port = mkOption {
       type = types.port;
-      default = 50002;
+      default = 50001;
       description = "Port to listen for RPC connections.";
     };
     dataDir = mkOption {
