@@ -25,6 +25,16 @@ let
         Run backup with the given frequency. If null, do not run automatically.
       '';
     };
+    maxFull = mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      example = 2;
+      description = ''
+        If non-null, delete all backups sets that are older than the count:th
+        last full backup (in other words, keep the last count full backups and
+        associated incremental sets).
+      '';
+    };
     postgresqlDatabases = mkOption {
       type = types.listOf types.str;
       default = [];
@@ -87,11 +97,12 @@ in {
         enable = true;
         extraFlags = [
           "--include-filelist" "${filelist}"
-          "--full-if-older-than" "1M"
         ];
+        fullIfOlderThan = "1M";
         targetUrl = cfg.destination;
         frequency = cfg.frequency;
         secretFile = "${config.nix-bitcoin.secretsDir}/backup-encryption-env";
+        cleanup.maxFull = cfg.maxFull;
       };
 
       systemd.services.duplicity = {
