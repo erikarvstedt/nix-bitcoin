@@ -3,7 +3,16 @@
 with lib;
 let
   options.services.backups = {
-    enable = mkEnableOption "Backups service";
+    enable = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Enable backups of node data.
+        This uses the NixOS duplicity service.
+        To further configure the backup, you can set NixOS options `services.duplicity.*`.
+        The `services.duplicity.cleanup.*` options are particularly useful.
+      '';
+    };
     with-bulk-data = mkOption {
       type = types.bool;
       default = false;
@@ -23,16 +32,6 @@ let
       default = null;
       description = ''
         Run backup with the given frequency. If null, do not run automatically.
-      '';
-    };
-    maxFull = mkOption {
-      type = types.nullOr types.int;
-      default = null;
-      example = 2;
-      description = ''
-        If non-null, delete all backups sets that are older than the count:th
-        last full backup (in other words, keep the last count full backups and
-        associated incremental sets).
       '';
     };
     postgresqlDatabases = mkOption {
@@ -98,11 +97,10 @@ in {
         extraFlags = [
           "--include-filelist" "${filelist}"
         ];
-        fullIfOlderThan = "1M";
+        fullIfOlderThan = mkDefault "1M";
         targetUrl = cfg.destination;
         frequency = cfg.frequency;
         secretFile = "${config.nix-bitcoin.secretsDir}/backup-encryption-env";
-        cleanup.maxFull = cfg.maxFull;
       };
 
       systemd.services.duplicity = {
