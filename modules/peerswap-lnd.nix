@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-let 
+let
   nbPkgs = config.nix-bitcoin.pkgs;
   cfg = config.services.peerswap-lnd;
   nbLib = config.nix-bitcoin.lib;
@@ -100,7 +100,7 @@ in
 {
   inherit options;
   config = mkIf cfg.enable {
-      
+
     services.lnd.enable = true;
     services.lnd.macaroons.peerswap = {
       user = cfg.user;
@@ -112,7 +112,7 @@ in
     systemd.tmpfiles.rules = [
       "d '${cfg.dataDir}' 0770 ${lnd.user} ${lnd.group} - -"
     ];
-    
+
 
     systemd.services.peerswap-lnd = {
       description = "peerswap initialize script";
