@@ -50,6 +50,7 @@ let
         nbPkgs = config.nix-bitcoin.pkgs;
         pluginPkgs = nbPkgs.clightning-plugins // {
           clboss.path = "${nbPkgs.clboss}/bin/clboss";
+          peerswap.path = "${nbPkgs.peerswap-cln}/bin/peerswap";
         };
       in map (plugin: pluginPkgs.${plugin}.path) enabled;
       # Torified 'dig' subprocesses of clboss don't respond to SIGTERM and keep
@@ -131,6 +132,7 @@ let
         clboss.enable = true;
         helpme.enable = true;
         monitor.enable = true;
+        peerswap.enable = true;
         prometheus.enable = true;
         rebalance.enable = true;
         summary.enable = true;
