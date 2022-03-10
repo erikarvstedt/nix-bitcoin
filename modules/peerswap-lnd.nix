@@ -64,49 +64,52 @@ let
       };
       cli = mkOption {
         default = pkgs.writeScriptBin "pscli" ''
-        ${cfg.package}/bin/pscli --rpchost=${nbLib.addressWithPort cfg.rpcAddress cfg.rpcPort} "$@"
-      '';
+          ${cfg.package}/bin/pscli --rpchost=${nbLib.addressWithPort cfg.rpcAddress cfg.rpcPort} "$@"
+        '';
         defaultText = "(See source)";
         description = "Binary to connect with the peerswap instance.";
       };
     };
   };
 
-  nbPkgs = config.nix-bitcoin.pkgs;
   cfg = config.services.peerswap-lnd;
   nbLib = config.nix-bitcoin.lib;
+  nbPkgs = config.nix-bitcoin.pkgs;
 
-  configFile = builtins.toFile "peerswap.conf" ''
-    ${optionalString (cfg.acceptallpeers != null) "accept_all_peers=${toString cfg.acceptallpeers}"}
+  inherit (config.services)
+    liquidd
+    lnd;
+
+  configFile = builtins.toFile "peerswap.conf" (''
     host=${nbLib.addressWithPort cfg.rpcAddress cfg.rpcPort}
     lnd.macaroonpath=${cfg.dataDir}/peerswap.macaroon
     lnd.tlscertpath=${lnd.certPath}
     lnd.host=${nbLib.addressWithPort lnd.rpcAddress lnd.rpcPort}
     bitcoinswaps=${toString cfg.enableBitcoin}
     datadir=${cfg.dataDir}
-    ${optionalString cfg.enableLiquid ''
-    liquid.rpchost=http://${config.services.liquidd.rpc.address}
-    liquid.rpcport=${toString config.services.liquidd.rpc.port}
-    liquid.rpcuser=${config.services.liquidd.rpcuser}
+  '' + optionalString (cfg.acceptallpeers != null) ''
+    accept_all_peers=${toString cfg.acceptallpeers}
+  '' + optionalString cfg.enableLiquid ''
+    liquid.rpchost=http://${liquidd.rpc.address}
+    liquid.rpcport=${toString liquidd.rpc.port}
+    liquid.rpcuser=${liquidd.rpcuser}
     liquid.rpcpasswordfile=${config.nix-bitcoin.secretsDir}/liquid-rpcpassword
     liquid.network=liquidv1
     liquid.rpcwallet=${cfg.liquidRpcWallet}
-    ''}
-    ${lib.concatMapStrings (nodeid: "allowlisted_peers=${nodeid}\n") cfg.allowlist}
-  '';
-
-  inherit (config.services)
-    liquidd
-    lnd;
+  '' +
+    concatMapStringsSep "\n" (nodeid: "allowlisted_peers=${nodeid}") cfg.allowlist
+  );
 in
 {
   inherit options;
-  config = mkIf cfg.enable {
 
-    services.lnd.enable = true;
-    services.lnd.macaroons.peerswap = {
-      user = cfg.user;
-      permissions = ''{"entity": "info","action": "read"},{"entity": "onchain","action": "write"},{"entity": "onchain","action": "read"},{"entity": "invoices","action": "write"},{"entity": "invoices","action": "read"},{"entity": "offchain","action": "write"},{"entity": "offchain","action": "read"},{"entity": "peers","action": "read"}'';
+  config = mkIf cfg.enable {
+    services.lnd = {
+      enable = true;
+      macaroons.peerswap = {
+        user = cfg.user;
+        permissions = ''{"entity":"info","action":"read"},{"entity":"onchain","action":"write"},{"entity":"onchain","action":"read"},{"entity":"invoices","action":"write"},{"entity":"invoices","action":"read"},{"entity":"offchain","action":"write"},{"entity":"offchain","action":"read"},{"entity":"peers","action":"read"}'';
+      };
     };
 
     environment.systemPackages = [ cfg.package (hiPrio cfg.cli) ];
@@ -115,15 +118,13 @@ in
       "d '${cfg.dataDir}' 0770 ${lnd.user} ${lnd.group} - -"
     ];
 
-
     systemd.services.peerswap-lnd = {
       description = "peerswap initialize script";
       wantedBy = [ "multi-user.target" ];
       requires = [ "lnd.service" ];
       after = [ "lnd.service" ];
       preStart = ''
-      macaroonDir=${cfg.dataDir}
-      ln -sf /run/lnd/peerswap.macaroon $macaroonDir
+        ln -sf /run/lnd/peerswap.macaroon ${cfg.dataDir}
       '';
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/peerswapd --configfile=${configFile}";
@@ -138,9 +139,9 @@ in
       isSystemUser = true;
       group = cfg.group;
       home = cfg.dataDir;
-      extraGroups =
-        [ lnd.group ]
-        ++ optional cfg.enableLiquid liquidd.group;
+      extraGroups = [
+        lnd.group
+      ] ++ optional cfg.enableLiquid liquidd.group;
     };
     users.groups.${cfg.group} = {};
   };
