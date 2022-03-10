@@ -2,77 +2,79 @@
 
 with lib;
 let
+  options = {
+    services.peerswap-lnd = {
+      enable = mkEnableOption "peerswap lnd";
+      package = mkOption {
+        type = types.package;
+        default = config.nix-bitcoin.pkgs.peerswap-lnd;
+        description = "The package providing peerswap binaries.";
+      };
+      allowlist = mkOption {
+        type = types.listOf types.str;
+        default = [""];
+        description = ''
+        Only node ids in the allowlist can send a peerswap request to your node.
+      '';
+      };
+      acceptallpeers = mkOption {
+        type = types.nullOr types.bool;
+        default = null;
+        description = "UNSAFE Allow all peers to swap with your node";
+      };
+      rpcAddress = mkOption {
+        type = types.str;
+        default = "localhost";
+        description = "Address to listen for gRPC connections.";
+      };
+      rpcPort = mkOption {
+        type = types.port;
+        default = 42069;
+        description = "Port to listen for gRPC connections.";
+      };
+      dataDir = mkOption {
+        type = types.path;
+        default = "/var/lib/peerswap-lnd";
+        description = "The data directory for peerswap.";
+      };
+      enableLiquid = mkOption {
+        type = types.bool;
+        default = config.services.liquidd.enable;
+        description = "enables l-btc swaps";
+      };
+      enableBitcoin = mkOption {
+        type = types.bool;
+        default = true;
+        description = "enables bitcoin swaps";
+      };
+      liquidRpcWallet = mkOption {
+        type = types.str;
+        default = "peerswap";
+        description = "The liquid rpc wallet to use peerswap with";
+      };
+      user = mkOption {
+        type = types.str;
+        default = "peerswap";
+        description = "The user as which to run PeerSwap.";
+      };
+      group = mkOption {
+        type = types.str;
+        default = cfg.user;
+        description = "The group as which to run PeerSwap.";
+      };
+      cli = mkOption {
+        default = pkgs.writeScriptBin "pscli" ''
+        ${cfg.package}/bin/pscli --rpchost=${nbLib.addressWithPort cfg.rpcAddress cfg.rpcPort} "$@"
+      '';
+        defaultText = "(See source)";
+        description = "Binary to connect with the peerswap instance.";
+      };
+    };
+  };
+
   nbPkgs = config.nix-bitcoin.pkgs;
   cfg = config.services.peerswap-lnd;
   nbLib = config.nix-bitcoin.lib;
-
-  options.services.peerswap-lnd = {
-    enable = mkEnableOption "peerswap lnd";
-    package = mkOption {
-      type = types.package;
-      default = config.nix-bitcoin.pkgs.peerswap-lnd;
-      description = "The package providing peerswap binaries.";
-    };
-    allowlist = mkOption {
-      type = types.listOf types.str;
-      default = [""];
-      description = ''
-        Only node ids in the allowlist can send a peerswap request to your node.
-      '';
-    };
-    acceptallpeers = mkOption {
-      type = types.nullOr types.bool;
-        default = null;
-        description = "UNSAFE Allow all peers to swap with your node";
-    };
-    rpcAddress = mkOption {
-      type = types.str;
-      default = "localhost";
-      description = "Address to listen for gRPC connections.";
-    };
-    rpcPort = mkOption {
-      type = types.port;
-      default = 42069;
-      description = "Port to listen for gRPC connections.";
-    };
-    dataDir = mkOption {
-      type = types.path;
-      default = "/var/lib/peerswap-lnd";
-      description = "The data directory for peerswap.";
-    };
-    enableLiquid = mkOption {
-      type = types.bool;
-        default = config.services.liquidd.enable;
-        description = "enables l-btc swaps";
-    };
-    enableBitcoin = mkOption {
-      type = types.bool;
-        default = true;
-        description = "enables bitcoin swaps";
-    };
-    liquidRpcWallet = mkOption {
-      type = types.str;
-      default = "peerswap";
-      description = "The liquid rpc wallet to use peerswap with";
-    };
-    user = mkOption {
-      type = types.str;
-      default = "peerswap";
-      description = "The user as which to run PeerSwap.";
-    };
-    group = mkOption {
-      type = types.str;
-      default = cfg.user;
-      description = "The group as which to run PeerSwap.";
-    };
-    cli = mkOption {
-      default = pkgs.writeScriptBin "pscli" ''
-        ${cfg.package}/bin/pscli --rpchost=${nbLib.addressWithPort cfg.rpcAddress cfg.rpcPort} "$@"
-      '';
-      defaultText = "(See source)";
-      description = "Binary to connect with the peerswap instance.";
-    };
-  };
 
   configFile = builtins.toFile "peerswap.conf" ''
     ${optionalString (cfg.acceptallpeers != null) "accept_all_peers=${toString cfg.acceptallpeers}"}
