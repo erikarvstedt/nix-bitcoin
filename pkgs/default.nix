@@ -16,7 +16,7 @@ let self = {
   secp256k1 = pkgs.callPackage ./secp256k1 { };
   spark-wallet = pkgs.callPackage ./spark-wallet { };
   peerswap-lnd = pkgs.callPackage ./peerswap { lndBackend = true; };
-  peerswap-cln = pkgs.callPackage ./peerswap { };
+  peerswap-clightning = pkgs.callPackage ./peerswap { };
   nbPython3Packages = (pkgs.python3.override {
     packageOverrides = import ./python-packages self;
   }).pkgs;

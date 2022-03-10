@@ -10,7 +10,7 @@ let
       enable = mkEnableOption "peerswap (clightning plugin)";
       package = mkOption {
         type = types.package;
-        default = config.nix-bitcoin.pkgs.peerswap-cln;
+        default = config.nix-bitcoin.pkgs.peerswap-clightning;
         description = "The package providing peerswap binaries.";
       };
     };
