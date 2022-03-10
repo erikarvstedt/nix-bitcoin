@@ -30,6 +30,16 @@ in
   inherit options;
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.enableLiquid -> (config.services.liquidd.enable or false);
+        message = ''
+          Option `services.clightning.plugins.peerswap.enableLiquid` requires liquidd to be enabled
+          (set `services.liquidd.enable = true`).
+        '';
+      }
+    ];
+
     services.clightning = {
       enable = true;
       extraConfig = ''

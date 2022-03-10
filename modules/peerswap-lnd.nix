@@ -79,6 +79,16 @@ in
   inherit options;
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.enableLiquid -> (config.services.liquidd.enable or false);
+        message = ''
+          Option `services.peerswap-lnd.enableLiquid` requires liquidd to be enabled
+          (set `services.liquidd.enable = true`).
+        '';
+      }
+    ];
+
     services.lnd = {
       enable = true;
       macaroons.peerswap = {
