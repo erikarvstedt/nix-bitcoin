@@ -14,10 +14,10 @@ in {
   imports = [
     ./clboss.nix
     ./commando.nix
+    ./peerswap.nix
     ./prometheus.nix
     ./summary.nix
     ./zmq.nix
-    ./peerswap-cln.nix
   ];
 
   inherit options;
