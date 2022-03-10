@@ -1,9 +1,9 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-let 
+let
 nbPkgs = config.nix-bitcoin.pkgs;
-cfg = config.services.clightning.plugins.peerswap; 
+cfg = config.services.clightning.plugins.peerswap;
 configFile = builtins.toFile "policy.conf" ''
 ${optionalString (cfg.acceptallpeers != null) "accept_all_peers=${toString cfg.acceptallpeers}"}
 ${lib.concatMapStrings (nodeid: "allowlisted_peers=${nodeid}\n") cfg.allowlist}
@@ -45,7 +45,7 @@ in
       description = "The liquid rpc wallet to use peerswap with";
     };
   };
-  
+
   config = mkIf cfg.enable {
     services.clightning.extraConfig = ''
       plugin=${cfg.package}/bin/peerswap
@@ -60,7 +60,7 @@ in
         peerswap-liquid-rpcwallet=${cfg.liquidRpcWallet}
       ''}
     '';
-         
+
     users.users.${config.services.clightning.user}.extraGroups = optional cfg.enableLiquid config.services.liquidd.group;
   };
 }
