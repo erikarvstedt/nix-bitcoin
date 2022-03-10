@@ -40,7 +40,7 @@ let
       };
       enableLiquid = mkOption {
         type = types.bool;
-        default = config.services.liquidd.enable;
+        default = config.services.liquidd.enable or false;
         description = "Enable liquid-btc swaps.";
       };
       liquidRpcWallet = mkOption {
