@@ -18,6 +18,7 @@
     ./lightning-loop.nix
     ./lightning-pool.nix
     ./charge-lnd.nix
+    ./peerswap-lnd.nix
     ./rtl.nix
     ./electrs.nix
     ./liquid.nix
@@ -25,7 +26,6 @@
     ./joinmarket.nix
     ./joinmarket-ob-watcher.nix
     ./hardware-wallets.nix
-    ./peerswap-lnd.nix
 
     # Support features
     ./versioning.nix

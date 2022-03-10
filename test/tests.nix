@@ -83,6 +83,8 @@ let
 
       tests.charge-lnd = cfg.charge-lnd.enable;
 
+      tests.peerswap-lnd = cfg.peerswap-lnd.enable;
+
       tests.electrs = cfg.electrs.enable;
 
       tests.liquidd = cfg.liquidd.enable;
@@ -115,8 +117,6 @@ let
       tests.nodeinfo = config.nix-bitcoin.nodeinfo.enable;
 
       tests.backups = cfg.backups.enable;
-
-      tests.peerswap-lnd = cfg.peerswap-lnd.enable;
 
       # To test that unused secrets are made inaccessible by 'setup-secrets'
       systemd.services.setup-secrets.preStart = mkIfTest "security" ''
@@ -173,13 +173,13 @@ let
       services.lightning-loop.enable = true;
       services.lightning-pool.enable = true;
       services.charge-lnd.enable = true;
+      services.peerswap-lnd.enable = true;
       services.electrs.enable = true;
       services.liquidd.enable = true;
       services.btcpayserver.enable = true;
       services.joinmarket.enable = true;
       services.joinmarket-ob-watcher.enable = true;
       services.backups.enable = true;
-      services.peerswap-lnd.enable = true;
 
       nix-bitcoin.nodeinfo.enable = true;
 
