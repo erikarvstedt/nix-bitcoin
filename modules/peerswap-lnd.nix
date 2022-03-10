@@ -137,7 +137,6 @@ in
     users.users.${cfg.user} = {
       isSystemUser = true;
       group = cfg.group;
-      home = cfg.dataDir;
       extraGroups = [
         lnd.group
       ] ++ optional cfg.enableLiquid liquidd.group;
