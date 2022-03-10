@@ -119,20 +119,19 @@ in
     ];
 
     systemd.services.peerswap-lnd = {
-      description = "peerswap initialize script";
       wantedBy = [ "multi-user.target" ];
       requires = [ "lnd.service" ];
       after = [ "lnd.service" ];
       preStart = ''
         ln -sf /run/lnd/peerswap.macaroon ${cfg.dataDir}
       '';
-      serviceConfig = {
+      serviceConfig = nbLib.defaultHardening // {
         ExecStart = "${cfg.package}/bin/peerswapd --configfile=${configFile}";
         User = cfg.user;
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;
-      };
+      } // nbLib.allowLocalIPAddresses;
     };
 
     users.users.${cfg.user} = {
