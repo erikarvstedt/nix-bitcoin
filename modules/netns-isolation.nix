@@ -228,7 +228,11 @@ in {
       };
       clightning = {
         id = 13;
-        connections = [ "bitcoind" ];
+        connections = let
+          inherit (config.services.clightning.plugins) peerswap;
+          connectToLiquid = peerswap.enable && peerswap.enableLiquid;
+        in
+          [ "bitcoind" ] ++ optional connectToLiquid "liquidd";
       };
       lnd = {
         id = 14;
@@ -286,6 +290,11 @@ in {
         connections = []
                       ++ optional (config.services.rtl.nodes.lnd) "lnd"
                       ++ optional config.services.rtl.loop "lightning-loop";
+      };
+      peerswap-lnd = {
+        id = 30;
+        connections = [ "lnd" ]
+                      ++ optional config.services.peerswap-lnd.enableLiquid "liquidd";
       };
     };
 
