@@ -45,7 +45,7 @@ all other security vulnerabilities.
 | :-: | :-: | :-: |
 | Outright Vulnerabilities | Vulnerabilities in nix-bitcoin specific tooling (except CI tooling) | privilege escalation in SUID binary `netns-exec`, improper release signature verification through `fetch-release` |
 | Violations of [PoLP](https://en.wikipedia.org/wiki/Principle_of_least_privilege) | nix-bitcoin services are given too much privilege over the system or unnecessary access to other nix-bitcoin services, or one of the nix-bitcoin isolation measures is incorrectly implemented | `netns-isolation` doesn't work, spark-wallet has access to bitcoin RPC interface or files |
-| Vulnerabilities in Dependencies | A vulnerability in any dependency of a nix-bitcoin installation with a configuration consisting of any combination of the following services: bitcoind, clightning, lnd, electrs, joinmarket, btcpayserver, liquidd | Compromised NixOS expression pulls in malicious package, JoinMarket pulls in a python dependency with a known severe vulnerability |
+| Vulnerabilities in Dependencies | A vulnerability in any dependency of a nix-bitcoin installation with a configuration consisting of any combination of the following services: bitcoind, clightning, lnd, electrs, joinmarket, btcpayserver, liquidd.<br />**Note:** The vulnerability must first be reported to and handled by the maintainers of the dependency before it qualifies for a reward| Compromised NixOS expression pulls in malicious package, JoinMarket pulls in a python dependency with a known severe vulnerability |
 | Bad Documentation | Our documentation suggests blatantly insecure things | `install.md` tells you to add our SSH keys to your root user |
 | Compromise of Signing Key | Compromise of the nix-bitcoin signing key, i.e., `0xB1A70E4F8DCD0366` | Leaking the key, managing to sign something with it |
 
@@ -96,11 +96,6 @@ measures) or complex/unlikely attack execution.
   believe that the patch is still under development or simply has not yet been
   ported to NixOS, due to the relative recency of the patch, is not eligible for
   rewards under the "Vulnerabilities in Dependencies" vulnerability type.
-* Primary maintainers first: Vulnerabilities in dependencies themselves, not
-  stemming from a NixOS or nix-bitcoin specific implementation, must first be
-  reported to and handled by the primary maintainers of said dependencies before
-  they qualify for reward under the "Vulnerabilities in Dependencies"
-  vulnerability type.
 * Termination: The fund can be terminated at any time by the quorum of key
   holders in which case the holdings are donated to non-profit organizations.
 * The fund's holdings can be used for purposes not mentioned in this document.
