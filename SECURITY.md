@@ -90,12 +90,12 @@ measures) or complex/unlikely attack execution.
   proportional to the remaining amount.
 * Exclusion of dependencies with existing bug bounty programms: Software which
   is covered by an existing bug bounty program is not eligible for rewards under
-  the "Vulnerabilities in Dependencies" vulnerability type.
+  the "Vulnerabilities in Dependencies" category.
 * Exclusion of dependencies with known vulnerabilities that are in the process
   of being patched: Software with a known vulnerability where there is reason to
   believe that the patch is still under development or simply has not yet been
   ported to NixOS, due to the relative recency of the patch, is not eligible for
-  rewards under the "Vulnerabilities in Dependencies" vulnerability type.
+  rewards under the "Vulnerabilities in Dependencies" category.
 * Termination: The fund can be terminated at any time by the quorum of key
   holders in which case the holdings are donated to non-profit organizations.
 * The fund's holdings can be used for purposes not mentioned in this document.
