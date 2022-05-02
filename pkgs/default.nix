@@ -23,6 +23,7 @@ let self = {
 
   # Internal pkgs
   netns-exec = pkgs.callPackage ./netns-exec { };
+  setup-dirs = pkgs.callPackage ./setup-dirs { };
   krops = import ./krops { };
 
   # Deprecated pkgs
