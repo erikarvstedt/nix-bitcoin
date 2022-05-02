@@ -61,9 +61,7 @@ in {
       listenWhitelisted = true;
     };
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = cfg.user;
 
     systemd.services.electrs = {
       wantedBy = [ "multi-user.target" ];

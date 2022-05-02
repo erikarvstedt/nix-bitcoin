@@ -201,9 +201,7 @@ in {
     services.lightning-loop.enable = mkIf cfg.loop true;
     services.clightning.enable = mkIf cfg.nodes.clightning true;
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = cfg.user;
 
     services.rtl.tor.enforce = mkIf (cfg.extraCurrency != null) false;
 

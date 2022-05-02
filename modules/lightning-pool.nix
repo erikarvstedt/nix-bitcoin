@@ -86,9 +86,7 @@ in {
 
     environment.systemPackages = [ cfg.package (hiPrio cfg.cli) ];
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 lnd lnd - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = lnd.user;
 
     systemd.services.lightning-pool = {
       wantedBy = [ "multi-user.target" ];
@@ -100,7 +98,7 @@ in {
       '';
       serviceConfig = nbLib.defaultHardening // {
         ExecStart = "${cfg.package}/bin/poold --basedir='${cfg.dataDir}' --network=${network}";
-        User = "lnd";
+        User = lnd.user;
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;

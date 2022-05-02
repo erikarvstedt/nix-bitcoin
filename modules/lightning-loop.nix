@@ -93,9 +93,7 @@ in {
 
     environment.systemPackages = [ cfg.package (hiPrio cfg.cli) ];
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${lnd.user} ${lnd.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = lnd.user;
 
     systemd.services.lightning-loop = {
       wantedBy = [ "multi-user.target" ];

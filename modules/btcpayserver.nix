@@ -143,10 +143,10 @@ in {
       }];
     };
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.nbxplorer.dataDir}' 0770 ${cfg.nbxplorer.user} ${cfg.nbxplorer.group} - -"
-      "d '${cfg.btcpayserver.dataDir}' 0770 ${cfg.btcpayserver.user} ${cfg.btcpayserver.group} - -"
-    ];
+    nix-bitcoin.dataDirs = {
+      ${cfg.nbxplorer.dataDir}.user = cfg.nbxplorer.user;
+      ${cfg.btcpayserver.dataDir}.user = cfg.btcpayserver.user;
+    };
 
     systemd.services.nbxplorer = let
       configFile = builtins.toFile "config" ''

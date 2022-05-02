@@ -250,9 +250,7 @@ in {
       (hiPrio cfg.swapCli)
     ];
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = cfg.user;
 
     systemd.services.liquidd = {
       requires = [ "bitcoind.service" ];

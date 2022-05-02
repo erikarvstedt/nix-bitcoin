@@ -187,9 +187,7 @@ in {
 
     environment.systemPackages = [ cfg.package (hiPrio cfg.cli) ];
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = cfg.user;
 
     systemd.services.lnd = {
       wantedBy = [ "multi-user.target" ];

@@ -68,9 +68,7 @@ in {
       client.enable = true;
     };
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = cfg.user;
 
     systemd.services.joinmarket-ob-watcher = rec {
       wantedBy = [ "multi-user.target" ];

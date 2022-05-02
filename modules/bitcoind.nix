@@ -367,9 +367,7 @@ in {
       proto.sam.enable = true;
     };
 
-    systemd.tmpfiles.rules = [
-      "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ];
+    nix-bitcoin.dataDirs.${cfg.dataDir}.user = cfg.user;
 
     systemd.services.bitcoind = {
       # Use `wants` instead of `requires` so that bitcoind and all dependent services
