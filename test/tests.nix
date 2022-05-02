@@ -116,6 +116,7 @@ let
       systemd.services.setup-secrets.preStart = mkIfTest "security" ''
         install -D -o nobody -g nogroup -m777 <(:) /secrets/dummy
       '';
+      system.extraDependencies = mkIfTest "security" [ config.nix-bitcoin.pkgs.setup-dirs.test ];
 
       # Avoid timeout failures on slow CI nodes
       systemd.services.postgresql.serviceConfig.TimeoutStartSec = "3min";

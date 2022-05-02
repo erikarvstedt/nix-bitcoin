@@ -7,6 +7,7 @@
     ./nix-bitcoin.nix
     ./secrets/secrets.nix
     ./operator.nix
+    ./data-dirs.nix
 
     # Main features
     ./bitcoind.nix
