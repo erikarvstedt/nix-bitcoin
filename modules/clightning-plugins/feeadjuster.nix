@@ -21,6 +21,11 @@ let maybeFlag = enable: flag: if enable then flag + "\n" else ""; in
       default = "default";
       description = "Adjustment method to calculate channel fee (soft=less difference, hard=high difference)";
     };
+    adjustDaily = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Automatically update fees daily";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -30,5 +35,27 @@ let maybeFlag = enable: flag: if enable then flag + "\n" else ""; in
     '' +
     (maybeFlag (!cfg.fuzz) "feeadjuster-deactivate-fuzz") +
     (maybeFlag (!cfg.adjustOnForward) "feeadjuster-deactivate-fee-update");
+
+    systemd.services.cln-feeadjust = {
+      description = "Update the channel fees of lightningd to keep channels balanced";
+      requires = [ "clightning.service" ];
+      path = [
+        config.nix-bitcoin.pkgs.clightning
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        User = "clightning";
+      };
+      script = ''
+        lightning-cli --lightning-dir ${config.services.clightning.dataDir} feeadjust;
+      '';
+    };
+
+    systemd.timers.cln-feeadjust = {
+      enable = cfg.adjustDaily;
+      wantedBy = [ "timers.target" ];
+      partOf = [ "cln-feeadjust.service" ];
+      timerConfig.OnCalendar = [ "*-*-* 12:00:00" ];
+    };
   };
 }
