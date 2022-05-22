@@ -64,10 +64,10 @@ in
         after = [ "clightning.service" ];
         serviceConfig = {
           Type = "oneshot";
-          JoinsNamespaceOf = [ "clightning.service" ];
           User = "clightning";
           ExecStart = "${config.nix-bitcoin.pkgs.clightning}/bin/lightning-cli --lightning-dir ${clightning.dataDir} feeadjust";
         };
+        unitConfig.JoinsNamespaceOf = [ "clightning.service" ];
         startAt = [ "daily" ];
       };
       timers.clightning-feeadjuster.timerConfig = {
