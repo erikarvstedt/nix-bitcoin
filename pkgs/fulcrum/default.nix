@@ -12,8 +12,8 @@ mkDerivation rec {
   src = fetchFromGitHub {
     owner = "cculianu";
     repo = "Fulcrum";
-    rev = "bcccf76f5fa8570d87a7077caddb86ee504fd1d8";
-    sha256 = "sha256-5xIG7CjpEz8XCXMLx2MWrEWVHk6dJVvrvE1Jq9Ji4Hw=";
+    rev = "8acdc926fe1ff5913b44bc236449683799299a80";
+    sha256 = "sha256-f2bEyp9s07fStMkSHuS28wqmXRq5gJNmQnJXfqCg6t0==";
   };
 
   nativeBuildInputs = [
