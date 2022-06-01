@@ -30,6 +30,11 @@ let
         The onion service is automatically setup by joinmarket.
       '';
     };
+    messagingPort = mkOption {
+      type = types.port;
+      default = 64181; # payjoinPort + 1
+      description = "The port corresponding to option `messagingAddress`.";
+    };
     dataDir = mkOption {
       type = types.path;
       default = "/var/lib/joinmarket";
@@ -151,7 +156,7 @@ let
     # required option, but ignored for unix socket host
     tor_control_port = 9051
     onion_serving_host = ${cfg.messagingAddress}
-    onion_serving_port = 8080
+    onion_serving_port = ${toString cfg.messagingPort}
     hidden_service_dir =
     directory_nodes = 3kxw6lf5vf6y26emzwgibzhrzhmhqiw6ekrek3nqfjjmhwznb2moonad.onion:5222,jmdirjmioywe2s5jad7ts6kgcqg66rj6wujj6q77n6wbdrgocqwexzid.onion:5222,bqlpq6ak24mwvuixixitift4yu42nxchlilrcqwk2ugn45tdclg42qid.onion:5222
 
@@ -232,7 +237,7 @@ let
     onion_socks5_host = ${torAddress.addr}
     onion_socks5_port = ${toString torAddress.port}
     tor_control_host = unix:/run/tor/control
-    # required option, but ignored for unix socket host
+    # Required option, but unused because `tor_control_host` is a Unix socket
     tor_control_port = 9051
     onion_serving_host = ${cfg.payjoinAddress}
     onion_serving_port = ${toString cfg.payjoinPort}

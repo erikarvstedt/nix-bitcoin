@@ -10,7 +10,7 @@ let
     patches = [
       (fetchpatch {
         # https://github.com/JoinMarket-Org/joinmarket-clientserver/pull/1264
-        name = "twisted-22.4.0";
+        name = "use-twisted-22.4.0";
         url = "https://patch-diff.githubusercontent.com/raw/JoinMarket-Org/joinmarket-clientserver/pull/1264.patch";
         sha256 = "1nlyhc5myph9239d5zczsl4jan4qj4ggy0l1f39jv0ihjbjhcks5";
       })
