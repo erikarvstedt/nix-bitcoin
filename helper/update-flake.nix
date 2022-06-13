@@ -48,7 +48,7 @@ in rec {
         else
           builtins.concatStringsSep "\n" ([title] ++ lines);
 
-    changes = [
+    changes = builtins.trace versions [
       (mkChanges "Pkg updates in nixpkgs stable:" versions.stable)
       (mkChanges "Pkg updates in nixpkgs unstable:" versions.unstable)
     ];
