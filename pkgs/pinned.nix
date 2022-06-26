@@ -8,7 +8,6 @@ pkgs: pkgsUnstable:
     clightning
     electrs
     elementsd
-    extra-container
     lightning-pool
     lnd
     lndconnect;
@@ -18,6 +17,11 @@ pkgs: pkgsUnstable:
     hwi
     lightning-loop
     nbxplorer;
+
+  # TODO-EXTERNAL: Remove this when
+  # https://github.com/NixOS/nixpkgs/pull/179198
+  # has been released
+  extra-container = pkgs.callPackage ./extra-container.nix {};
 
   inherit pkgs pkgsUnstable;
 }
