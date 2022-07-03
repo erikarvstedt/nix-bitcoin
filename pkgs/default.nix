@@ -27,7 +27,7 @@ let self = {
 
   # Internal pkgs
   netns-exec = pkgs.callPackage ./netns-exec { };
-  krops = import ./krops { inherit pkgs; };
+  krops = import ./krops { pkgs = pkgs.extend (self: super: { inherit (pkgsUnstable) rsync; }); };
 
   # Deprecated pkgs
   generate-secrets = import ./generate-secrets-deprecated.nix;
