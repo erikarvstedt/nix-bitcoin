@@ -6,7 +6,8 @@ let
     rev = "1.26.2";
     sha256 = "0mzn213dh3pklvdzfpwi4nin4lncdap447zvl11j81r809jll76j";
   };
-in {
+in rec {
   lib = import "${src}/lib";
-  pkgs = import "${src}/pkgs" {};
+  krops = pkgs.callPackage "${src}/pkgs/krops" { inherit populate; };
+  populate = pkgs.callPackage "${src}/pkgs/populate" {};
 }

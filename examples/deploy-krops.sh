@@ -61,7 +61,7 @@ let
     qemu-vm.file = toString <qemu-vm>;
   };
 in
-krops.pkgs.krops.writeCommand "krops-deploy" {
+krops.krops.writeCommand "krops-deploy" {
   source = import <krops/sources.nix> { inherit extraSources krops; };
   force = true;
   target = {

@@ -8,7 +8,7 @@ let
 
   krops = (import <nix-bitcoin> {}).krops;
 in
-krops.pkgs.krops.writeDeploy "deploy" {
+krops.krops.writeDeploy "deploy" {
   inherit target;
 
   source = import ./sources.nix { inherit extraSources krops; };
