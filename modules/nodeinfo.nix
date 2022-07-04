@@ -29,6 +29,7 @@ let
     '';
     clightning-rest = mkInfo "";
     electrs = mkInfo "";
+    fulcrum = mkInfo "";
     spark-wallet = mkInfo "";
     btcpayserver = mkInfo "";
     liquidd = mkInfo "";
