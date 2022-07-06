@@ -38,6 +38,23 @@ let
       default = "/var/lib/mempool";
       description = "The data directory for Mempool.";
     };
+    settings = mkOption {
+      type = with types; attrsOf (attrsOf anything);
+      example = {
+        MEMPOOL = {
+          POLL_RATE_MS = 3000;
+          STDOUT_LOG_MIN_PRIORITY = "debug";
+        };
+        PRICE_DATA_SERVER = {
+          CLEARNET_URL = "https://myserver.org/prices";
+        };
+      };
+      description = ''
+        Mempool backend settings.
+        See here for possible options:
+        https://github.com/mempool/mempool/blob/master/backend/src/config.ts
+      '';
+    };
     database = {
       name = mkOption {
         type = types.str;
@@ -63,35 +80,7 @@ let
   nbPkgs = config.nix-bitcoin.pkgs;
   secretsDir = config.nix-bitcoin.secretsDir;
 
-  configFile = builtins.toFile "mempool-config"
-    (builtins.toJSON
-      {
-        MEMPOOL = {
-          NETWORK = "mainnet";
-          BACKEND = "electrum";
-          HTTP_PORT = cfg.backendPort;
-          CACHE_DIR = "/run/mempool";
-        };
-        CORE_RPC = {
-          HOST = bitcoind.rpc.address;
-          PORT = bitcoind.rpc.port;
-          USERNAME = bitcoind.rpc.users.public.name;
-          PASSWORD = "@btcRpcPassword@";
-        };
-        ELECTRUM = let
-          server = config.services.${cfg.electrumServer};
-        in {
-          HOST = server.address;
-          PORT = server.port;
-          TLS_ENABLED = false;
-        };
-        DATABASE = {
-          ENABLED = true;
-          DATABASE = cfg.database.name;
-          SOCKET = "/run/mysqld/mysqld.sock";
-        };
-      }
-    );
+  configFile = builtins.toFile "mempool-config" (builtins.toJSON cfg.settings);
 
   inherit (config.services)
     bitcoind
@@ -121,6 +110,37 @@ in {
       # Create symlink to static website content
       "L+ /var/www/mempool/browser - - - - ${nbPkgs.mempool-frontend}"
     ];
+
+    # Available options:
+    # https://github.com/mempool/mempool/blob/master/backend/src/config.ts
+    services.mempool.settings = {
+      MEMPOOL = {
+        # mempool doesn't support regtest
+        NETWORK = "mainnet";
+        BACKEND = "electrum";
+        HTTP_PORT = cfg.backendPort;
+        CACHE_DIR = "/run/mempool";
+        STDOUT_LOG_MIN_PRIORITY = mkDefault "info";
+      };
+      CORE_RPC = {
+        HOST = bitcoind.rpc.address;
+        PORT = bitcoind.rpc.port;
+        USERNAME = bitcoind.rpc.users.public.name;
+        PASSWORD = "@btcRpcPassword@";
+      };
+      ELECTRUM = let
+        server = config.services.${cfg.electrumServer};
+      in {
+        HOST = server.address;
+        PORT = server.port;
+        TLS_ENABLED = false;
+      };
+      DATABASE = {
+        ENABLED = true;
+        DATABASE = cfg.database.name;
+        SOCKET = "/run/mysqld/mysqld.sock";
+      };
+    };
 
     systemd.services.mempool = {
       wantedBy = [ "multi-user.target" ];
