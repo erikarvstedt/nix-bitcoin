@@ -38,6 +38,13 @@ let
       default = "/var/lib/mempool";
       description = "The data directory for Mempool.";
     };
+    database = {
+      name = mkOption {
+        type = types.str;
+        default = "mempool";
+        description = "Database name.";
+      };
+    };
     user = mkOption {
       type = types.str;
       default = "mempool";
@@ -55,10 +62,6 @@ let
   nbLib = config.nix-bitcoin.lib;
   nbPkgs = config.nix-bitcoin.pkgs;
   secretsDir = config.nix-bitcoin.secretsDir;
-  mysqlAddress = if config.nix-bitcoin.netns-isolation.enable then
-    config.nix-bitcoin.netns-isolation.netns.mysql.address
-  else
-    "localhost";
 
   configFile = builtins.toFile "mempool-config"
     (builtins.toJSON
@@ -84,11 +87,8 @@ let
         };
         DATABASE = {
           ENABLED = true;
-          HOST = mysqlAddress;
-          PORT = config.services.mysql.port;
-          DATABASE = "mempool";
-          USERNAME = cfg.user;
-          PASSWORD = "@mempoolDbPassword@";
+          DATABASE = cfg.database.name;
+          SOCKET = "/run/mysqld/mysqld.sock";
         };
       }
     );
@@ -106,10 +106,14 @@ in {
     services.fulcrum.enable = mkIf (cfg.electrumServer == "fulcrum" ) true;
     services.mysql = {
       enable = true;
-      settings.mysqld.skip_name_resolve = true;
       package = pkgs.mariadb;
-      initialDatabases = [{name = "mempool";}];
-      initialScript = "${secretsDir}/mempool-db-initialScript";
+      ensureDatabases = [ cfg.database.name ];
+      ensureUsers = [
+        {
+          name = cfg.user;
+          ensurePermissions = { "${cfg.database.name}.*" = "ALL PRIVILEGES"; };
+        }
+      ];
     };
 
     systemd.tmpfiles.rules = [
@@ -127,7 +131,6 @@ in {
           (nbLib.script "mempool-setup-config" ''
             <${configFile} sed \
               -e "s|@btcRpcPassword@|$(cat ${secretsDir}/bitcoin-rpcpassword-public)|" \
-              -e "s|@mempoolDbPassword@|$(cat ${secretsDir}/mempool-db-password)|" \
               > '${cfg.dataDir}/config.json'
           '')
         ];
@@ -289,14 +292,5 @@ in {
       extraGroups = [ "bitcoinrpc-public" ];
     };
     users.groups.${cfg.group} = {};
-
-    nix-bitcoin.secrets.mempool-db-initialScript.user = config.services.mysql.user;
-    nix-bitcoin.secrets.mempool-db-password.user = cfg.user;
-    nix-bitcoin.generateSecretsCmds.mempool = ''
-      makePasswordSecret mempool-db-password
-      if [[ mempool-db-password -nt mempool-db-initialScript ]]; then
-         echo "grant all on mempool.* to '${cfg.user}'@'${cfg.backendAddress}' identified by '$(cat mempool-db-password)'" > mempool-db-initialScript
-      fi
-    '';
   };
 }
