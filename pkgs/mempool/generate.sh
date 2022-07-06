@@ -24,6 +24,7 @@ hash=$(nix hash path $src)
 generatePkg() {
   component=$1
   node2nix \
+    --nodejs-16 \
     --input $src/$component/package.json \
     --lock $src/$component/package-lock.json \
     --output node-packages-$component.nix \
