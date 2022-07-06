@@ -4,9 +4,9 @@ with lib;
 let
   options.services.mempool = {
     enable = mkEnableOption "Mempool, a fully featured Bitcoin visualizer, explorer, and API service.";
-    # Use nginx address as services.mempool.address so onion-services.nix can pick up on it
     address = mkOption {
       type = types.str;
+      # nginx is used as the HTTP server
       default = if config.nix-bitcoin.netns-isolation.enable then
         config.nix-bitcoin.netns-isolation.netns.nginx.address
       else
@@ -21,7 +21,7 @@ let
     backendAddress = mkOption {
       type = types.str;
       default = "127.0.0.1";
-      description = "mempool-backend address.";
+      description = "Backend address.";
     };
     backendPort = mkOption {
       type = types.port;
