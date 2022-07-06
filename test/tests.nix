@@ -79,6 +79,7 @@ let
       '');
 
       tests.mempool = cfg.mempool.enable;
+      services.mempool.electrumServer = "fulcrum";
 
       tests.spark-wallet = cfg.spark-wallet.enable;
 

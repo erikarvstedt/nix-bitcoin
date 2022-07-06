@@ -6,8 +6,8 @@ rec {
   src = fetchFromGitHub {
     owner = "mempool";
     repo = "mempool";
-    rev = "v2.3.1";
-    hash = "sha256-l7wdbNDi7A8o2nBg3V7FR+TAd0PIZBhIw44k+9OAaX4=";
+    rev = "ad32ba8a98acff06739ef882986a72706a9bfb1f";
+    hash = "sha256-EwYK5wGnAE/4HvW2tLRThzc7Rp16tWABVqxaCs9eyMc=";
   };
 
   # node2nix requires that the backend and frontend are available as distinct node
