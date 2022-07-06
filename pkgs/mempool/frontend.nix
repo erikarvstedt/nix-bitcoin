@@ -1,18 +1,18 @@
 srcFrontend: nodeEnv: frontendPkgs: nodejs: meta: fetchurl: rsync:
 let
   # TODO: Fetch the rev and hashes via ./generate.sh
-  assetRegistryRev = "689456ad4d653055eb690dca282b9f8faab1e873";
+  assetRegistryRev = "49cfb7a1c50939c3fe00b7c18e52459d7e6f7723";
   assetIndex = fetchurl {
-    url = "https://raw.githubusercontent.com/mempool/asset_registry_db/${assetRegistryRev}/index.json";
-    hash = "sha256-9pqWQoe3AkTswUt9lFXs02YB5/RB2tFzIQpRDUG34/U=";
+    url = "https://raw.githubusercontent.com/blockstream/asset_registry_db/${assetRegistryRev}/index.json";
+    hash = "sha256-cqKpq5PW5N4VtpAPStiaVPuyC4mfu5ytCa7XpDxNFVg=";
   };
   assetIndexMinimal = fetchurl {
-    url = "https://raw.githubusercontent.com/mempool/asset_registry_db/${assetRegistryRev}/index.minimal.json";
-    hash = "sha256-RobjVsefsUEPomqYARu4d9s/cDfhb0ra+63IUNeYWuw=";
+    url = "https://raw.githubusercontent.com/blockstream/asset_registry_db/${assetRegistryRev}/index.minimal.json";
+    hash = "sha256-QUZcvYL4P7XB4s2Ol9cOxlBrWDbgQlO+WdL8F6D5fPU=";
   };
   pools = fetchurl {
-    url = "https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/8446d4d156035e128a2e98742e91880265c61d6c/pools.json";
-    hash = "sha256-wX6+Q7ykKXHoHhiJnb12X4x1PqTrpK3h89vpwdDf2zw=";
+    url = "https://raw.githubusercontent.com/mempool/mining-pools/3fb27ad0328c6fc4228f855d8ff1175e01f18e4c/pools.json";
+    hash = "sha256-tu1Rhe5YTkQt9hPgEX/KznioY2DbW4Lof4n3URt8cXE=";
   };
 in
 nodeEnv.buildNodePackage (frontendPkgs.args // {

@@ -10,14 +10,17 @@ repo=https://github.com/mempool/mempool
 TMPDIR="$(mktemp -d /tmp/mempool.XXX)"
 trap "rm -rf $TMPDIR" EXIT
 
-version=v2.3.1
+version=v2.4.0
 # Fetch and verify source
 src=$TMPDIR/src
 mkdir -p $src
-git clone --depth 1 --branch ${version} -c advice.detachedHead=false https://github.com/mempool/mempool $src
-export GNUPGHOME=$TMPDIR
-gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 913C5FF1F579B66CA10378DBA394E332255A6173 2> /dev/null
-git -C $src verify-tag ${version}
+git -C $src init
+git -C $src fetch --depth 1 $repo ad32ba8a98acff06739ef882986a72706a9bfb1f:src
+git -C $src checkout src
+# This commit was only signed by the Github webinterface
+# export GNUPGHOME=$TMPDIR
+# gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 913C5FF1F579B66CA10378DBA394E332255A6173 2> /dev/null
+# git -C $src verify-tag ${version}
 rm -rf $src/.git
 hash=$(nix hash path $src)
 
