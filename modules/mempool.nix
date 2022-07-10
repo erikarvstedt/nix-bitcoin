@@ -146,14 +146,12 @@ in {
       wantedBy = [ "multi-user.target" ];
       requires = [ "${cfg.electrumServer}.service" ];
       after = [ "${cfg.electrumServer}.service" "mysql.service" ];
+      preStart = ''
+        <${configFile} sed \
+          -e "s|@btcRpcPassword@|$(cat ${secretsDir}/bitcoin-rpcpassword-public)|" \
+          > '${cfg.dataDir}/config.json'
+      '';
       serviceConfig = nbLib.defaultHardening // {
-        ExecStartPre = [
-          (nbLib.script "mempool-setup-config" ''
-            <${configFile} sed \
-              -e "s|@btcRpcPassword@|$(cat ${secretsDir}/bitcoin-rpcpassword-public)|" \
-              > '${cfg.dataDir}/config.json'
-          '')
-        ];
         ExecStart = "${nbPkgs.mempool-backend.workaround}/bin/mempool-backend";
         RuntimeDirectory = "mempool";
         # Show "mempool" instead of "node" in the journal
