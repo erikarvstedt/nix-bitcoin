@@ -44,14 +44,10 @@ nodeEnv.buildNodePackage (frontendPkgs.args // {
     npm run build
 
     # Add assets that would otherwise be downloaded by sync-assets.js
-    resources=dist/mempool/browser/resources/resources
-    resourcesEnUS=dist/mempool/browser/en-US/resources
+    resources=dist/mempool/browser/resources
     cp ${assetIndex} $resources/assets.json
-    cp ${assetIndex} $resourcesEnUS/assets.json
     cp ${assetIndexMinimal} $resources/assets.minimal.json
-    cp ${assetIndexMinimal} $resourcesEnUS/assets.minimal.json
     cp ${pools} $resources/pools.json
-    cp ${pools} $resourcesEnUS/pools.json
 
     # Move build to $out
     mv dist/mempool/browser/* $out

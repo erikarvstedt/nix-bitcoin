@@ -15,7 +15,7 @@ version=v2.4.0
 src=$TMPDIR/src
 mkdir -p $src
 git -C $src init
-git -C $src fetch --depth 1 $repo ad32ba8a98acff06739ef882986a72706a9bfb1f:src
+git -C $src fetch --depth 1 $repo 7f0c5a0f57b82b4bab81971fb8bc0a33f9c68121:src
 git -C $src checkout src
 # This commit was only signed by the Github webinterface
 # export GNUPGHOME=$TMPDIR
