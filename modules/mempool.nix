@@ -174,76 +174,8 @@ in {
       eventsConfig = ''
         multi_accept on;
       '';
-      appendHttpConfig = ''
-        map $http_accept_language $header_lang {
-          default en-US;
-          ~*^en-US en-US;
-          ~*^en en-US;
-          ~*^ar ar;
-          ~*^ca ca;
-          ~*^cs cs;
-          ~*^de de;
-          ~*^es es;
-          ~*^fa fa;
-          ~*^fr fr;
-          ~*^ko ko;
-          ~*^it it;
-          ~*^he he;
-          ~*^ka ka;
-          ~*^hu hu;
-          ~*^mk mk;
-          ~*^nl nl;
-          ~*^ja ja;
-          ~*^nb nb;
-          ~*^pl pl;
-          ~*^pt pt;
-          ~*^ro ro;
-          ~*^ru ru;
-          ~*^sl sl;
-          ~*^fi fi;
-          ~*^sv sv;
-          ~*^th th;
-          ~*^tr tr;
-          ~*^uk uk;
-          ~*^vi vi;
-          ~*^zh zh;
-          ~*^hi hi;
-        }
-
-        map $cookie_lang $lang {
-          default $header_lang;
-          ~*^en-US en-US;
-          ~*^en en-US;
-          ~*^ar ar;
-          ~*^ca ca;
-          ~*^cs cs;
-          ~*^de de;
-          ~*^es es;
-          ~*^fa fa;
-          ~*^fr fr;
-          ~*^ko ko;
-          ~*^it it;
-          ~*^he he;
-          ~*^ka ka;
-          ~*^hu hu;
-          ~*^mk mk;
-          ~*^nl nl;
-          ~*^ja ja;
-          ~*^nb nb;
-          ~*^pl pl;
-          ~*^pt pt;
-          ~*^ro ro;
-          ~*^ru ru;
-          ~*^sl sl;
-          ~*^fi fi;
-          ~*^sv sv;
-          ~*^th th;
-          ~*^tr tr;
-          ~*^uk uk;
-          ~*^vi vi;
-          ~*^zh zh;
-          ~*^hi hi;
-        }
+      commonHttpConfig = ''
+        include ${./mempool/http-language.conf};
       '';
       virtualHosts."mempool" = {
         root = "/var/www/mempool/browser";
@@ -255,24 +187,7 @@ in {
           add_header Vary Accept-Language;
           add_header Vary Cookie;
 
-          location / {
-                  try_files /$lang/$uri /$lang/$uri/ $uri $uri/ /en-US/$uri @index-redirect;
-                  expires 10m;
-          }
-          location /resources {
-                  try_files /$lang/$uri /$lang/$uri/ $uri $uri/ /en-US/$uri @index-redirect;
-                  expires 1h;
-          }
-          location @index-redirect {
-                  rewrite (.*) /$lang/index.html;
-          }
-
-          location ~ ^/(ar|bg|bs|ca|cs|da|de|et|el|es|eo|eu|fa|fr|gl|ko|hr|id|it|he|ka|lv|lt|hu|mk|ms|nl|ja|nb|nn|pl|pt|pt-BR|ro|ru|sk|sl|sr|sh|fi|sv|th|tr|uk|vi|zh|hi)/resources/ {
-                  rewrite ^/[a-zA-Z-]*/resources/(.*) /en-US/resources/$1;
-          }
-          location ~ ^/(ar|bg|bs|ca|cs|da|de|et|el|es|eo|eu|fa|fr|gl|ko|hr|id|it|he|ka|lv|lt|hu|mk|ms|nl|ja|nb|nn|pl|pt|pt-BR|ro|ru|sk|sl|sr|sh|fi|sv|th|tr|uk|vi|zh|hi)/ {
-                  try_files $uri $uri/ /$1/index.html =404;
-          }
+          include ${./mempool/location-static.conf};
 
           location = /api {
                   try_files $uri $uri/ /en-US/index.html =404;
