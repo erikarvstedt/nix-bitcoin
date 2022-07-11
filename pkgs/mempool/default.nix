@@ -4,10 +4,10 @@ rec {
   nodejsRuntime = pkgs.nodejs-slim-16_x;
 
   src = fetchFromGitHub {
-    owner = "mempool";
+    owner = "erikarvstedt";
     repo = "mempool";
-    rev = "ad32ba8a98acff06739ef882986a72706a9bfb1f";
-    hash = "sha256-EwYK5wGnAE/4HvW2tLRThzc7Rp16tWABVqxaCs9eyMc=";
+    rev = "1d3fbfd3cd3fb73b0e9d7ebe85580002d814e590";
+    hash = "sha256-X/Iw4Ww82tpSm+xpQQwj15NPVA38iCu65HOSNgBMazw=";
   };
 
   # node2nix requires that the backend and frontend are available as distinct node
