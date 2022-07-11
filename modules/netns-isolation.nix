@@ -297,12 +297,13 @@ in {
         id = 31;
         connections = [ "bitcoind" ];
       };
-      mysql = {
-        id = 32;
-      };
       mempool = {
-        id = 33;
-        connections = [ "bitcoind" "electrs" "fulcrum" "nginx" "mysql" ];
+        id = 32;
+        connections = [
+          "bitcoind"
+          "nginx"
+          (if (config.services.mempool.electrumServer == "electrs") then "electrs" else "fulcrum")
+        ];
       };
     };
 
