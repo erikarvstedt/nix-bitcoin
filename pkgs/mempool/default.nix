@@ -1,4 +1,4 @@
-{ pkgs, lib, fetchFromGitHub, fetchurl, makeWrapper, rsync }:
+{ pkgs, lib, fetchFromGitHub, fetchurl, fetchzip, makeWrapper, rsync }:
 rec {
   nodejs = pkgs.nodejs-16_x;
   nodejsRuntime = pkgs.nodejs-slim-16_x;
@@ -59,7 +59,7 @@ rec {
   });
 
   mempool-frontend =
-    import ./frontend.nix srcFrontend nodeEnv frontendPkgs nodejs meta fetchurl rsync;
+    import ./frontend.nix srcFrontend nodeEnv frontendPkgs nodejs meta fetchurl fetchzip rsync;
 
   meta = with lib; {
     description = "Bitcoin blockchain and mempool explorer";

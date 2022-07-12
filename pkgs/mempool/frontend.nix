@@ -1,4 +1,4 @@
-srcFrontend: nodeEnv: frontendPkgs: nodejs: meta: fetchurl: rsync:
+srcFrontend: nodeEnv: frontendPkgs: nodejs: meta: fetchurl: fetchzip: rsync:
 let
   # TODO: Fetch the rev and hashes via ./generate.sh
   assetRegistryRev = "49cfb7a1c50939c3fe00b7c18e52459d7e6f7723";
@@ -11,8 +11,12 @@ let
     hash = "sha256-QUZcvYL4P7XB4s2Ol9cOxlBrWDbgQlO+WdL8F6D5fPU=";
   };
   pools = fetchurl {
-    url = "https://raw.githubusercontent.com/mempool/mining-pools/3fb27ad0328c6fc4228f855d8ff1175e01f18e4c/pools.json";
-    hash = "sha256-tu1Rhe5YTkQt9hPgEX/KznioY2DbW4Lof4n3URt8cXE=";
+    url = "https://raw.githubusercontent.com/mempool/mining-pools/ef8de0ef7a98bd149b1b791730933da4731051b8/pools.json";
+    hash = "sha256-J8D8WzKwQsZVVVJCv1GssSGHt/xGrx4lZTv03WirsKE=";
+  };
+  poolLogos = fetchzip {
+    url = "https://github.com/mempool/mining-pool-logos/archive/79e4b379561206692ea3a90524d7f78558f638e0.tar.gz";
+    hash = "sha256-JlPducAiM6jmWhZrYepW20Z/IHz7aJZkPwEoRALiZM8=";
   };
 in
 nodeEnv.buildNodePackage (frontendPkgs.args // {
@@ -33,7 +37,7 @@ nodeEnv.buildNodePackage (frontendPkgs.args // {
 
     # sync-assets.js is called during `npm run build` and downloads assets from the
     # internet. Disable this script and instead add the assets manually after building.
-    true > sync-assets.js
+    : > sync-assets.js
 
     # TODO-EXTERNAL:
     # `npm run build` produces incorrect output if a parent dir of $PWD is named `node_modules`:
@@ -48,6 +52,7 @@ nodeEnv.buildNodePackage (frontendPkgs.args // {
     cp ${assetIndex} $resources/assets.json
     cp ${assetIndexMinimal} $resources/assets.minimal.json
     cp ${pools} $resources/pools.json
+    rsync -a ${poolLogos}/ $resources/mining-pools
 
     # Move build to $out
     mv dist/mempool/browser/* $out
