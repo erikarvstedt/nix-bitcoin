@@ -5,17 +5,18 @@ set -euo pipefail
 # Use this to start a debug shell at the location of this statement
 # . "${BASH_SOURCE[0]%/*}/../../helper/start-bash-session.sh"
 
-repo=https://github.com/mempool/mempool
+repo=https://github.com/erikarvstedt/mempool
 
 TMPDIR="$(mktemp -d /tmp/mempool.XXX)"
 trap "rm -rf $TMPDIR" EXIT
 
-version=v2.4.0
+# https://github.com/erikarvstedt/mempool/commits/dev
+version=8924873bfde2b9c2bd218e77800eff4008bd0122
 # Fetch and verify source
 src=$TMPDIR/src
 mkdir -p $src
 git -C $src init
-git -C $src fetch --depth 1 $repo 7f0c5a0f57b82b4bab81971fb8bc0a33f9c68121:src
+git -C $src fetch --depth 1 $repo $version:src
 git -C $src checkout src
 # This commit was only signed by the Github webinterface
 # export GNUPGHOME=$TMPDIR

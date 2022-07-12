@@ -4,19 +4,17 @@ rec {
   nodejsRuntime = pkgs.nodejs-slim-16_x;
 
   src = fetchFromGitHub {
-    owner = "mempool";
+    owner = "erikarvstedt";
     repo = "mempool";
-    # https://github.com/mempool/mempool/pull/2078
-    rev = "7f0c5a0f57b82b4bab81971fb8bc0a33f9c68121";
-    hash = "sha256-WIzdoC58edHmosi2hzgLnXE0GBZPbffoqswhDOXvqLM=";
+    # https://github.com/erikarvstedt/mempool/commits/dev
+    rev = "8924873bfde2b9c2bd218e77800eff4008bd0122";
+    hash = "sha256-YZyUQ42sz+eLNFvi1o/2lu3aHXk6UhpTbeDJdiCDyTQ=";
   };
 
   # node2nix requires that the backend and frontend are available as distinct node
   # packages
   srcBackend = pkgs.runCommand "mempool-backend" {} ''
-    cp -r --no-preserve=mode ${src}/backend $out
-    cd $out
-    patch -p2 <${./fix-config-path.patch}
+    cp -r ${src}/backend $out
   '';
   srcFrontend = pkgs.runCommand "mempool-frontend" {} ''
     cp -r ${src}/frontend $out
@@ -42,32 +40,22 @@ rec {
       makeWrapper
     ];
 
+    # PWD at this point: $out/lib/node_modules/mempool-backend
     postInstall = ''
-      npm run build
+      npm run package
 
-      # Remove unneeded src and cache files
-      rm -r src cache .[!.]*
+      mv package $out/lib/mempool-backend
+      rm -r $out/lib/node_modules/
 
       makeWrapper ${nodejsRuntime}/bin/node $out/bin/mempool-backend \
-        --add-flags $out/lib/node_modules/mempool-backend/dist/index.js
+        --add-flags $out/lib/mempool-backend/index.js
     '';
 
     inherit meta;
 
-    passthru.workaround = backend-workaround;
-  });
-
-  backend-workaround = mempool-backend.overrideAttrs (old: {
-    postInstall = old.postInstall + ''
-      # See ./README.md
-      cp mempool-config.sample.json mempool-config.json
-      mkdir -p ../.git/refs/heads
-      echo 0000000000000000000000000000000000000000 > ../.git/refs/heads/master
-
-      makeWrapper ${nodejsRuntime}/bin/node $out/bin/mempool-backend \
-        --add-flags $out/lib/node_modules/mempool-backend/dist/index.js \
-        --run "cd $out/lib/node_modules/mempool-backend"
-    '';
+    passthru = {
+      inherit nodejs nodejsRuntime;
+    };
   });
 
   mempool-frontend =

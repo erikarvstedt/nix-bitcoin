@@ -151,8 +151,9 @@ in {
           -e "s|@btcRpcPassword@|$(cat ${secretsDir}/bitcoin-rpcpassword-public)|" \
           > '${cfg.dataDir}/config.json'
       '';
+      environment.MEMPOOL_CONFIG_FILE = "${cfg.dataDir}/config.json";
       serviceConfig = nbLib.defaultHardening // {
-        ExecStart = "${nbPkgs.mempool-backend.workaround}/bin/mempool-backend";
+        ExecStart = "${nbPkgs.mempool-backend}/bin/mempool-backend";
         RuntimeDirectory = "mempool";
         # Show "mempool" instead of "node" in the journal
         SyslogIdentifier = "mempool";
