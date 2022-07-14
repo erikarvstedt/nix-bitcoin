@@ -121,7 +121,7 @@ in {
         NETWORK = "mainnet";
         BACKEND = "electrum";
         HTTP_PORT = cfg.backendPort;
-        CACHE_DIR = "/run/mempool";
+        CACHE_DIR = "/var/cache/mempool";
         STDOUT_LOG_MIN_PRIORITY = mkDefault "info";
       };
       CORE_RPC = {
@@ -164,7 +164,8 @@ in {
       environment.MEMPOOL_CONFIG_FILE = "${cfg.dataDir}/config.json";
       serviceConfig = nbLib.defaultHardening // {
         ExecStart = "${nbPkgs.mempool-backend}/bin/mempool-backend";
-        RuntimeDirectory = "mempool";
+        CacheDirectory = "mempool";
+        CacheDirectoryMode = "750";
         # Show "mempool" instead of "node" in the journal
         SyslogIdentifier = "mempool";
         User = cfg.user;
