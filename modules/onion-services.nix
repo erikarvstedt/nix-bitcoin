@@ -122,6 +122,9 @@ in {
         rtl = {
           externalPort = 80;
         };
+        mempool-frontend = {
+          externalPort = 80;
+        };
       };
     }
   ];

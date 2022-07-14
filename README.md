@@ -89,6 +89,7 @@ NixOS modules ([src](modules/modules.nix))
   * [electrs](https://github.com/romanz/electrs)
   * [fulcrum](https://github.com/cculianu/Fulcrum) (see [the module](modules/fulcrum.nix) for a comparison to electrs)
   * [btcpayserver](https://github.com/btcpayserver/btcpayserver)
+  * [mempool](https://github.com/mempool/mempool): Bitcoin visualizer, explorer, and API service
   * [liquid](https://github.com/elementsproject/elements)
   * [JoinMarket](https://github.com/joinmarket-org/joinmarket-clientserver)
     * [JoinMarket Orderbook Watcher](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/orderbook.md)
