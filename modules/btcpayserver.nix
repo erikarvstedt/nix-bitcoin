@@ -69,7 +69,7 @@ let
       };
       package = mkOption {
         type = types.package;
-        default = config.nix-bitcoin.pkgs.nbxplorer;
+        default = config.nix-bitcoin.pkgs.nbxplorerNoBanlist;
         defaultText = "config.nix-bitcoin.pkgs.nbxplorer";
         description = "The package providing nbxplorer binaries.";
       };

@@ -1,0 +1,13 @@
+--- a/NBXplorer/Backends/DBTrie/BitcoinDWaiter.cs
++++ b/NBXplorer/Backends/DBTrie/BitcoinDWaiter.cs
+@@ -282,7 +282,7 @@ namespace NBXplorer.Backends.DBTrie
+ 			}
+ 			catch { }
+ 		}
+-		bool _BanListLoaded;
++		bool _BanListLoaded = true;
+ 		async Task<bool> StepAsync(CancellationToken token)
+ 		{
+ 			var oldState = State;
+--
+2.33.3

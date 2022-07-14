@@ -25,6 +25,13 @@ let self = {
     packageOverrides = import ./python-packages self;
   }).pkgs;
 
+  # TODO-EXTERNAL:
+  # Remove this when https://github.com/dgarage/NBXplorer/issues/367
+  # has been released
+  nbxplorerNoBanlist = self.pinned.nbxplorer.overrideAttrs (_: {
+    patches = [ ./nbxplorer/disable-banlist-loading.patch ];
+  });
+
   # Internal pkgs
   netns-exec = pkgs.callPackage ./netns-exec { };
   krops = import ./krops { inherit pkgs; };
