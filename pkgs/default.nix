@@ -17,9 +17,10 @@ let self = {
   lndinit = pkgs.callPackage ./lndinit { };
   liquid-swap = pkgs.python3Packages.callPackage ./liquid-swap { };
   rtl = pkgs.callPackage ./rtl { };
-  inherit (pkgs.callPackage ./mempool { })
+  inherit (pkgs.callPackage ./mempool { inherit (self) fetchNodeModules; })
     mempool-backend
-    mempool-frontend;
+    mempool-frontend
+    mempool-nginx-conf;
   # The secp256k1 version used by joinmarket
   secp256k1 = pkgs.callPackage ./secp256k1 { };
   spark-wallet = pkgs.callPackage ./spark-wallet { };

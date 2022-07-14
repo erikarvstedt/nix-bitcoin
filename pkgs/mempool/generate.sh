@@ -1,50 +1,89 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -i bash -p nodePackages.node2nix gnupg wget jq gnused nix_2_4
+#! nix-shell -i bash -p gnupg gnused jq
 set -euo pipefail
 
 # Use this to start a debug shell at the location of this statement
 # . "${BASH_SOURCE[0]%/*}/../../helper/start-bash-session.sh"
 
-repo=https://github.com/erikarvstedt/mempool
-
-TMPDIR="$(mktemp -d /tmp/mempool.XXX)"
-trap "rm -rf $TMPDIR" EXIT
-
+version=
 # https://github.com/erikarvstedt/mempool/commits/dev
-version=8924873bfde2b9c2bd218e77800eff4008bd0122
-# Fetch and verify source
-src=$TMPDIR/src
-mkdir -p $src
-git -C $src init
-git -C $src fetch --depth 1 $repo $version:src
-git -C $src checkout src
-# This commit was only signed by the Github webinterface
-# export GNUPGHOME=$TMPDIR
-# gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 913C5FF1F579B66CA10378DBA394E332255A6173 2> /dev/null
-# git -C $src verify-tag ${version}
-rm -rf $src/.git
-hash=$(nix hash path $src)
+rev=1b91d3e5d60fedb60eb7b8f57035de3b7082364d
+owner=erikarvstedt
+repo=https://github.com/$owner/mempool
 
-generatePkg() {
-  component=$1
-  node2nix \
-    --nodejs-16 \
-    --input $src/$component/package.json \
-    --lock $src/$component/package-lock.json \
-    --output node-packages-$component.nix \
-    --composition /dev/null \
-    --strip-optional-dependencies \
-    --no-copy-node-env
+cd "${BASH_SOURCE[0]%/*}"
 
-  # Delete reference to temporary src
-  sed -i '/\bsrc = .*\/tmp\/mempool/d' node-packages-$component.nix
+updateRepo() {
+    TMPDIR="$(mktemp -d /tmp/mempool.XXX)"
+    trap "rm -rf $TMPDIR" EXIT
+
+    # Fetch and verify source
+    src=$TMPDIR/src
+    mkdir -p $src
+    if [[ -v rev ]]; then
+        git -C $src init
+        git -C $src fetch --depth 1 $repo $rev:src
+        git -C $src checkout src
+        version=$rev
+    else
+        # Fetch version tag
+        git clone --depth 1 --branch $version -c advice.detachedHead=false $repo $src
+        git -C $src checkout tags/$version
+        export GNUPGHOME=$TMPDIR
+        gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 913C5FF1F579B66CA10378DBA394E332255A6173 2> /dev/null
+        git -C $src verify-tag $version
+    fi
+    rm -rf $src/.git
+    hash=$(nix hash path $src)
+
+    sed -i "
+      s|\bowner = .*;|owner = \"$owner\";|
+      s|\brev = .*;|rev = \"$version\";|
+      s|\bhash = .*;|hash = \"$hash\";|
+    " default.nix
+}
+updateNodeModulesHash() {
+    component=$1
+    echo
+    echo "Fetching node modules for mempool-$component"
+    updateFixedOutputDirevation ./default.nix mempool-$component "cd $component"
+}
+updateFixedOutputDirevation() {
+    # The file that defines the derivation that should be updated
+    file=$1
+    # The output name of this flake that should be updated
+    flakeOutput=$2
+    # A pattern in a line preceding the hash that should be updated
+    patternPrecedingHash=$3
+
+    sed -i "/$patternPrecedingHash/,/hash/ s|hash = .*|hash = \"\";|" $file
+    # Display stderr and capture it. stdbuf is required to disable output buffering.
+    stderr=$(
+        nix build --no-link -L .#$flakeOutput |&
+        stdbuf -oL grep -v '\berror:.*failed to build$' |
+        tee /dev/stderr || :
+    )
+    hash=$(echo "$stderr" | sed -nE 's/.*?\bgot: *?(sha256-.*)/\1/p')
+    if [[ ! $hash ]]; then
+        echo
+        echo "Error: No hash in build output."
+        exit 1
+    fi
+    sed -i "/$patternPrecedingHash/,/hash/ s|hash = .*|hash = \"$hash\";|" $file
+}
+updateFrontendAssets() {
+  . ./frontend-assets-update.sh
+  echo
+  echo "Fetching frontend assets"
+  updateFixedOutputDirevation ./default.nix mempool-frontend.assets "frontendAssets"
 }
 
-generatePkg frontend
-generatePkg backend
-
-# Use the verified package src
-sed -i "
-  s|\brev = .*;|rev = \"${version}\";|
-  s|\hash = .*;|hash = \"${hash}\";|
-" default.nix
+if [[ $# == 0 ]]; then
+    # Each of these can be run separately
+    updateRepo
+    updateFrontendAssets
+    updateNodeModulesHash backend
+    updateNodeModulesHash frontend
+else
+    eval "$@"
+fi
