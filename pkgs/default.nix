@@ -28,6 +28,8 @@ let self = {
     packageOverrides = import ./python-packages self;
   }).pkgs;
 
+  fetchNodeModules = pkgs.callPackage ./build-support/fetch-node-modules.nix { };
+
   # Internal pkgs
   netns-exec = pkgs.callPackage ./netns-exec { };
   krops = import ./krops { inherit pkgs; };
