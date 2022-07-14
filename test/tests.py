@@ -240,7 +240,7 @@ def _():
     machine.wait_until_succeeds(
         log_has_string("mempool", "Mempool Server is running on port 8999")
     )
-    assert_matches(f"curl -L {ip('nginx')}:12125", "mempool - Bitcoin Explorer")
+    assert_matches(f"curl -L {ip('nginx')}:60845", "mempool - Bitcoin Explorer")
 
 @test("spark-wallet")
 def _():

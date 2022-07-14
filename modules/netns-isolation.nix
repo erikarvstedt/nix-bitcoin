@@ -365,7 +365,8 @@ in {
 
     services.clightning-rest.address = netns.clightning-rest.address;
 
-    services.mempool.backendAddress = netns.mempool.address;
+    services.mempool.address = netns.mempool.address;
+    services.mempool.frontend.address = netns.nginx.address;
   }
   ]);
 }

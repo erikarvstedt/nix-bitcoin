@@ -120,7 +120,7 @@ in {
         rtl = {
           externalPort = 80;
         };
-        mempool = {
+        mempool-frontend = {
           externalPort = 80;
         };
       };
