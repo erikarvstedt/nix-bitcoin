@@ -297,6 +297,14 @@ in {
         id = 31;
         connections = [ "bitcoind" ];
       };
+      mempool = {
+        id = 32;
+        connections = [
+          "bitcoind"
+          "nginx"
+          (if (config.services.mempool.electrumServer == "electrs") then "electrs" else "fulcrum")
+        ];
+      };
     };
 
     services.bitcoind = {
@@ -355,6 +363,9 @@ in {
     services.rtl.address = netns.rtl.address;
 
     services.clightning-rest.address = netns.clightning-rest.address;
+
+    services.mempool.address = netns.mempool.address;
+    services.mempool.frontend.address = netns.nginx.address;
   }
   ]);
 }

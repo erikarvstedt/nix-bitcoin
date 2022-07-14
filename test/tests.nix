@@ -79,6 +79,9 @@ let
         echo a > rtl-password
       '');
 
+      tests.mempool = cfg.mempool.enable;
+      services.mempool.electrumServer = "fulcrum";
+
       tests.spark-wallet = cfg.spark-wallet.enable;
 
       tests.lnd = cfg.lnd.enable;
@@ -215,6 +218,8 @@ let
       tests.secure-node = true;
       tests.restart-bitcoind = true;
 
+      nix-bitcoin.onionServices.mempool-frontend.enable = true;
+
       # Stop electrs from spamming the test log with 'WARN - wait until IBD is over' messages
       tests.stop-electrs = true;
     };
@@ -233,6 +238,7 @@ let
       services.clightning-rest.enable = true;
       services.liquidd.enable = true;
       services.rtl.enable = true;
+      services.mempool.enable = true;
       services.spark-wallet.enable = true;
       services.lnd.enable = true;
       services.lightning-loop.enable = true;

@@ -251,6 +251,14 @@ def _():
         log_has_string("clightning-rest", "cl-rest api server is ready and listening on port: 3001")
     )
 
+@test("mempool")
+def _():
+    assert_running("mempool")
+    machine.wait_until_succeeds(
+        log_has_string("mempool", "Mempool Server is running on port 8999")
+    )
+    assert_matches(f"curl -L {ip('nginx')}:60845", "mempool - Bitcoin Explorer")
+
 @test("spark-wallet")
 def _():
     assert_running("spark-wallet")
@@ -432,6 +440,12 @@ def _():
 
     if enabled("btcpayserver"):
         machine.wait_until_succeeds(log_has_string("nbxplorer", f"At height: {num_blocks}"))
+
+    if enabled("mempool"):
+        assert_running("nginx")
+        assert_full_match(
+            f"curl -fsS http://{ip('nginx')}:60845/api/v1/blocks/tip/height", str(num_blocks)
+        )
 
 if "netns-isolation" in enabled_tests:
     def ip(name):
