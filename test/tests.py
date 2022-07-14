@@ -437,6 +437,12 @@ def _():
     if enabled("btcpayserver"):
         machine.wait_until_succeeds(log_has_string("nbxplorer", f"At height: {num_blocks}"))
 
+    if enabled("mempool"):
+        assert_running("nginx")
+        assert_full_match(
+            f"curl -fsS http://{ip('nginx')}:60845/api/v1/blocks/tip/height", str(num_blocks)
+        )
+
 if "netns-isolation" in enabled_tests:
     def ip(name):
         return test_data["netns"][name]["address"]
