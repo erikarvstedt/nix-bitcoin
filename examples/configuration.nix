@@ -161,6 +161,24 @@
   # public access to the web interface.
   # nix-bitcoin.onionServices.btcpayserver.enable = true;
 
+  ### MEMPOOL
+  # Set this to enable mempool, a fully featured Bitcoin visualizer, explorer,
+  # and API service.
+  #
+  # services.fulcrum.enable = true;
+  #
+  # Possible options for the Electrum backend server:
+  #
+  # - electrs:
+  #   Small database size, slow when querying new addresses.
+  #   Enable with:
+  #     services.mempool.electrumServer = "electrs";
+  #
+  # - fulcrum:
+  #   Large database size, quickly serves arbitrary address queries.
+  #   Enable with:
+  #     services.mempool.electrumServer = "fulcrum";
+
   ### LIQUIDD
   # Enable this module to use Liquid, a sidechain for an inter-exchange
   # settlement network linking together cryptocurrency exchanges and

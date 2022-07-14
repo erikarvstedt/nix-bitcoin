@@ -80,7 +80,15 @@ let
       electrumServer = mkOption {
         type = types.enum [ "electrs" "fulcrum" ];
         default = "electrs";
-        description = "Electrum server implementation.";
+        description = ''
+          The Electrum server to use for fetching address information.
+
+          Possible options:
+          - electrs:
+            Small database size, slow when querying new addresses.
+          - fulcrum:
+            Large database size, quickly serves arbitrary address queries.
+        '';
       };
       dataDir = mkOption {
         type = types.path;
