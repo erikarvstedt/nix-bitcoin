@@ -28,10 +28,10 @@ in {
     # btcpayserver = defaultEnableTorProxy;
     spark-wallet = defaultEnableTorProxy;
     lightning-pool = defaultEnableTorProxy;
+    mempool = defaultEnableTorProxy;
     # TODO-EXTERNAL:
     # disable Tor enforcement until
     # https://github.com/mempool/mempool/pull/1213 is released
-    # mempool = defaultEnforceTor;
 
     # These services don't make outgoing connections
     # (or use Tor by default in case of joinmarket)

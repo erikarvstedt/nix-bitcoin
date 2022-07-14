@@ -72,7 +72,7 @@ let
       default = cfg.user;
       description = "The group as which to run Mempool.";
     };
-    tor.enforce = nbLib.tor.enforce;
+    tor = nbLib.tor;
   };
 
   cfg = config.services.mempool;
@@ -86,6 +86,8 @@ let
     bitcoind
     electrs
     fulcrum;
+
+  torSocket = config.services.tor.client.socksListenAddress;
 in {
   inherit options;
 
@@ -139,6 +141,14 @@ in {
         ENABLED = true;
         DATABASE = cfg.database.name;
         SOCKET = "/run/mysqld/mysqld.sock";
+      };
+    } // optionalAttrs (cfg.tor.proxy) {
+      # Use Tor for rate fetching
+      SOCKS5PROXY = {
+        ENABLED = true;
+        USE_ONION = true;
+        HOST = torSocket.addr;
+        PORT = torSocket.port;
       };
     };
 
