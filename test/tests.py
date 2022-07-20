@@ -123,6 +123,11 @@ def _():
 def _():
     succeed("systemctl stop electrs")
 
+@test("lndhub-go")
+def _():
+    assert_running("lndhub-go")
+    wait_for_open_port(ip("lndhub-go"), 8082)
+
 @test("liquidd")
 def _():
     assert_running("liquidd")
