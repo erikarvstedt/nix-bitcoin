@@ -12,7 +12,7 @@ let
       };
       port = mkOption {
         type = types.port;
-        default = 3001;
+        default = 8082;
         description = "Port to listen on.";
       };
       settings = mkOption {
