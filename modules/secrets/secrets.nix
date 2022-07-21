@@ -173,6 +173,7 @@ in {
          RemainAfterExit = true;
       };
       script = ''
+        export LC_COLLATE=C
         ${optionalString cfg.generateSecrets ''
           mkdir -p "${cfg.secretsDir}"
           cd "${cfg.secretsDir}"
