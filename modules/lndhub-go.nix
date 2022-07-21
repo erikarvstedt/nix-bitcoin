@@ -55,6 +55,7 @@ let
 
   cfg = config.services.lndhub-go;
   nbLib = config.nix-bitcoin.lib;
+  xxd = "${pkgs.xxd}/bin/xxd";
 
   inherit (config.services)
     lnd
@@ -101,11 +102,12 @@ in {
       requires = [ "lnd.service" "postgresql.service" ];
       after = requires;
       preStart = ''
+        set -euo pipefail
         {
           cat ${configFile}
           echo "JWT_SECRET=$(cat ${config.nix-bitcoin.secretsDir}/lndhub.go-jwt_secret)"
-          echo "LND_MACAROON_HEX=$(xxd -p -c 99999 /run/lnd/lndhub-go.macaroon)"
-          echo "LND_CERT_HEX=$(xxd -p -c 99999 ${lnd.certPath})"
+          echo "LND_MACAROON_HEX=$(${xxd} -p -c 99999 /run/lnd/lndhub-go.macaroon)"
+          echo "LND_CERT_HEX=$(${xxd} -p -c 99999 ${lnd.certPath})"
         } > .env
       '';
       serviceConfig = nbLib.defaultHardening // {
