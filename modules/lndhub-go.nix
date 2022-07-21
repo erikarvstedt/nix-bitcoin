@@ -105,7 +105,7 @@ in {
         set -euo pipefail
         {
           cat ${configFile}
-          echo "JWT_SECRET=$(cat ${config.nix-bitcoin.secretsDir}/lndhub.go-jwt_secret)"
+          echo "JWT_SECRET=$(cat '${config.nix-bitcoin.secretsDir}/lndhub.go-jwt-secret')"
           echo "LND_MACAROON_HEX=$(${xxd} -p -c 99999 /run/lnd/lndhub-go.macaroon)"
           echo "LND_CERT_HEX=$(${xxd} -p -c 99999 ${lnd.certPath})"
         } > .env
@@ -126,8 +126,10 @@ in {
       group = cfg.group;
     };
     users.groups.${cfg.group} = {};
+
+    nix-bitcoin.secrets."lndhub.go-jwt-secret".user = cfg.user;
     nix-bitcoin.generateSecretsCmds.lndhub-go = ''
-      makePasswordSecret lndhub.go-jwt_secret
+      makePasswordSecret lndhub.go-jwt-secret
     '';
   };
 }
