@@ -86,7 +86,7 @@ in {
     services.lndhub-go.settings = {
       HOST = cfg.address;
       PORT = cfg.port;
-      DATABASE_URI = "postgresql://${cfg.user}:@localhost:${toString postgresql.port}/lndhub-go?sslmode=disable";
+      DATABASE_URI = "postgresql://${cfg.user}:@localhost:${toString postgresql.port}/lndhubgo?sslmode=disable";
       LND_ADDRESS = "${nbLib.addressWithPort lnd.address lnd.port}";
       BRANDING_TITLE = "LndHub.go - Nix-Bitcoin";
       BRANDING_DESC = "Accounting wrapper for the Lightning Network";
