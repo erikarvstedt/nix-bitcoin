@@ -90,10 +90,10 @@ in {
       ];
     };
 
-    systemd.services.lndhub-go = {
+    systemd.services.lndhub-go = rec {
       wantedBy = [ "multi-user.target" ];
       requires = [ "lnd.service" "postgresql.service" ];
-      after = [ "lnd.service" "postgresql.service" ];
+      after = requires;
       preStart = ''
         mkdir -p '${cfg.lndhub-go.dataDir}'
         {
