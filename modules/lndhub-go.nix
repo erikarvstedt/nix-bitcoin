@@ -84,11 +84,11 @@ in {
     };
     services.postgresql = {
       enable = true;
-      ensureDatabases = [ "lndhub-go" ];
+      ensureDatabases = [ "lndhubgo" ];
       ensureUsers = [
         {
           name = cfg.user;
-          ensurePermissions."DATABASE lndhub-go" = "ALL PRIVILEGES";
+          ensurePermissions."DATABASE lndhubgo" = "ALL PRIVILEGES";
         }
       ];
     };
