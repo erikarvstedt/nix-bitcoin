@@ -15,30 +15,18 @@ let
         default = 3001;
         description = "Port to listen on.";
       };
-      feeReserve = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Keep fee reserve for each user.";
-      };
-      allowAccountCreation = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Enable creation of new accounts.";
-      };
-      maxReceiveAmount = mkOption {
-        type = types.ints.unsigned;
-        default = 0;  # 0 = no limit
-        description = "Set maximum amount (in satoshi) for which an invoice can be created.";
-      };
-      maxSendAmount = mkOption {
-        type = types.ints.unsigned;
-        default = 0;  # 0 = no limit
-        description = "Set maximum amount (in satoshi) of an invoice that can be paid.";
-      };
-      maxAccountBalance = mkOption {
-        type = types.ints.unsigned;
-        default = 0;  # 0 = no limit
-        description = "Set maximum balance (in satoshi) for each account.";
+      settings = mkOption {
+        type = with types; attrsOf (oneOf [ str int bool ]);
+        example = {
+          ALLOW_ACCOUNT_CREATION = false;
+          FEE_RESERVE = true;
+          MAX_SEND_AMOUNT = 1000000;
+        };
+        description = ''
+          LndHub.go settings.
+          See here for possible options:
+          https://github.com/getAlby/lndhub.go#available-configuration
+        '';
       };
       package = mkOption {
         type = types.package;
@@ -71,6 +59,8 @@ let
   inherit (config.services)
     lnd
     postgresql;
+
+  configFile = builtins.toFile "lndhub-go-conf" (lib.generators.toKeyValue {} cfg.settings);
 in {
   inherit options;
 
@@ -93,39 +83,36 @@ in {
       ];
     };
 
+    services.lndhub-go.settings = {
+      HOST = cfg.address;
+      PORT = cfg.port;
+      DATABASE_URI = "postgresql://${cfg.user}:@localhost:${toString postgresql.port}/lndhub-go?sslmode=disable";
+      LND_ADDRESS = "${nbLib.addressWithPort lnd.address lnd.port}";
+      BRANDING_TITLE = "LndHub.go - Nix-Bitcoin";
+      BRANDING_DESC = "Accounting wrapper for the Lightning Network";
+      BRANDING_URL = "https://nixbitcoin.org";
+      BRANDING_LOGO = "https://nixbitcoin.org/files/nix-bitcoin-logo-text.png";
+      BRANDING_FAVICON = "https://nixbitcoin.org/files/nix-bitcoin-logo.png";
+      BRANDING_FOOTER = "about=https://nixbitcoin.org,github=https://github.com/fort-nix/nix-bitcoin";
+    };
+
     systemd.services.lndhub-go = rec {
       wantedBy = [ "multi-user.target" ];
       requires = [ "lnd.service" "postgresql.service" ];
       after = requires;
       preStart = ''
-        mkdir -p '${cfg.dataDir}';
         {
-          echo "DATABASE_URI=postgresql://${cfg.user}:@localhost:${postgresql.port}/lndhub-go?sslmode=disable"
+          cat ${configFile}
           echo "JWT_SECRET=$(cat ${config.nix-bitcoin.secretsDir}/lndhub.go-jwt_secret)"
-          echo "LND_ADDRESS="${lnd.address}:${toString lnd.port}"
-          echo "LND_MACAROON_HEX=$(xxd -p -c 9999 /run/lnd/lndhub-go.macaroon)"
-          echo "LND_CERT_HEX=$(xxd -p -c 9999 ${lnd.certPath})"
-          echo "HOST=${cfg.address}"
-          echo "PORT=${toString cfg.port}"
-          echo "FEE_RESERVE=${cfg.feeReserve}"
-          echo "ALLOW_ACCOUNT_CREATION=${cfg.allowAccountCreation}"
-          echo "MAX_RECEIVE_AMOUNT=${toString cfg.maxReceiveAmount}"
-          echo "MAX_SEND_AMOUNT=${toString cfg.maxSendAmount}"
-          echo "MAX_ACCOUNT_BALANCE=${toString cfg.maxAccountBalance}"
-          echo "BRANDING_TITLE=LndHub.go - Nix-Bitcoin"
-          echo "BRANDING_DESC=Accounting wrapper for the Lightning Network"
-          echo "BRANDING_URL=https://nixbitcoin.org"
-          echo "BRANDING_LOGO=https://nixbitcoin.org/files/nix-bitcoin-logo-text.png"
-          echo "BRANDING_FAVICON=https://nixbitcoin.org/files/nix-bitcoin-logo.png"
-          echo "BRANDING_FOOTER=about=https://nixbitcoin.org,github=https://github.com/fort-nix/nix-bitcoin"
-        } > '${cfg.dataDir}/lndhub-go.env'
-        chmod 600 '${cfg.dataDir}/lndhub-go.env'
+          echo "LND_MACAROON_HEX=$(xxd -p -c 99999 /run/lnd/lndhub-go.macaroon)"
+          echo "LND_CERT_HEX=$(xxd -p -c 99999 ${lnd.certPath})"
+        } > .env
       '';
       serviceConfig = nbLib.defaultHardening // {
-        EnvironmentFile = "${cfg.dataDir}/lndhub-go.env";
-        ExecStart = ''
-          ${cfg.package}/bin/lndhub.go
-        '';
+        StateDirectory = "lndhub-go";
+        StateDirectoryMode = "770";
+        WorkingDirectory = "/var/lib/lndhub-go";
+        ExecStart = "${config.nix-bitcoin.pkgs.lndhub-go}/bin/lndhub.go";
         User = cfg.user;
         Restart = "on-failure";
         RestartSec = "10s";
