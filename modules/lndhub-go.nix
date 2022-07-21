@@ -58,24 +58,27 @@ let
       };
       group = mkOption {
         type = types.str;
-        default = cfg.lndhub-go.user;
+        default = cfg.user;
         description = "The group as which to run LndHub.go.";
       };
       tor.enforce = nbLib.tor.enforce;
     };
   };
 
-  cfg = config.services;
+  cfg = config.services.lndhub-go;
   nbLib = config.nix-bitcoin.lib;
 
+  inherit (config.services)
+    lnd
+    postgresql;
 in {
   inherit options;
 
-  config = mkIf cfg.lndhub-go.enable {
+  config = mkIf cfg.enable {
     services.lnd = {
       enable = true;
       macaroons.lndhub-go = {
-        inherit (cfg.lndhub-go) user;
+        inherit (cfg) user;
         permissions = ''{"entity":"info","action":"read"},{"entity":"invoices","action":"read"},{"entity":"invoices","action":"write"},{"entity":"offchain","action":"read"},{"entity":"offchain","action":"write"}'';
       };
     };
@@ -84,7 +87,7 @@ in {
       ensureDatabases = [ "lndhub-go" ];
       ensureUsers = [
         {
-          name = cfg.lndhub-go.user;
+          name = cfg.user;
           ensurePermissions."DATABASE lndhub-go" = "ALL PRIVILEGES";
         }
       ];
@@ -95,45 +98,45 @@ in {
       requires = [ "lnd.service" "postgresql.service" ];
       after = requires;
       preStart = ''
-        mkdir -p '${cfg.lndhub-go.dataDir}'
+        mkdir -p '${cfg.dataDir}';
         {
-          echo "DATABASE_URI=postgresql://${cfg.lndhub-go.user}:@localhost:${toString cfg.postgresql.port}/lndhub-go?sslmode=disable"
+          echo "DATABASE_URI=postgresql://${cfg.user}:@localhost:${postgresql.port}/lndhub-go?sslmode=disable"
           echo "JWT_SECRET=$(cat ${config.nix-bitcoin.secretsDir}/lndhub.go-jwt_secret)"
-          echo "LND_ADDRESS=${cfg.lnd.address}:${toString cfg.lnd.port}"
-          echo "LND_MACAROON_HEX=$(xxd -p -c 99999 /run/lnd/lndhub-go.macaroon)"
-          echo "LND_CERT_HEX=$(xxd -p -c 99999 ${cfg.lnd.certPath})"
-          echo "HOST=${cfg.lndhub-go.address}"
-          echo "PORT=${toString cfg.lndhub-go.port}"
-          echo "FEE_RESERVE=${toString cfg.lndhub-go.feeReserve}"
-          echo "ALLOW_ACCOUNT_CREATION=${toString cfg.lndhub-go.allowAccountCreation}"
-          echo "MAX_RECEIVE_AMOUNT=${toString cfg.lndhub-go.maxReceiveAmount}"
-          echo "MAX_SEND_AMOUNT=${toString cfg.lndhub-go.maxSendAmount}"
-          echo "MAX_ACCOUNT_BALANCE=${toString cfg.lndhub-go.maxAccountBalance}"
+          echo "LND_ADDRESS="${lnd.address}:${toString lnd.port}"
+          echo "LND_MACAROON_HEX=$(xxd -p -c 9999 /run/lnd/lndhub-go.macaroon)"
+          echo "LND_CERT_HEX=$(xxd -p -c 9999 ${lnd.certPath})"
+          echo "HOST=${cfg.address}"
+          echo "PORT=${toString cfg.port}"
+          echo "FEE_RESERVE=${cfg.feeReserve}"
+          echo "ALLOW_ACCOUNT_CREATION=${cfg.allowAccountCreation}"
+          echo "MAX_RECEIVE_AMOUNT=${toString cfg.maxReceiveAmount}"
+          echo "MAX_SEND_AMOUNT=${toString cfg.maxSendAmount}"
+          echo "MAX_ACCOUNT_BALANCE=${toString cfg.maxAccountBalance}"
           echo "BRANDING_TITLE=LndHub.go - Nix-Bitcoin"
           echo "BRANDING_DESC=Accounting wrapper for the Lightning Network"
           echo "BRANDING_URL=https://nixbitcoin.org"
           echo "BRANDING_LOGO=https://nixbitcoin.org/files/nix-bitcoin-logo-text.png"
           echo "BRANDING_FAVICON=https://nixbitcoin.org/files/nix-bitcoin-logo.png"
           echo "BRANDING_FOOTER=about=https://nixbitcoin.org,github=https://github.com/fort-nix/nix-bitcoin"
-        } > '${cfg.lndhub-go.dataDir}/lndhub-go.env'
-        chmod 600 '${cfg.lndhub-go.dataDir}/lndhub-go.env'
+        } > '${cfg.dataDir}/lndhub-go.env'
+        chmod 600 '${cfg.dataDir}/lndhub-go.env'
       '';
       serviceConfig = nbLib.defaultHardening // {
-        EnvironmentFile = "${cfg.lndhub-go.dataDir}/lndhub-go.env";
+        EnvironmentFile = "${cfg.dataDir}/lndhub-go.env";
         ExecStart = ''
-          ${cfg.lndhub-go.package}/bin/lndhub.go
+          ${cfg.package}/bin/lndhub.go
         '';
-        User = cfg.lndhub-go.user;
+        User = cfg.user;
         Restart = "on-failure";
         RestartSec = "10s";
-      } // nbLib.allowedIPAddresses cfg.lndhub-go.tor.enforce;
+      } // nbLib.allowedIPAddresses cfg.tor.enforce;
     };
 
-    users.users.${cfg.lndhub-go.user} = {
+    users.users.${cfg.user} = {
       isSystemUser = true;
-      group = cfg.lndhub-go.group;
+      group = cfg.group;
     };
-    users.groups.${cfg.lndhub-go.group} = {};
+    users.groups.${cfg.group} = {};
     nix-bitcoin.generateSecretsCmds.lndhub-go = ''
       makePasswordSecret lndhub.go-jwt_secret
     '';
