@@ -79,14 +79,15 @@ in {
   };
 
   testScript = ''
-    start_all()
-    client.succeed(
-        "cp ${privateKey} /root/id_ed25519"
-    )
-    client.succeed("chmod 0600 /root/id_ed25519")
-    client.succeed(
-        "cp ${privateKeyAppendOnly} /root/id_ed25519.appendOnly"
-    )
-    client.succeed("chmod 0600 /root/id_ed25519.appendOnly")
+    if not "is_interactive" in vars():
+      start_all()
+      client.succeed(
+          "cp ${privateKey} /root/id_ed25519"
+      )
+      client.succeed("chmod 0600 /root/id_ed25519")
+      client.succeed(
+          "cp ${privateKeyAppendOnly} /root/id_ed25519.appendOnly"
+      )
+      client.succeed("chmod 0600 /root/id_ed25519.appendOnly")
   '';
 })
