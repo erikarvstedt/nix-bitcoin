@@ -33,10 +33,17 @@ in {
 
   nodes = {
     client = { ... }: {
-      services.clightning.replication = {
+      imports = [ ../modules/modules.nix ];
+
+      nix-bitcoin.generateSecrets = true;
+
+      services.clightning = {
         enable = true;
-        sshfs.destination = "nb-replication@server:writeable";
-        encrypt = true;
+        replication = {
+          enable = true;
+          sshfs.destination = "nb-replication@server:writeable";
+          encrypt = true;
+        };
       };
     };
 
