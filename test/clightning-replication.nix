@@ -64,9 +64,12 @@ in {
 
       users.groups.sftponly = {};
       users.users.nb-replication = {
+        isNormalUser = true;
         shell = "${pkgs.coreutils}/bin/false";
+        group = "nb-replication";
         extraGroups = [ "sftponly" ];
       };
+      users.groups.nb-replication = {};
 
       systemd.tmpfiles.rules = [
         "d '/var/backup/nb-replication' 0755 root root - -"
