@@ -8,29 +8,6 @@ task:
   timeout_in: 120m
 
   matrix:
-    - name: modules_test
-      container:
-        # Use Nix release 2.3.x, the default on NixOS stable
-        image: nixos/nix:2.3.12
-        # Besides virtualization, this also enables privileged containers which are required for
-        # sandboxed builds
-        kvm: true
-        # Needed for package builds
-        memory: 8G
-        # A maximum of 16 CPUs is shared among all concurrent tasks.
-        # https://cirrus-ci.org/faq/#are-there-any-limits
-        cpu: 4
-      environment:
-        matrix:
-          - scenario: default
-          - scenario: netns
-          - scenario: netnsRegtest
-      # This script is run as root
-      build_script:
-        - echo "sandbox = true" >> /etc/nix/nix.conf
-        - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix nixpkgs)"
-        - nix run -f '<nixpkgs>' bash coreutils cachix -c ./test/ci/build.sh
-
     - name: flake
       container:
         image: nixpkgs/nix-flakes
