@@ -54,13 +54,13 @@ in {
             ForceCommand internal-sftp
         '';
       };
-      
+
       users.groups.sftponly = {};
       users.users.nb-replication = {
         shell = "${pkgs.coreutils}/bin/false";
         extraGroups = [ "sftponly" ];
       };
-      
+
       systemd.tmpfiles.rules = [
         "d '/var/backup/nb-replication' 0755 root root - -"
         "d '/var/backup/nb-replication/writeable' 0700 <user> sftponly - -"
