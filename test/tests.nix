@@ -358,7 +358,7 @@ let
   tests = builtins.mapAttrs makeTest allScenarios // {
     clightningReplication.vm = import ./clightning-replication.nix {
       inherit pkgs;
-      inherit (pkgs) system;
+      inherit (pkgs.stdenv) system;
     };
   };
 
