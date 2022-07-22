@@ -355,7 +355,12 @@ let
     };
   makeTest' = import ./lib/make-test.nix pkgs;
 
-  tests = builtins.mapAttrs makeTest allScenarios;
+  tests = builtins.mapAttrs makeTest allScenarios // {
+    clightningReplication.vm = import ./clightning-replication.nix {
+      inherit pkgs;
+      inherit (pkgs) system;
+    };
+  };
 
   getTest = name: tests.${name} or (makeTest name {
     services.${name}.enable = true;
