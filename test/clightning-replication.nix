@@ -32,14 +32,14 @@ with pkgs.lib;
         enable = true;
         replication = {
           enable = true;
+          encrypt = true;
           sshfs = {
             destination = "nb-replication@server:writable";
             sshOptions = [ "StrictHostKeyChecking=no" ];
           };
-          encrypt = true;
         };
       };
-      # Disable autostart so we can start it after ssh server is up
+      # Disable autostart so we can start it after SSH server is up
       systemd.services.clightning.wantedBy = mkForce [];
     };
 
@@ -53,10 +53,10 @@ with pkgs.lib;
         extraConfig = ''
           Match group sftponly
             ChrootDirectory /var/backup/%u
-            X11Forwarding no
             AllowTcpForwarding no
             AllowAgentForwarding no
             ForceCommand internal-sftp
+            X11Forwarding no
         '';
       };
 
@@ -66,7 +66,7 @@ with pkgs.lib;
         shell = "${pkgs.coreutils}/bin/false";
         group = "nb-replication";
         extraGroups = [ "sftponly" ];
-        openssh.authorizedKeys.keys = [ "${publicKey}" ];
+        openssh.authorizedKeys.keys = [ publicKey ];
       };
       users.groups.nb-replication = {};
 
