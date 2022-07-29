@@ -4,26 +4,16 @@ let
   nixpkgs = (import ../pkgs/nixpkgs-pinned.nix).nixpkgs;
 in
 import "${nixpkgs}/nixos/tests/make-test-python.nix" ({ pkgs, ... }:
+with pkgs.lib;
 let
   keyDir = "${nixpkgs}/nixos/tests/initrd-network-ssh";
-  keys = rec {
+  keys = {
     server = "${keyDir}/ssh_host_ed25519_key";
-    serverPub = "${server}.pub";
+    client = "${keyDir}/id_ed25519";
+    serverPub = readFile "${keys.server}.pub";
+    clientPub = readFile "${keys.client}.pub";
   };
-  privateKey = pkgs.writeText "private-key" ''
-    -----BEGIN OPENSSH PRIVATE KEY-----
-    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-    QyNTUxOQAAACBx8UB04Q6Q/fwDFjakHq904PYFzG9pU2TJ9KXpaPMcrwAAAJB+cF5HfnBe
-    RwAAAAtzc2gtZWQyNTUxOQAAACBx8UB04Q6Q/fwDFjakHq904PYFzG9pU2TJ9KXpaPMcrw
-    AAAEBN75NsJZSpt63faCuaD75Unko0JjlSDxMhYHAPJk2/xXHxQHThDpD9/AMWNqQer3Tg
-    9gXMb2lTZMn0pelo8xyvAAAADXJzY2h1ZXR6QGt1cnQ=
-    -----END OPENSSH PRIVATE KEY-----
-  '';
-  publicKey = ''
-    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHHxQHThDpD9/AMWNqQer3Tg9gXMb2lTZMn0pelo8xyv root@client
-  '';
 in
-with pkgs.lib;
 {
   name = "clightning-replication";
 
@@ -33,10 +23,10 @@ with pkgs.lib;
 
       nix-bitcoin.generateSecrets = true;
       nix-bitcoin.generateSecretsCmds.clightning-replication-ssh-key = mkForce ''
-        install -m 600 ${privateKey} clightning-replication-ssh-key
+        install -m 600 ${keys.client} clightning-replication-ssh-key
       '';
 
-      programs.ssh.knownHosts."server".publicKey = readFile keys.serverPub;
+      programs.ssh.knownHosts."server".publicKey = keys.serverPub;
 
       services.clightning = {
         enable = true;
@@ -81,7 +71,7 @@ with pkgs.lib;
         isSystemUser = true;
         group = "nb-replication";
         shell = "${pkgs.coreutils}/bin/false";
-        openssh.authorizedKeys.keys = [ publicKey ];
+        openssh.authorizedKeys.keys = [ keys.clientPub ];
       };
       users.groups.nb-replication = {};
 
