@@ -31,7 +31,7 @@ with pkgs.lib;
         replication = {
           enable = true;
           sshfs = {
-            destination = "nb-replication@server:writeable";
+            destination = "nb-replication@server:writable";
             sshOptions = [ "StrictHostKeyChecking=no" ];
           };
           encrypt = true;
@@ -70,7 +70,7 @@ with pkgs.lib;
 
       systemd.tmpfiles.rules = [
         "d '/var/backup/nb-replication' 0755 root root - -"
-        "d '/var/backup/nb-replication/writeable' 0700 nb-replication sftponly - -"
+        "d '/var/backup/nb-replication/writable' 0700 nb-replication sftponly - -"
       ];
     };
   };
@@ -87,6 +87,6 @@ with pkgs.lib;
       client.succeed(f"runuser -u clightning -- ls {replica_db}")
       # No other user should be able to read the unencrypted files
       client.fail(f"runuser -u bitcoin -- ls {replica_db}")
-      server.succeed("runuser -u nb-replication -- gocryptfs -info /var/backup/nb-replication/writeable/lightningd-db/")
+      server.succeed("runuser -u nb-replication -- gocryptfs -info /var/backup/nb-replication/writable/lightningd-db/")
   '';
 })
