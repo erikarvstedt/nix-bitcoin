@@ -175,7 +175,7 @@ in {
         optionalString cfg.encrypt ''
           cipherDir="${if useSshfs then sshfsDir else localDir}/lightningd-db"
           mkdir -p "$cipherDir" ${plaintextDir}
-          gocryptfs=(${pkgs.gocryptfs}/bin/gocryptfs -passfile '${secretsDir}'/clightning-replication-password)
+          gocryptfs=(${pkgs.gocryptfs}/bin/gocryptfs -passfile '${secretsDir}/clightning-replication-password')
           # 1. init
           if [[ ! -e $cipherDir/gocryptfs.conf ]]; then
             "''${gocryptfs[@]}" -init "$cipherDir"
