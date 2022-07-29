@@ -1,7 +1,15 @@
 # You can run this test via `run-tests.sh -s clightningReplication`
 
-import "${(import ../pkgs/nixpkgs-pinned.nix).nixpkgs}/nixos/tests/make-test-python.nix" ({ pkgs, ... }:
 let
+  nixpkgs = (import ../pkgs/nixpkgs-pinned.nix).nixpkgs;
+in
+import "${nixpkgs}/nixos/tests/make-test-python.nix" ({ pkgs, ... }:
+let
+  keyDir = "${nixpkgs}/nixos/tests/initrd-network-ssh";
+  keys = rec {
+    server = "${keyDir}/ssh_host_ed25519_key";
+    serverPub = "${server}.pub";
+  };
   privateKey = pkgs.writeText "private-key" ''
     -----BEGIN OPENSSH PRIVATE KEY-----
     b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
@@ -28,15 +36,14 @@ with pkgs.lib;
         install -m 600 ${privateKey} clightning-replication-ssh-key
       '';
 
+      programs.ssh.knownHosts."server".publicKey = readFile keys.serverPub;
+
       services.clightning = {
         enable = true;
         replication = {
           enable = true;
           encrypt = true;
-          sshfs = {
-            destination = "nb-replication@server:writable";
-            sshOptions = [ "StrictHostKeyChecking=no" ];
-          };
+          sshfs.destination = "nb-replication@server:writable";
         };
       };
       # Disable autostart so we can start it after SSH server is up
@@ -45,6 +52,11 @@ with pkgs.lib;
 
     server = { ... }: {
       environment.systemPackages = [ pkgs.gocryptfs ];
+
+      environment.etc."ssh-host-key" = {
+        source = keys.server;
+        mode = "400";
+      };
 
       services.openssh = {
         enable = true;
@@ -57,6 +69,12 @@ with pkgs.lib;
             PasswordAuthentication no
             X11Forwarding no
         '';
+        hostKeys = mkForce [
+          {
+            path = "/etc/ssh-host-key";
+            type = "ed25519";
+          }
+        ];
       };
 
       users.users.nb-replication = {
