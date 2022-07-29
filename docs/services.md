@@ -40,19 +40,19 @@ or via the `services.backups` module.
 ## Remote target via SSHFS
 
 1. Add this to your `configuration.nix`:
-    ```nix
-    services.clightning.replication = {
-      enable = true;
-      sshfs.destination = "user@hostname:directory";
-      # This is optional
-      encrypt = true;
-    };
-    programs.ssh.knownHosts."hostname".publicKey = "<ssh public key from running `ssh-keyscan` on the host>";
-    ```
+   ```nix
+   services.clightning.replication = {
+     enable = true;
+     sshfs.destination = "user@hostname:directory";
+     # This is optional
+     encrypt = true;
+   };
+   programs.ssh.knownHosts."hostname".publicKey = "<ssh public key from running `ssh-keyscan` on the host>";
+   ```
 
-    Leave out the `encrypt` line if you want to store data on your destination
-    in plaintext.\
-    Adjust `user`, `hostname` and `directory` as necessary.
+   Leave out the `encrypt` line if you want to store data on your destination
+   in plaintext.\
+   Adjust `user`, `hostname` and `directory` as necessary.
 
 2. Deploy
 
@@ -66,47 +66,47 @@ or via the `services.backups` module.
 
    To implement this on NixOS, add the following to the NixOS configuration of
    the SSHFS target node:
-    ```nix
-    systemd.tmpfiles.rules = [
-      "d /var/backup/nb-replication 0755 nb-replication - - -"
-    ];
+   ```nix
+   systemd.tmpfiles.rules = [
+     "d /var/backup/nb-replication 0755 nb-replication - - -"
+   ];
 
-    services.openssh = {
-      extraConfig = ''
-        Match group sftponly
-          ChrootDirectory /var/backup/%u
-          AllowTcpForwarding no
-          AllowAgentForwarding no
-          ForceCommand internal-sftp
-          X11Forwarding no
-      '';
-    };
+   services.openssh = {
+     extraConfig = ''
+       Match group sftponly
+         ChrootDirectory /var/backup/%u
+         AllowTcpForwarding no
+         AllowAgentForwarding no
+         ForceCommand internal-sftp
+         X11Forwarding no
+     '';
+   };
 
-    users.groups.sftponly = {};
-    users.users.nb-replication = {
-      isSystemUser = true;
-      group = "sftponly";
-      shell = "${pkgs.coreutils}/bin/false";
-      openssh.authorizedKeys.keys = [ keys.clientPub ];
-    };
-    ```
+   users.groups.sftponly = {};
+   users.users.nb-replication = {
+     isSystemUser = true;
+     group = "sftponly";
+     shell = "${pkgs.coreutils}/bin/false";
+     openssh.authorizedKeys.keys = [ keys.clientPub ];
+   };
+   ```
 
-    With this setup, the corresponding `sshfs.destination` on the nix-bitcoin
-    node is `"nb-replication@hostname:"`.
+   With this setup, the corresponding `sshfs.destination` on the nix-bitcoin
+   node is `"nb-replication@hostname:"`.
 
 ## Local directory target
 
 1. Add this to your `configuration.nix`
-    ```nix
-    services.clightning.replication = {
-      enable = true;
-      local.directory = "/var/backup/clightning";
-      encrypt = true;
-    };
-    ```
+   ```nix
+   services.clightning.replication = {
+     enable = true;
+     local.directory = "/var/backup/clightning";
+     encrypt = true;
+   };
+   ```
 
-    Leave out the `encrypt` line if you want to store data in
-    `local.directory` in plaintext.
+   Leave out the `encrypt` line if you want to store data in
+   `local.directory` in plaintext.
 
 2. Deploy
 
