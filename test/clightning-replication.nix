@@ -1,3 +1,5 @@
+# You can run this test via `run-tests.sh -s clightningReplication`
+
 import "${(import ../pkgs/nixpkgs-pinned.nix).nixpkgs}/nixos/tests/make-test-python.nix" ({ pkgs, ... }:
 let
   privateKey = pkgs.writeText "private-key" ''
