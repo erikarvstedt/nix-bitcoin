@@ -13,36 +13,51 @@ let
     serverPub = readFile "${keys.server}.pub";
     clientPub = readFile "${keys.client}.pub";
   };
+
+  clientBaseConfig = {
+    imports = [ ../modules/modules.nix ];
+
+    nix-bitcoin.generateSecrets = true;
+
+    services.clightning = {
+      enable = true;
+      replication.enable = true;
+
+      # TODO-EXTERNAL:
+      # When WAN is disabled, DNS bootstrapping slows down service startup by ~15 s.
+      extraConfig = "disable-dns";
+    };
+  };
 in
 {
   name = "clightning-replication";
 
-  nodes = {
-    client = { ... }: {
-      imports = [ ../modules/modules.nix ];
+  nodes = let nodes = {
+    replicationLocal = {
+      imports = [ clientBaseConfig ];
+      services.clightning.replication.local.directory = "/var/backup/clightning";
+    };
 
-      nix-bitcoin.generateSecrets = true;
+    replicationLocalEncrypted = {
+      imports = [ nodes.replicationLocal ];
+      services.clightning.replication.encrypt = true;
+    };
+
+    replicationRemote = {
+      imports = [ clientBaseConfig ];
       nix-bitcoin.generateSecretsCmds.clightning-replication-ssh-key = mkForce ''
         install -m 600 ${keys.client} clightning-replication-ssh-key
       '';
-
       programs.ssh.knownHosts."server".publicKey = keys.serverPub;
+      services.clightning.replication.sshfs.destination = "nb-replication@server:writable";
+    };
 
-      services.clightning = {
-        enable = true;
-        replication = {
-          enable = true;
-          encrypt = true;
-          sshfs.destination = "nb-replication@server:writable";
-        };
-      };
-      # Disable autostart so we can start it after SSH server is up
-      systemd.services.clightning.wantedBy = mkForce [];
+    replicationRemoteEncrypted = {
+      imports = [ nodes.replicationRemote ];
+      services.clightning.replication.encrypt = true;
     };
 
     server = { ... }: {
-      environment.systemPackages = [ pkgs.gocryptfs ];
-
       environment.etc."ssh-host-key" = {
         source = keys.server;
         mode = "400";
@@ -81,20 +96,58 @@ in
         "d /var/backup/nb-replication/writable 0700 nb-replication - - -"
       ];
     };
-  };
+  }; in nodes;
 
-  testScript = ''
+  testScript =  { nodes, ... }: let
+    systems = builtins.concatStringsSep ", "
+      (mapAttrsToList (name: node: ''"${name}": "${node.config.system.build.toplevel}"'') nodes);
+  in ''
+    systems = { ${systems} }
+
+    def switch_to_system(system):
+        cmd = f"{systems[system]}/bin/switch-to-configuration test >&2"
+        client.succeed(cmd)
+
+    client = replicationLocal
+
     if not "is_interactive" in vars():
-      start_all()
+      client.start()
+      server.start()
+
+      with subtest("local replication"):
+          client.wait_for_unit("clightning.service")
+          client.succeed("runuser -u clightning -- ls /var/backup/clightning/lightningd.sqlite3")
+          # No other user should be able to read the backup directory
+          client.fail("runuser -u bitcoin -- ls /var/backup/clightning")
+
+      # If `switch_to_system` succeeds then all services, including clightning,
+      # have started successfully
+      switch_to_system("replicationLocalEncrypted")
+      with subtest("local replication encrypted"):
+          replica_db = "/var/cache/clightning-replication/plaintext/lightningd.sqlite3"
+          client.succeed(f"runuser -u clightning -- ls {replica_db}")
+          # No other user should be able to read the unencrypted files
+          client.fail(f"runuser -u bitcoin -- ls {replica_db}")
+          # A gocryptfs has been created
+          client.succeed("ls /var/backup/clightning/lightningd-db/gocryptfs.conf")
 
       server.wait_for_unit("sshd.service")
-      client.succeed("systemctl start clightning.service")
-      client.wait_for_unit("clightning.service")
+      switch_to_system("replicationRemote")
+      with subtest("remote replication"):
+          replica_db = "/var/cache/clightning-replication/sshfs/lightningd.sqlite3"
+          client.succeed(f"runuser -u clightning -- ls {replica_db}")
+          # No other user should be able to read the unencrypted files
+          client.fail(f"runuser -u bitcoin -- ls {replica_db}")
+          # A clighting db exists on the server
+          server.succeed("ls /var/backup/nb-replication/writable/lightningd.sqlite3")
 
-      replica_db = "/var/lib/clightning-replication/plaintext/lightningd.sqlite3"
-      client.succeed(f"runuser -u clightning -- ls {replica_db}")
-      # No other user should be able to read the unencrypted files
-      client.fail(f"runuser -u bitcoin -- ls {replica_db}")
-      server.succeed("runuser -u nb-replication -- gocryptfs -info /var/backup/nb-replication/writable/lightningd-db/")
+      switch_to_system("replicationRemoteEncrypted")
+      with subtest("remote replication encrypted"):
+          replica_db = "/var/cache/clightning-replication/plaintext/lightningd.sqlite3"
+          client.succeed(f"runuser -u clightning -- ls {replica_db}")
+          # No other user should be able to read the unencrypted files
+          client.fail(f"runuser -u bitcoin -- ls {replica_db}")
+          # A gocryptfs has been created on the server
+          server.succeed("ls /var/backup/nb-replication/writable/lightningd-db/gocryptfs.conf")
   '';
 })
