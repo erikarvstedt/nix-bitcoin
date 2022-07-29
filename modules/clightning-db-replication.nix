@@ -193,6 +193,7 @@ in {
         '';
 
       serviceConfig = {
+        StopPropagatedFrom = [ "clightning.service" ];
         CacheDirectory = "clightning-replication";
         CacheDirectoryMode = "770";
         User = user;
