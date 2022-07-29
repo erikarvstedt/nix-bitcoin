@@ -26,35 +26,35 @@ systemctl cat bitcoind
 systemctl show bitcoind
 ```
 
-# Setup clightning database replication
+# clightning database replication
 
-Clightning can write an additional, replica database to a local directory. The
-local directory can also be used to write to custom targets mounted at that
-path, like external HDD's, or NFS/SMB shares. Nix-bitcoin has built-in support
-for replicating to a remote filesystem over SSH (using SSHFS). Backups can also
-be automatically encrypted using gocryptfs.
+The clightning database can be replicated to a local path
+or to a remote SSH target.\
+When remote replication is enabled, nix-bitcoin mounts a SSHFS to a local path.\
+Optionally, backups can be encrypted via `gocryptfs`.
 
-Note: You should also backup `hsm_secret` (located at
-`/var/lib/clightning/bitcoin/hsm_secret` in most cases) separately, manually
-and/or using the `services.backups` module.
+Note: You should also backup the static file `hsm_secret` (located at
+`/var/lib/clightning/bitcoin/hsm_secret` by default), either manually
+or via the `services.backups` module.
 
-## SSHFS
+## Remote target via SSHFS
 
-1. Append to your `configuration.nix`
-
-    ```
+1. Add this to your `configuration.nix`:
+    ```nix
     services.clightning.replication = {
       enable = true;
       sshfs.destination = "user@hostname:directory";
+      # This is optional
       encrypt = true;
     };
     programs.ssh.knownHosts."hostname".publicKey = "<ssh public key from running `ssh-keyscan` on the host>";
     ```
 
     Leave out the `encrypt` line if you want to store data on your destination
-    in plaintext and adjust `user`, `hostname` and `directory` as necessary.
+    in plaintext.\
+    Adjust `user`, `hostname` and `directory` as necessary.
 
-2. Deploy new `configuration.nix`
+2. Deploy
 
 3. Authorize the public key on your destination by copying the contents of
    `$secretsDir/clightning-replication-ssh.pub` to the `authorized_keys` file of
@@ -64,42 +64,40 @@ and/or using the `services.backups` module.
    using OpenSSH's builtin features, as detailed
    [here](https://serverfault.com/questions/354615/allow-sftp-but-disallow-ssh).
 
-   To easily get this working on NixOS, you should add the following to the
-   SSHFS target's configuration:
-
-    ```
+   To implement this on NixOS, add the following to the NixOS configuration of
+   the SSHFS target node:
+    ```nix
     systemd.tmpfiles.rules = [
-      "d '/var/backup/<user>' 0755 root root - -"
-      "d '/var/backup/<user>/writeable' 0700 <user> sftponly - -"
+      "d /var/backup/nb-replication 0755 nb-replication - - -"
     ];
 
     services.openssh = {
       extraConfig = ''
         Match group sftponly
           ChrootDirectory /var/backup/%u
-          X11Forwarding no
           AllowTcpForwarding no
           AllowAgentForwarding no
           ForceCommand internal-sftp
+          X11Forwarding no
       '';
     };
 
     users.groups.sftponly = {};
-    users.users.<user> = {
+    users.users.nb-replication = {
+      isSystemUser = true;
+      group = "sftponly";
       shell = "${pkgs.coreutils}/bin/false";
-      extraGroups = [ "sftponly" ];
+      openssh.authorizedKeys.keys = [ keys.clientPub ];
     };
     ```
 
-    If the `<user>` is set to `nb-replication` and the targets hostname is
-    `hostname`, then the corresponding `sshfs.destination` on the nix-bitcoin
-    node is `"nb-replication@hostname:writeable"`.
+    With this setup, the corresponding `sshfs.destination` on the nix-bitcoin
+    node is `"nb-replication@hostname:"`.
 
-## Local Directory
+## Local directory target
 
-1. Append to your `configuration.nix`
-
-    ```
+1. Add this to your `configuration.nix`
+    ```nix
     services.clightning.replication = {
       enable = true;
       local.directory = "/var/backup/clightning";
@@ -107,20 +105,20 @@ and/or using the `services.backups` module.
     };
     ```
 
-    Leave out the `encrypt` line if you want to store data in your
+    Leave out the `encrypt` line if you want to store data in
     `local.directory` in plaintext.
 
-2. Deploy new `configuration.nix`
+2. Deploy
 
-clightning will now replicate database files locally to `local.directory`. This
+clightning will now replicate database files to `local.directory`. This
 can be used to replicate to an external HDD by mounting it at path
 `local.directory`.
 
 ## Custom remote destination
 
-Follow the steps in section "Local Directory" above and mount a custom remote
-destination (for example NFS or SMB share) to `local.directory`. You might want
-to disable `local.setupDirectory` in order to create the mount directory
+Follow the steps in section "Local directory target" above and mount a custom remote
+destination (e.g., a NFS or SMB share) to `local.directory`.\
+You might want to disable `local.setupDirectory` in order to create the mount directory
 yourself with custom permissions.
 
 # Connect to RTL
@@ -318,7 +316,6 @@ lndconnect-onion --host=mynode.org
 
 5. Edit your deployment tool's configuration and change the node's address to `localhost` and the ssh port to `<random port of your choosing>`.
    If you use krops as described in the [installation tutorial](./install.md), set `target = "localhost:<random port of your choosing>";` in `krops/deploy.nix`.
-
 
 6. After deploying the new configuration, it will connect through the SSH tunnel you established in step iv. This also allows you to do more complex SSH setups that some deployment tools don't support. An example would be authenticating with [Trezor's SSH agent](https://github.com/romanz/trezor-agent), which provides extra security.
 
