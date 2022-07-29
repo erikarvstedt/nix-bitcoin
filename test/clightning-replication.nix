@@ -16,9 +16,6 @@ in
 with pkgs.lib;
 {
   name = "clightning-replication";
-  meta = with pkgs.lib; {
-    maintainers = with maintainers; [ nixbitcoin ];
-  };
 
   nodes = {
     client = { ... }: {
