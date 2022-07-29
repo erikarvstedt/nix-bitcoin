@@ -51,8 +51,8 @@ with pkgs.lib;
         passwordAuthentication = false;
         kbdInteractiveAuthentication = false;
         extraConfig = ''
-          Match group sftponly
-            ChrootDirectory /var/backup/%u
+          Match user nb-replication
+            ChrootDirectory /var/backup/nb-replication
             AllowTcpForwarding no
             AllowAgentForwarding no
             ForceCommand internal-sftp
@@ -60,19 +60,18 @@ with pkgs.lib;
         '';
       };
 
-      users.groups.sftponly = {};
       users.users.nb-replication = {
         isSystemUser = true;
-        shell = "${pkgs.coreutils}/bin/false";
         group = "nb-replication";
-        extraGroups = [ "sftponly" ];
+        shell = "${pkgs.coreutils}/bin/false";
         openssh.authorizedKeys.keys = [ publicKey ];
       };
       users.groups.nb-replication = {};
 
       systemd.tmpfiles.rules = [
-        "d '/var/backup/nb-replication' 0755 root root - -"
-        "d '/var/backup/nb-replication/writable' 0700 nb-replication sftponly - -"
+        # Because this directory is chrooted by sshd, it must only be writable by user/group root
+        "d /var/backup/nb-replication 0755 root root - -"
+        "d /var/backup/nb-replication/writable 0700 nb-replication - - -"
       ];
     };
   };
