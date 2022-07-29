@@ -98,7 +98,7 @@ let
   useMounts = useSshfs || cfg.encrypt;
 
   localDir = cfg.local.directory;
-  mountsDir = "/var/lib/clightning-replication";
+  mountsDir = "/var/cache/clightning-replication";
   sshfsDir = "${mountsDir}/sshfs";
   plaintextDir = "${mountsDir}/plaintext";
   destDir =
@@ -193,8 +193,8 @@ in {
         '';
 
       serviceConfig = {
-        StateDirectory = "clightning-replication";
-        StateDirectoryMode = "770";
+        CacheDirectory = "clightning-replication";
+        CacheDirectoryMode = "770";
         User = user;
         RemainAfterExit = "yes";
         Type = "oneshot";
