@@ -56,9 +56,9 @@ or via the `services.backups` module.
 
 2. Deploy
 
-3. Authorize the public key on your destination by copying the contents of
-   `$secretsDir/clightning-replication-ssh.pub` to the `authorized_keys` file of
-   `user` or by using `ssh-copy-id`.
+3. To allow SSH access from the nix-bitcoin node to the target node, either
+   use the remote node config below, or copy the contents of `$secretsDir/clightning-replication-ssh.pub`
+   to the `authorized_keys` file of `user` (or use `ssh-copy-id`).
 
 4. You can restrict the nix-bitcoin node's capabilities on the SSHFS target
    using OpenSSH's builtin features, as detailed
@@ -68,31 +68,34 @@ or via the `services.backups` module.
    the SSHFS target node:
    ```nix
    systemd.tmpfiles.rules = [
-     "d /var/backup/nb-replication 0755 nb-replication - - -"
+     # Because this directory is chrooted by sshd, it must only be writable by user/group root
+     "d /var/backup/nb-replication 0755 root root - -"
+     "d /var/backup/nb-replication/writable 0700 nb-replication - - -"
    ];
 
    services.openssh = {
      extraConfig = ''
-       Match group sftponly
-         ChrootDirectory /var/backup/%u
+       Match user nb-replication
+         ChrootDirectory /var/backup/nb-replication
          AllowTcpForwarding no
          AllowAgentForwarding no
          ForceCommand internal-sftp
+         PasswordAuthentication no
          X11Forwarding no
      '';
    };
 
-   users.groups.sftponly = {};
    users.users.nb-replication = {
      isSystemUser = true;
-     group = "sftponly";
+     group = "nb-replication";
      shell = "${pkgs.coreutils}/bin/false";
-     openssh.authorizedKeys.keys = [ keys.clientPub ];
+     openssh.authorizedKeys.keys = [ "<contents of $secretsDir/clightning-replication-ssh.pub>" ];
    };
+   users.groups.nb-replication = {};
    ```
 
    With this setup, the corresponding `sshfs.destination` on the nix-bitcoin
-   node is `"nb-replication@hostname:"`.
+   node is `"nb-replication@hostname:writable"`.
 
 ## Local directory target
 
