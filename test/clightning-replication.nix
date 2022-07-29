@@ -1,6 +1,6 @@
 import "${(import ../pkgs/nixpkgs-pinned.nix).nixpkgs}/nixos/tests/make-test-python.nix" ({ pkgs, ... }:
 let
-  privateKey = pkgs.writeText "id_ed25519" ''
+  privateKey = pkgs.writeText "private-key" ''
     -----BEGIN OPENSSH PRIVATE KEY-----
     b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
     QyNTUxOQAAACBx8UB04Q6Q/fwDFjakHq904PYFzG9pU2TJ9KXpaPMcrwAAAJB+cF5HfnBe
@@ -12,8 +12,9 @@ let
   publicKey = ''
     ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHHxQHThDpD9/AMWNqQer3Tg9gXMb2lTZMn0pelo8xyv root@client
   '';
-
-in {
+in
+with pkgs.lib;
+{
   name = "clightning-replication";
   meta = with pkgs.lib; {
     maintainers = with maintainers; [ nixbitcoin ];
@@ -23,8 +24,10 @@ in {
     client = { ... }: {
       imports = [ ../modules/modules.nix ];
 
-      nix-bitcoin.secretsDir = "/secrets";
       nix-bitcoin.generateSecrets = true;
+      nix-bitcoin.generateSecretsCmds.clightning-replication-ssh-key = mkForce ''
+        install -m 600 ${privateKey} clightning-replication-ssh-key
+      '';
 
       services.clightning = {
         enable = true;
@@ -38,7 +41,7 @@ in {
         };
       };
       # Disable autostart so we can start it after ssh server is up
-      systemd.services.clightning.wantedBy = pkgs.lib.mkForce [];
+      systemd.services.clightning.wantedBy = mkForce [];
     };
 
     server = { ... }: {
@@ -78,10 +81,6 @@ in {
   testScript = ''
     if not "is_interactive" in vars():
       start_all()
-      client.succeed(
-          "cp ${privateKey} /secrets/clightning-replication-ssh-key"
-      )
-      client.succeed("chmod 0600 /secrets/clightning-replication-ssh-key")
 
       server.wait_for_unit("sshd.service")
       client.succeed("systemctl start clightning.service")
