@@ -152,7 +152,8 @@ in {
     systemd.services.clightning-replication-mounts = mkIf useMounts {
       requiredBy = [ "clightning.service" ];
       before = [ "clightning.service" ];
-      after = [ "setup-secrets.service" ];
+      wants = [ "nix-bitcoin-secrets.target" ];
+      after = [ "nix-bitcoin-secrets.target" ];
       path = [
         # Includes
         # - The SUID-wrapped `fusermount` binary which enables FUSE
