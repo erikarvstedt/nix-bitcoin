@@ -48,14 +48,13 @@ with pkgs.lib;
 
       services.openssh = {
         enable = true;
-        passwordAuthentication = false;
-        kbdInteractiveAuthentication = false;
         extraConfig = ''
           Match user nb-replication
             ChrootDirectory /var/backup/nb-replication
             AllowTcpForwarding no
             AllowAgentForwarding no
             ForceCommand internal-sftp
+            PasswordAuthentication no
             X11Forwarding no
         '';
       };
