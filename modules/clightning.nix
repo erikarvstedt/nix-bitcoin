@@ -2,7 +2,7 @@
 
 with lib;
 let
-  options.services.clightning = {
+  options.services.clightning2 = {
     enable = mkEnableOption "clightning, a Lightning Network implementation in C";
     address = mkOption {
       type = types.str;
@@ -32,7 +32,7 @@ let
     };
     dataDir = mkOption {
       type = types.path;
-      default = "/var/lib/clightning";
+      default = "/var/lib/clightning2";
       description = "The data directory for clightning.";
     };
     networkDir = mkOption {
@@ -56,7 +56,7 @@ let
     };
     user = mkOption {
       type = types.str;
-      default = "clightning";
+      default = "clightning2";
       description = "The user as which to run clightning.";
     };
     group = mkOption {
@@ -72,7 +72,7 @@ let
     };
     cli = mkOption {
       readOnly = true;
-      default = pkgs.writeScriptBin "lightning-cli" ''
+      default = pkgs.writeScriptBin "lightning-cli2" ''
         ${cfg.package}/bin/lightning-cli --lightning-dir='${cfg.dataDir}' "$@"
       '';
       defaultText = "(See source)";
@@ -89,7 +89,7 @@ let
     tor = nbLib.tor;
   };
 
-  cfg = config.services.clightning;
+  cfg = config.services.clightning2;
   nbLib = config.nix-bitcoin.lib;
   nbPkgs = config.nix-bitcoin.pkgs;
 
@@ -109,10 +109,10 @@ let
   '';
 
   # If a public clightning onion service is enabled, use the onion port as the public port
-  publicPort = if (config.nix-bitcoin.onionServices.clightning.enable or false)
-                  && config.nix-bitcoin.onionServices.clightning.public
+  publicPort = if (config.nix-bitcoin.onionServices.clightning2.enable or false)
+                  && config.nix-bitcoin.onionServices.clightning2.public
                then
-                 (builtins.elemAt config.services.tor.relay.onionServices.clightning.map 0).port
+                 (builtins.elemAt config.services.tor.relay.onionServices.clightning2.map 0).port
                else
                  cfg.port;
 in {
@@ -132,7 +132,7 @@ in {
       "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
     ];
 
-    systemd.services.clightning = {
+    systemd.services.clightning2 = {
       path  = [ nbPkgs.bitcoind ];
       wantedBy = [ "multi-user.target" ];
       requires = [ "bitcoind.service" ];
@@ -161,7 +161,7 @@ in {
         while [[ ! -e ${cfg.networkDir}/lightning-rpc ]]; do
             sleep 0.1
         done
-        # Needed to enable lightning-cli for users with group 'clightning'
+        # Needed to enable lightning-cli for users with group 'clightning2'
         chmod g+x ${cfg.networkDir}
       '';
     };
