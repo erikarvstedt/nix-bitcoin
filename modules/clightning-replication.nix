@@ -207,7 +207,7 @@ in {
       (mkIf useSshfs {
         secrets.clightning-replication-ssh-key = {
           user = user;
-          permissions = "0400";
+          permissions = "400";
         };
         generateSecretsCmds.clightning-replication-ssh-key = ''
           if [[ ! -f clightning-replication-ssh-key ]]; then
