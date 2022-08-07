@@ -91,7 +91,7 @@ in {
         Restart = "on-failure";
         RestartSec = "10s";
         ReadWritePaths = cfg.dataDir;
-      };
+      } // nbLib.allowLocalIPAddresses;
     };
     users.users.${cfg.user} = {
       isSystemUser = true;
