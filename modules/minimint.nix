@@ -7,7 +7,7 @@ let
     type = types.bool;
     default = true;
     description = ''
-      Enable Minimint,is a federated Chaumian e-cash mint backed
+      Enable Minimint, a federated Chaumian e-cash mint backed
       by bitcoin with deposits and withdrawals that can occur on-chain
       or via Lightning.
     '';
