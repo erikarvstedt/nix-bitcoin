@@ -4,13 +4,13 @@ with lib;
 let
   options.services.minimint = {
     enable = mkOption {
-    type = types.bool;
-    default = true;
-    description = ''
-      Enable Minimint, a federated Chaumian e-cash mint backed
-      by bitcoin with deposits and withdrawals that can occur on-chain
-      or via Lightning.
-    '';
+      type = types.bool;
+      default = true;
+      description = ''
+        Enable Minimint, a federated Chaumian e-cash mint backed
+        by bitcoin with deposits and withdrawals that can occur on-chain
+        or via Lightning.
+      '';
     };
     address = mkOption {
       type = types.str;
@@ -82,15 +82,15 @@ in {
         sed -i -e "s/bitcoin/$PASS/g" ${cfg.dataDir}/server-0.json
       '';
       serviceConfig = nbLib.defaultHardening // {
-      WorkingDirectory = cfg.dataDir;
-      ExecStart = ''
-        ${cfg.package}/bin/server ${cfg.dataDir}/server-0.json ${cfg.dataDir}/mint-0.db
+        WorkingDirectory = cfg.dataDir;
+        ExecStart = ''
+          ${cfg.package}/bin/server ${cfg.dataDir}/server-0.json ${cfg.dataDir}/mint-0.db
         '';
-      User = cfg.user;
-      Group = cfg.group;
-      Restart = "on-failure";
-      RestartSec = "10s";
-      ReadWritePaths = cfg.dataDir;
+        User = cfg.user;
+        Group = cfg.group;
+        Restart = "on-failure";
+        RestartSec = "10s";
+        ReadWritePaths = cfg.dataDir;
       };
     };
     users.users.${cfg.user} = {
