@@ -1,31 +1,31 @@
-{ config, lib, pkgs, ... }:                                                                                                                                                                   
-                                                                                                                                                                                              
-with lib;                                                                                                                                                                                     
-let                                                                                                                                                                                           
-  options.services.minimint = {                                                                                                                                                               
-    enable = mkOption {                                                                                                                                                                       
-    type = types.bool;                                                                                                                                                                        
-    default = true;                                                                                                                                                                           
-    description = ''                                                                                                                                                                          
-      Enable Minimint,is a federated Chaumian e-cash mint backed                                                                                                                              
-      by bitcoin with deposits and withdrawals that can occur on-chain                                                                                                                        
-      or via Lightning.                                                                                                                                                                       
-    '';                                                                                                                                                                                       
-    };                                                                                                                                                                                        
-    address = mkOption {                                                                                                                                                                      
-      type = types.str;                                                                                                                                                                       
-      default = "127.0.0.1";                                                                                                                                                                  
-      description = "Address to listen for RPC connections.";                                                                                                                                 
-    };                                                                                                                                                                                        
-    port = mkOption {                                                                                                                                                                         
-      type = types.port;                                                                                                                                                                      
-      default = 5000;                                                                                                                                                                         
-      description = "Port to listen for RPC connections.";                                                                                                                                    
-    };                                                                                                                                                                                        
-    extraArgs = mkOption {                                                                                                                                                                    
-      type = types.separatedString " ";                                                                                                                                                       
-      default = "";                                                                                                                                                                           
-      description = "Extra command line arguments passed to minimint.";                                                                                                                       
+{ config, lib, pkgs, ... }:
+
+with lib;
+let
+  options.services.minimint = {
+    enable = mkOption {
+    type = types.bool;
+    default = true;
+    description = ''
+      Enable Minimint,is a federated Chaumian e-cash mint backed
+      by bitcoin with deposits and withdrawals that can occur on-chain
+      or via Lightning.
+    '';
+    };
+    address = mkOption {
+      type = types.str;
+      default = "127.0.0.1";
+      description = "Address to listen for RPC connections.";
+    };
+    port = mkOption {
+      type = types.port;
+      default = 5000;
+      description = "Port to listen for RPC connections.";
+    };
+    extraArgs = mkOption {
+      type = types.separatedString " ";
+      default = "";
+      description = "Extra command line arguments passed to minimint.";
     };
     dataDir = mkOption {
       type = types.path;
@@ -69,7 +69,7 @@ in {
     };
     systemd.tmpfiles.rules = [
       "d '${cfg.dataDir}' 0770 ${cfg.user} ${cfg.group} - -"
-    ]; 
+    ];
     systemd.services.minimint = {
       wantedBy = [ "multi-user.target" ];
       requires = [ "bitcoind.service" ];
