@@ -1,31 +1,31 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-let
-  options.services.minimint = {
-    enable = mkOption {
-    type = types.bool;
-    default = true;
-    description = ''
-      Enable Minimint,is a federated Chaumian e-cash mint backed 
-      by bitcoin with deposits and withdrawals that can occur on-chain
-      or via Lightning.
-    '';
-    }; 
-    address = mkOption {
-      type = types.str;
-      default = "127.0.0.1";
-      description = "Address to listen for RPC connections.";
-    };
-    port = mkOption {
-      type = types.port;
-      default = 5000;
-      description = "Port to listen for RPC connections.";
-    };
-    extraArgs = mkOption {
-      type = types.separatedString " ";
-      default = "";
-      description = "Extra command line arguments passed to minimint.";
+{ config, lib, pkgs, ... }:                                                                                                                                                                   
+                                                                                                                                                                                              
+with lib;                                                                                                                                                                                     
+let                                                                                                                                                                                           
+  options.services.minimint = {                                                                                                                                                               
+    enable = mkOption {                                                                                                                                                                       
+    type = types.bool;                                                                                                                                                                        
+    default = true;                                                                                                                                                                           
+    description = ''                                                                                                                                                                          
+      Enable Minimint,is a federated Chaumian e-cash mint backed                                                                                                                              
+      by bitcoin with deposits and withdrawals that can occur on-chain                                                                                                                        
+      or via Lightning.                                                                                                                                                                       
+    '';                                                                                                                                                                                       
+    };                                                                                                                                                                                        
+    address = mkOption {                                                                                                                                                                      
+      type = types.str;                                                                                                                                                                       
+      default = "127.0.0.1";                                                                                                                                                                  
+      description = "Address to listen for RPC connections.";                                                                                                                                 
+    };                                                                                                                                                                                        
+    port = mkOption {                                                                                                                                                                         
+      type = types.port;                                                                                                                                                                      
+      default = 5000;                                                                                                                                                                         
+      description = "Port to listen for RPC connections.";                                                                                                                                    
+    };                                                                                                                                                                                        
+    extraArgs = mkOption {                                                                                                                                                                    
+      type = types.separatedString " ";                                                                                                                                                       
+      default = "";                                                                                                                                                                           
+      description = "Extra command line arguments passed to minimint.";                                                                                                                       
     };
     dataDir = mkOption {
       type = types.path;
@@ -72,32 +72,20 @@ in {
     ]; 
     systemd.services.minimint = {
       wantedBy = [ "multi-user.target" ];
-      requires = [ "bitcoind.service" "fedimint-gateway.service" ];
-      after = [ "bitcoind.service" "fedimint-gateway.service"  ];
+      requires = [ "bitcoind.service" ];
+      after = [ "bitcoind.service" ];
       preStart = ''
-        echo "auth = \"${bitcoind.rpc.users.public.name}:$(cat ${secretsDir}/bitcoin-rpcpassword-public)\"" \
-          > federation.json
+        ${config.nix-bitcoin.pkgs.minimint}/bin/configgen ${cfg.dataDir} 1 4000 5000 1 10 100 1000 10000 100000 1000000
+        sed -i -e "s/127.0.0.1:18443/${toString bitcoind.rpc.address}:${toString bitcoind.rpc.port}/g" ${cfg.dataDir}/server-0.json
+        sed -i -e 's/user": "bitcoin"/user": "${bitcoind.rpc.users.public.name}"/g' ${cfg.dataDir}/server-0.json
+        PASS=$(cat ${secretsDir}/bitcoin-rpcpassword-public)
+        sed -i -e "s/bitcoin/$PASS/g" ${cfg.dataDir}/server-0.json
       '';
       serviceConfig = nbLib.defaultHardening // {
       WorkingDirectory = cfg.dataDir;
       ExecStart = ''
-        fm_cfg=/var/lib/minimint
-        ${config.nix-bitcoin.pkgs.minimint}/bin/configgen $fm_cfg 1 4000 5000 1 10 100 1000 10000 100000 1000000
-        ${config.nix-bitcoin.pkgs.minimint}/bin/mint-client-cli $fm_cfg &
-        btc_rpc_address="127.0.0.1:8333"
-        btc_rpc_user="bitcoin"
-        btc_rpc_pass="bitcoin"
-        fm_tmp_config="$(mktemp -d)/config.json"
-
-        echo "Writing tmp config to $fm_tmp_config"
-        cat $fm_cfg | jq ".wallet.btc_rpc_address=\"$btc_rpc_address\"" \
-        | jq ".wallet.btc_rpc_user=\"$btc_rpc_user\"" \
-        | jq ".wallet.btc_rpc_pass=\"$btc_rpc_pass\"" > $fm_tmp_config
-
-        $fm_bin $fm_tmp_config &
-        ''
-
-       ;
+        ${cfg.package}/bin/server ${cfg.dataDir}/server-0.json ${cfg.dataDir}/mint-0.db
+        '';
       User = cfg.user;
       Group = cfg.group;
       Restart = "on-failure";
@@ -111,6 +99,9 @@ in {
       extraGroups = [ "bitcoinrpc-public" ];
     };
     users.groups.${cfg.group} = {};
-    nix-bitcoin.operator.groups = [ cfg.group ];
+    nix-bitcoin.operator = {
+      groups = [ cfg.group ];
+      allowRunAsUsers = [ cfg.user ];
+    };
   };
 }
