@@ -37,3 +37,9 @@ task:
       build_script:
         - nix flake check
         - ./test/nixos-search/ci-test.sh
+
+    - name: shellcheck
+      container:
+        image: nixpkgs/nix-flakes
+      build_script:
+        - nix shell nixpkgs#{shellcheck,findutils} -c ./test/shellcheck.sh
