@@ -108,6 +108,7 @@ in {
       serviceConfig = nbLib.defaultHardening // {
         StateDirectory = "lndhub-go";
         StateDirectoryMode = "770";
+        # lndhub-go reads file `.env` from the working directory
         WorkingDirectory = "/var/lib/lndhub-go";
         ExecStart = "${config.nix-bitcoin.pkgs.lndhub-go}/bin/lndhub.go";
         User = cfg.user;
