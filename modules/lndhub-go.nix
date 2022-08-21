@@ -57,7 +57,7 @@ let
 
   configFile = builtins.toFile "lndhub-go-conf" (lib.generators.toKeyValue {} cfg.settings);
 
-  dbName = "lndhubgo";
+  dbName = "lndhub-go";
 in {
   inherit options;
 
@@ -75,7 +75,7 @@ in {
       ensureUsers = [
         {
           name = cfg.user;
-          ensurePermissions."DATABASE ${dbName}" = "ALL PRIVILEGES";
+          ensurePermissions."DATABASE \"${dbName}\"" = "ALL PRIVILEGES";
         }
       ];
     };
