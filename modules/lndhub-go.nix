@@ -105,7 +105,6 @@ in {
       requires = [ "lnd.service" "postgresql.service" ];
       after = requires;
       preStart = ''
-        set -euo pipefail
         {
           cat ${configFile}
           echo "JWT_SECRET=$(cat '${config.nix-bitcoin.secretsDir}/lndhub.go-jwt-secret')"
