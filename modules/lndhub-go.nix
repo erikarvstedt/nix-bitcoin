@@ -84,7 +84,7 @@ in {
       HOST = cfg.address;
       PORT = cfg.port;
       DATABASE_URI = "unix://${cfg.user}@${dbName}/run/postgresql/.s.PGSQL.${toString postgresql.port}?sslmode=disable";
-      LND_ADDRESS = "${nbLib.addressWithPort lnd.address lnd.port}";
+      LND_ADDRESS = "${nbLib.addressWithPort lnd.address lnd.rpcPort}";
       LND_MACAROON_FILE = "/run/lnd/lndhub-go.macaroon";
       LND_CERT_FILE = lnd.certPath;
       BRANDING_TITLE = "LndHub.go - Nix-Bitcoin";
