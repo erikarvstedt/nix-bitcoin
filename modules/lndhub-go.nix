@@ -34,11 +34,6 @@ let
         defaultText = "config.nix-bitcoin.pkgs.lndhub-go";
         description = "The package providing LndHub.go binaries.";
       };
-      dataDir = mkOption {
-        type = types.path;
-        default = "/var/lib/lndhub-go";
-        description = "The data directory for LndHub.go.";
-      };
       user = mkOption {
         type = types.str;
         default = "lndhub-go";
