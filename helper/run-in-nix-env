@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+pkgs=($1)
+shift
+oldIFS=$IFS
+IFS=,
+# pkgs=pkg1,pkg2,...
+pkgs=${pkgs[*]}
+IFS=$oldIFS
+
+if [[ ${_NIX_BITCOIN_ENV_PKGS:-} != $pkgs ]]; then
+  export _NIX_BITCOIN_ENV_PKGS=$pkgs
+  # BASH_SOURCE[0] is this file
+  # BASH_SOURCE[-1] is the root src file
+  exec nix shell --inputs-from "${BASH_SOURCE[0]%/*}/.." $(eval echo nixpkgs#{$pkgs}) -c "${BASH_SOURCE[-1]}" "$@"
+fi
