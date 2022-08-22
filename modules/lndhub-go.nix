@@ -4,7 +4,7 @@ with lib;
 let
   options.services = {
     lndhub-go = {
-      enable = mkEnableOption "LndHub.go, an accounting wrapper for the Lightning Network";
+      enable = mkEnableOption "LndHub.go, an accounting wrapper for lnd";
       address = mkOption {
         type = types.str;
         default = "127.0.0.1";
