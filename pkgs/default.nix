@@ -33,6 +33,18 @@ let self = {
   # Remove this when the clightning build is fixed upstream.
   clightning = pkgs.callPackage ./clightning-mistune-workaround { inherit (pkgs) clightning; };
 
+  # TODO-EXTERNAL:
+  # Remove this when the upstream patch is available in nixpkgs
+  lndhub-go = pkgsUnstable.lndhub-go.overrideDerivation (_: {
+    patches = [
+      (pkgs.fetchpatch {
+        # https://github.com/getAlby/lndhub.go/pull/225
+        url = "https://github.com/getAlby/lndhub.go/pull/225.patch";
+        sha256 = "sha256-yjs+ZHXWhggzd5Zqm+qFKdulFuO/QJQkOmh4i99C9wE=";
+      })
+    ];
+  });
+
   # Internal pkgs
   netns-exec = pkgs.callPackage ./netns-exec { };
   krops = import ./krops { inherit pkgs; };

@@ -17,8 +17,7 @@ pkgs: pkgsUnstable:
     fulcrum
     hwi
     lightning-loop
-    lnd
-    lndhub-go;
+    lnd;
 
   inherit pkgs pkgsUnstable;
 }
