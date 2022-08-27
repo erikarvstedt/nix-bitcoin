@@ -10,8 +10,8 @@ task:
   matrix:
     - name: modules_test
       container:
-        # Use Nix release 2.3.x, the default on NixOS stable
-        image: nixos/nix:2.3.12
+        # Use Nix release 2.8.x, the default on NixOS 22.05
+        image: nixos/nix:2.8.1
         # Besides virtualization, this also enables privileged containers which are required for
         # sandboxed builds
         kvm: true
@@ -28,8 +28,8 @@ task:
       # This script is run as root
       build_script:
         - echo "sandbox = true" >> /etc/nix/nix.conf
-        - export NIX_PATH="nixpkgs=$(nix eval --raw -f pkgs/nixpkgs-pinned.nix nixpkgs)"
-        - nix run -f '<nixpkgs>' bash coreutils cachix -c ./test/ci/build.sh
+        - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+        - nix shell --inputs-from . nixpkgs#{bash,coreutils,gawk,cachix} -c ./test/ci/build.sh
 
     - name: flake
       container:
