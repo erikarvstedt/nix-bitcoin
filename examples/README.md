@@ -103,8 +103,7 @@ nix run ..#tests.default.containerLegacy # For NixOS with `system.stateVersion` 
 
 # Run a command in a container
 nix run ..#tests.default.container -- --run c nodeinfo
-nix run ..#tests.default.containerLegacy -- --run c nodeinfo  # For NixOS with
-`system.stateVersion` <22.05
+nix run ..#tests.default.containerLegacy -- --run c nodeinfo # For NixOS with `system.stateVersion` <22.05
 ```
 
 ### Real-world example
