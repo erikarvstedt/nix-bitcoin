@@ -338,9 +338,14 @@ in {
   inherit scenarios;
 
   pkgs = flake: pkgs: rec {
+    # A basic test using the nix-bitcoin test framework
     makeTestBasic = import ./lib/make-test.nix flake pkgs makeTestVM;
+
+    # Wraps `makeTest` in NixOS' testing-python.nix so that the drv includes the
+    # log output and the test driver
     makeTestVM = import ./lib/make-test-vm.nix pkgs;
 
+    # A test using the nix-bitcoin test framework, with some helpful defaults
     makeTest = { name ? "nix-bitcoin-test", config }:
       makeTestBasic {
         inherit name;
@@ -354,6 +359,7 @@ in {
         };
       };
 
+    # A test using the nix-bitcoin test framework, with defaults specific to nix-bitcoin
     makeTestNixBitcoin = { name, config }:
       makeTest {
         name = "nix-bitcoin-${name}";
@@ -363,33 +369,35 @@ in {
         };
       };
 
-    tests = let
+    makeTests = scenarios: let
       mainTests = builtins.mapAttrs (name: config:
         makeTestNixBitcoin { inherit name config; }
       ) scenarios;
     in
-      mainTests // {
+      {
         clightningReplication = import ./clightning-replication.nix makeTestVM pkgs;
-      };
+      } // mainTests;
+
+    tests = makeTests scenarios;
 
     ## Helper for ./run-tests.sh
 
     getTest = { name, extraScenariosFile ? null }:
       let
-        allScenarios = scenarios // (
+        tests = makeTests (scenarios // (
           lib.optionalAttrs (extraScenariosFile != null)
             (import extraScenariosFile {
               inherit scenarios lib pkgs;
               nix-bitcoin = flake;
             })
-        );
+        ));
       in
-        makeTestNixBitcoin {
+        tests.${name} or (makeTestNixBitcoin {
           inherit name;
-          config = allScenarios.${name} or {
+          config = {
             services.${name}.enable = true;
           };
-        };
+        });
 
     instantiateTests = testNames:
       let
