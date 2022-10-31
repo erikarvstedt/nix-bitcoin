@@ -10,7 +10,7 @@ let
 
   testConfig = config;
 
-  vm = makeTestVM {
+  test = makeTestVM {
     inherit name;
 
     nodes.machine = { config, ... }: {
@@ -50,12 +50,12 @@ let
               run_tests()
         ''
       ];
-
-    # A VM runner for interactive use
-    passthru.run = pkgs.writers.writeBashBin "run-vm" ''
-      . ${./run-vm.sh} ${vm.driver} "$@"
-    '';
   };
+
+  # A VM runner for interactive use
+  run = pkgs.writers.writeBashBin "run-vm" ''
+    . ${./run-vm.sh} ${test.driver} "$@"
+  '';
 
   mkContainer = legacyInstallDirs:
     extra-container.lib.buildContainers {
@@ -95,7 +95,7 @@ let
 
   # This allows running a test scenario in a regular NixOS VM.
   # No tests are executed.
-  vmWithoutTests = (pkgs.nixos ({ config, ... }: {
+  vm = (pkgs.nixos ({ config, ... }: {
     imports = [
       testConfig
       commonVmConfig
@@ -137,13 +137,13 @@ let
     };
   };
 in
-vm // {
+test // {
   inherit
+    run
     vm
     container
     # For NixOS with `system.stateVersion` <22.05
-    containerLegacy
-    vmWithoutTests;
+    containerLegacy;
 
   config = testConfig;
 }

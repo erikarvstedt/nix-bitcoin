@@ -92,10 +92,10 @@ Tests can also be directly accessed via Flakes:
 nix build --no-link ..#tests.default
 
 # Run a node in a VM. No tests are executed.
-nix run ..#tests.default.vmWithoutTests
+nix run ..#tests.default.vm
 
 # Run a Python test shell inside a VM node
-nix run ..#tests.default.vm.run -- --debug
+nix run ..#tests.default.run -- --debug
 
 # Run a node in a container. Requires extra-container, systemd and root privileges
 nix run ..#tests.default.container

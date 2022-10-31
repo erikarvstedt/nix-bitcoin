@@ -121,7 +121,7 @@ fi
 # Run the test. No temporary files are left on the host system.
 run() {
     makeTmpDir
-    buildTestAttr vm.run --out-link "$tmpDir/run-vm"
+    buildTestAttr .run --out-link "$tmpDir/run-vm"
     NIX_BITCOIN_VM_DATADIR=$tmpDir "$tmpDir/run-vm/bin/run-vm" "$@"
 }
 
@@ -141,7 +141,7 @@ container() {
     echo "Building container"
     makeTmpDir
     export container=$tmpDir/container
-    buildTestAttr "$attr" --out-link "$container"
+    buildTestAttr ".$attr" --out-link "$container"
     export scriptDir
     "$scriptDir/lib/make-container.sh" "$@"
 }
@@ -149,17 +149,17 @@ container() {
 # Run a regular NixOS VM
 vm() {
     makeTmpDir
-    buildTestAttr vmWithoutTests --out-link "$tmpDir/vm"
+    buildTestAttr .vm --out-link "$tmpDir/vm"
     NIX_BITCOIN_VM_DATADIR=$tmpDir "$tmpDir/vm/bin/run-vm-in-tmpdir"
 }
 
 # Run the test by building the test derivation
 buildTest() {
-    buildTestAttr vm "$@"
+    buildTestAttr "" "$@"
 }
 
 evalTest() {
-    nixInstantiateTest vm "$@"
+    nixInstantiateTest "" "$@"
     # Print out path
     nix-store -q "$drv"
     # Print drv path
@@ -200,7 +200,7 @@ nixInstantiateTest() {
     else
         local file=
     fi
-    nixInstantiate "(pkgs.getTest { name = \"$scenario\"; $file }).$attr" "$@" >/dev/null
+    nixInstantiate "(pkgs.getTest { name = \"$scenario\"; $file })$attr" "$@" >/dev/null
 }
 
 drv=
