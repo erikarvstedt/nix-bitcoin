@@ -163,7 +163,7 @@ evalTest() {
     # Print out path
     nix-store -q "$drv"
     # Print drv path
-    echo "$drv"
+    realpath "$drv"
 }
 
 buildTestAttr() {
