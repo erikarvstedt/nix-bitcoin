@@ -112,6 +112,32 @@ let
       echo o >/proc/sysrq-trigger
     '';
 
+    systemd.services.bitcoind-success = {
+      wantedBy = [ "bitcoind.service" ];
+      requires = [ "bitcoind.service" ];
+      after = [ "bitcoind.service" ];
+      script = ''
+        echo success > /tmp/xchg/result
+        echo o >/proc/sysrq-trigger
+      '';
+    };
+
+    systemd.services.bitcoind-failure = {
+      script = ''
+        echo failure > /tmp/xchg/result
+        journalctl -u bitcoind > /tmp/xchg/bitcoind-journal
+        echo o >/proc/sysrq-trigger
+      '';
+    };
+
+    systemd.services.bitcoind = {
+      serviceConfig.Restart = lib.mkForce "no";
+      unitConfig.OnFailure = [ "bitcoind-failure.service" ];
+    };
+
+    # debug: force bitcoind failure
+    # systemd.services.bitcoind.serviceConfig.ExecStart = lib.mkForce "${pkgs.coreutils}/bin/false";
+
     system.stateVersion = lib.mkDefault config.system.nixos.release;
   })).config.system.build.vm.overrideAttrs (old: {
     meta = old.meta // { mainProgram = "run-vm-in-tmpdir"; };
