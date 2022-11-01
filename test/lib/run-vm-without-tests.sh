@@ -20,11 +20,11 @@ fi
 
 # TODO-EXTERNAL:
 # Pass PATH because run-*-vm is impure (requires coreutils from PATH)
-exec env -i \
-     PATH="$PATH" \
-     USE_TMPDIR=1 \
-     TMPDIR="$dataDir" \
-     NIX_DISK_IMAGE="$dataDir/img.qcow2" \
-     QEMU_OPTS="${QEMU_OPTS:-}" \
-     QEMU_NET_OPTS="${QEMU_NET_OPTS:-}" \
-     "${BASH_SOURCE[0]%/*}"/run-*-vm
+env -i \
+    PATH="$PATH" \
+    USE_TMPDIR=1 \
+    TMPDIR="$dataDir" \
+    NIX_DISK_IMAGE="$dataDir/img.qcow2" \
+    QEMU_OPTS="${QEMU_OPTS:-}" \
+    QEMU_NET_OPTS="${QEMU_NET_OPTS:-}" \
+    "${BASH_SOURCE[0]%/*}"/run-*-vm

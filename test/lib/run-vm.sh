@@ -42,9 +42,9 @@ if [[ ! ${NIX_BITCOIN_VM_ENABLE_NETWORK:-} ]]; then
 fi
 
 # The VM creates a VDE control socket in $PWD
-exec env --chdir "$dataDir" -i \
-     USE_TMPDIR=1 \
-     TMPDIR="$dataDir" \
-     QEMU_OPTS="-nographic ${QEMU_OPTS:-}"  \
-     QEMU_NET_OPTS="${QEMU_NET_OPTS:-}" \
-     "$testDriver/bin/nixos-test-driver" <(echo "$tests") "$@"
+env --chdir "$dataDir" -i \
+    USE_TMPDIR=1 \
+    TMPDIR="$dataDir" \
+    QEMU_OPTS="-nographic ${QEMU_OPTS:-}"  \
+    QEMU_NET_OPTS="${QEMU_NET_OPTS:-}" \
+    "$testDriver/bin/nixos-test-driver" <(echo "$tests") "$@"
