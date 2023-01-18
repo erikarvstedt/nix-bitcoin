@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, options, pkgs, lib, ... }:
 
 with lib;
 {
@@ -43,6 +43,59 @@ with lib;
                   else "sudo -u";
         defaultText = "(See source)";
       };
+
+      version = mkOption {
+        readOnly = true;
+        default = "0.0.85";
+      };
+
+      requiredVersion = mkOption {
+        type = types.str;
+        example = "1.5";
+        description = mdDoc ''
+          The nix-bitcoin version (in format <major>.<minor>) required by a NixOS configuration.
+
+          This option can be set by modules that extend nix-bitcoin to ensure that a compatible
+          version of nix-bitcoin is present.
+.
+          An error is raised during evaluation if nix-bitcoin's major version is not equal to the
+          required major version or if nix-bitcoin's minor version is lower than the required
+          minor version.
+        '';
+      };
     };
+  };
+
+  config = {
+    # Check `requiredVersion`
+    system = let
+      version = builtins.splitVersion config.nix-bitcoin.version;
+      major = builtins.elemAt version 0;
+      minor = builtins.elemAt version 1;
+
+      collectUnmetRequirements = unmet: requiredVersion: let
+        v = builtins.splitVersion requiredVersion.value;
+        requiredMajor = builtins.elemAt v 0;
+        requiredMinor = builtins.elemAt v 1;
+      in
+        if major == requiredMajor && minor >= requiredMinor
+        then unmet
+        else unmet ++ [ requiredVersion ];
+      unmetRequirements = builtins.foldl' collectUnmetRequirements [] options.nix-bitcoin.requiredVersion.definitionsWithLocations;
+      checkVersions = if unmetRequirements != [] then builtins.throw errorMsg else {};
+
+      errorMsg = ''
+
+        You are using nix-bitcoin version ${config.nix-bitcoin.version}.
+        This version is incompatible with some modules in your configuration:
+
+        ${concatMapStringsSep "\n" (requirement: ''
+          - nix-bitcoin version ${requirement.value} required in ${requirement.file}
+        '') unmetRequirements}
+        Try updating these modules or nix-bitcoin so that the version requirements are met.
+      '';
+    in
+      # Force evaluation. An actual option value is never assigned
+      checkVersions;
   };
 }
