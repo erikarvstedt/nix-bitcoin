@@ -101,6 +101,10 @@ NixOS modules ([src](modules/modules.nix))
   * [backups](modules/backups.nix): duplicity backups of all your node's important files
   * [operator](modules/operator.nix): adds non-root user `operator` who has access to client tools (e.g. `bitcoin-cli`, `lightning-cli`)
 
+#### Extension Flakes
+
+* [Mempool](https://github.com/fort-nix/nix-bitcoin-mempool): Bitcoin visualizer, explorer and API service
+
 Security
 ---
 See [SECURITY.md](SECURITY.md) for the security policy and how to report a vulnerability.
