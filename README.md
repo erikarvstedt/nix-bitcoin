@@ -88,10 +88,10 @@ NixOS modules ([src](modules/modules.nix))
   * [lndconnect](https://github.com/LN-Zap/lndconnect): connect your wallet to lnd or clightning via a REST onion service
   * [Ride The Lightning](https://github.com/Ride-The-Lightning/RTL): web interface for `lnd` and `clightning`
   * [spark-wallet](https://github.com/shesek/spark-wallet)
-  * [electrs](https://github.com/romanz/electrs)
-  * [fulcrum](https://github.com/cculianu/Fulcrum) (see [the module](modules/fulcrum.nix) for a comparison to electrs)
+  * [electrs](https://github.com/romanz/electrs): Electrum server
+  * [fulcrum](https://github.com/cculianu/Fulcrum): Electrum server (see [the module](modules/fulcrum.nix) for a comparison to electrs)
   * [btcpayserver](https://github.com/btcpayserver/btcpayserver)
-  * [liquid](https://github.com/elementsproject/elements)
+  * [liquid](https://github.com/elementsproject/elements): federated sidechain
   * [JoinMarket](https://github.com/joinmarket-org/joinmarket-clientserver)
     * [JoinMarket Orderbook Watcher](https://github.com/JoinMarket-Org/joinmarket-clientserver/blob/master/docs/orderbook.md)
   * [bitcoin-core-hwi](https://github.com/bitcoin-core/HWI)
