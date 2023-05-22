@@ -2,13 +2,13 @@
 pkgs: pkgsUnstable:
 {
   inherit (pkgs)
-    bitcoin
-    bitcoind
     extra-container
     lightning-pool
     lndconnect;
 
   inherit (pkgsUnstable)
+    bitcoin
+    bitcoind
     btcpayserver
     charge-lnd
     clightning
