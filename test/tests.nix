@@ -15,7 +15,7 @@ let
         nix-bitcoin.secretsDir = "/secrets";
         nix-bitcoin.generateSecrets = true;
         nix-bitcoin.operator.enable = true;
-        environment.systemPackages = with pkgs; [ jq ];
+        environment.systemPackages = with pkgs; [ jq gdb ];
       }
     ];
 
@@ -172,7 +172,23 @@ let
     # Included in all scenarios by ./lib/make-test.nix
     base = baseConfig;
 
-    default = scenarios.secureNode;
+    default = scenarios.repro;
+
+    repro = {
+      services.clightning.enable = true;
+      services.lnd.enable = true;
+      services.clightning-rest.enable = true;
+      services.clightning-rest.lndconnect = { enable = true; onion = true; };
+      services.spark-wallet.enable = true;
+      services.rtl.enable = true;
+      services.joinmarket.enable = true;
+      services.joinmarket-ob-watcher.enable = true;
+      services.electrs.enable = true;
+      services.fulcrum.enable = true;
+      services.backups.enable = true;
+      tests.reproBitcoindShutdownHang = true;
+      tests.backups = lib.mkForce false;
+    };
 
     # All available basic services and tests
     full = {

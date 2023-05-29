@@ -56,7 +56,7 @@ let
       };
       package = mkOption {
         type = types.package;
-        default = config.nix-bitcoin.pkgs.bitcoind;
+        default = pkgs.enableDebugging config.nix-bitcoin.pkgs.bitcoind;
         defaultText = "config.nix-bitcoin.pkgs.bitcoind";
         description = mdDoc "The package providing bitcoin binaries.";
       };

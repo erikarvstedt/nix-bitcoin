@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import json
 import re
+import time
 
 def succeed(*cmds):
     """Returns the concatenated output of all cmds"""
@@ -338,6 +339,19 @@ def _():
         # netns-exec should only be executable by the operator user
         machine.fail("runuser -u clightning -- netns-exec nb-bitcoind ip a")
 
+
+@test("reproBitcoindShutdownHang")
+def _():
+    succeed("bitcoin-cli -named createwallet wallet_name=test blank=true >/dev/null")
+    succeed("systemctl stop bitcoind --no-block")
+    machine.wait_until_succeeds(log_has_string("bitcoind", "net thread exit"))
+    machine.wait_until_succeeds(log_has_string("bitcoind", "msghand thread exit"))
+    time.sleep(1)
+    if machine.execute("systemctl is-active --quiet service"):
+        print("bitcoind is still running. showing backtrace:")
+        print(succeed("pid=$(systemctl show -p MainPID --value bitcoind) && gdb -p $pid -ex=bt -ex='set confirm off' -ex=quit"))
+    else:
+        print("bitcoind has shut down successfully. the bug has not appeared.")
 
 # Impure: stops bitcoind (and dependent services)
 @test("backups")
