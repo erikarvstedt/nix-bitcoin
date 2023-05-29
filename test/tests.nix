@@ -186,8 +186,8 @@ let
       services.electrs.enable = true;
       services.fulcrum.enable = true;
       services.backups.enable = true;
-      tests.reproBitcoindShutdownHang = true;
-      tests.backups = lib.mkForce false;
+      # tests.reproBitcoindShutdownHang = true;
+      # tests.backups = lib.mkForce false;
     };
 
     # All available basic services and tests
