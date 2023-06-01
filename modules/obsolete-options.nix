@@ -74,7 +74,6 @@ in {
     "lightning-pool"
     "liquid"
     "lnd"
-    "spark-wallet"
     "bitcoind"
   ]) ++
   (map mkRenamedEnforceTorOption [
@@ -93,18 +92,15 @@ in {
     '')
   ] ++
   # 0.0.92
-  ([
-    (mkRemovedOptionModule [ "services" "spark-wallet" "enable" ] ''
-        Spark Lightning Wallet is unmaintained and incompatible with clightning
-        23.05. Therefore, the spark-wallet module has been removed from
-        nix-bitcoin. For a replacement, consider using the rtl (Ride The
-        Lightning) module or the clightning-rest module in combination with the
-        Zeus mobile wallet.
-      '')
-    ] ++ map
-         (attr: mkRemovedOptionModule ([ "services" "spark-wallet" ] ++ [attr]) "")
-         [ "port" "address" "extraArgs" "getPublicAddressCmd" "user" "group" "tor" ]
-  );
+  [
+    (mkRemovedOptionModule [ "services" "spark-wallet" ] ''
+      Spark Lightning Wallet is unmaintained and incompatible with clightning
+      23.05. Therefore, the spark-wallet module has been removed from
+      nix-bitcoin. For a replacement, consider using the rtl (Ride The
+      Lightning) module or the clightning-rest module in combination with the
+      Zeus mobile wallet.
+    '')
+  ];
   config = {
     # Migrate old clightning-rest datadir from nix-bitcoin versions < 0.0.70
     systemd.services.clightning-rest-migrate-datadir = let
