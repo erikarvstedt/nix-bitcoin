@@ -308,7 +308,7 @@ def _():
 
     # These reachability tests are non-exhaustive
     assert_reachable("bitcoind", ["clightning", "lnd", "liquidd"])
-    assert_unreachable("bitcoind", ["btcpayserver", "spark-wallet", "lightning-loop"])
+    assert_unreachable("bitcoind", ["btcpayserver", "rtl", "lightning-loop"])
     assert_unreachable("btcpayserver", ["bitcoind", "lightning-loop"])
 
     # netns addresses can not be bound to in the main netns.
