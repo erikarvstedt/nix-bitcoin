@@ -57,4 +57,17 @@ with lib;
       };
     };
   };
+
+  config = {
+    systemd.package = pkgs.systemd.overrideAttrs (old: {
+      patches = old.patches ++ [
+        # https://github.com/systemd/systemd/pull/28035
+        (pkgs.fetchpatch {
+          name = "fix-service-exit";
+          url = "https://github.com/systemd/systemd/commit/cca05f1ca4c601b3468ae981553f97e04b270851.patch";
+          sha256 = "sha256-X9oY74gjdChoaqbCiEKu7vxo3HD0KOnFKfXa3haIz90=";
+        })
+      ];
+    });
+  };
 }
