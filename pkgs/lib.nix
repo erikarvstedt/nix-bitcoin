@@ -41,8 +41,13 @@ let self = {
     RestrictAddressFamilies = self.defaultHardening.RestrictAddressFamilies + " AF_NETLINK";
   };
 
-  # nodejs applications require memory write execute for JIT compilation
-  nodejs = { MemoryDenyWriteExecute = false; };
+  nodejs = {
+    # Required for JIT compilation
+    MemoryDenyWriteExecute = false;
+    # Required by nodejs >= 18
+    # TODO-EXTERNAL: Remove this when `pkey_alloc` has been added to systemd's `@system-service`
+    SystemCallFilter = self.defaultHardening.SystemCallFilter ++ [ "pkey_alloc" ];
+  };
 
   # Allow takes precedence over Deny.
   allowLocalIPAddresses = {
