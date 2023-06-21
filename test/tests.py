@@ -438,7 +438,7 @@ def _():
     machine.wait_until_succeeds(log_has_string("clightning", "plugin-trustedcoin[^^]\[0m\s+tip: 0"))
     machine.wait_until_succeeds(log_has_string("clightning", "plugin-trustedcoin[^^]\[0m\s+estimatefees error: none of the esploras returned usable responses"))
 
-
+# 1
 if "netns-isolation" in enabled_tests:
     def ip(name):
         return test_data["netns"][name]["address"]
