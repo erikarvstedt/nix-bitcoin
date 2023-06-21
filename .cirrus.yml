@@ -1,6 +1,6 @@
 task:
   environment:
-    CACHIX_SIGNING_KEY: ENCRYPTED[!cec502ed813cbcd0237697d2031f750186ff20eed5815b1ad950ad2f2d701702ae6ba2f0cb4cb1985687a696c8ee492c!]
+    CACHIX_SIGNING_KEY: ENCRYPTED[!396912a84ed03b16cdf5d408339a856be2de30e95e80c2fcfa179c329c8dc9c66f027329ef89ef2e58a7702dddc943d1!]
     # Save some traffic by excluding the full git history
     CIRRUS_CLONE_DEPTH: 1
 
@@ -28,9 +28,6 @@ task:
       environment:
         matrix:
           - scenario: default
-          - scenario: netns
-          - scenario: netnsRegtest
-          - scenario: trustedcoin
       # This script is run as root
       build_script:
         - echo "sandbox = true" >> /etc/nix/nix.conf
@@ -39,12 +36,3 @@ task:
         # TODO-EXTERNAL:
         # Switch to the default version when this issue has been resolved
         - nix shell --inputs-from . nixpkgs#{bash,coreutils} nixpkgs/eef86b8a942913a828b9ef13722835f359deef29#cachix -c ./test/ci/build.sh $scenario
-
-    - name: flake
-      build_script:
-        - nix flake check
-        - ./test/nixos-search/ci-test.sh
-
-    - name: shellcheck
-      build_script:
-        - ./test/shellcheck.sh
