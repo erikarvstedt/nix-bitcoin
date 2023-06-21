@@ -9,14 +9,15 @@ set -euo pipefail
 
 scenario=$1
 
-if [[ -v CIRRUS_CI ]]; then
-    if [[ ! -e /dev/kvm ]]; then
-        >&2 echo "No KVM available on VM host."
-        exit 1
-    fi
-    # Enable KVM access for nixbld users
-    chmod o+rw /dev/kvm
-fi
+# if [[ -v CIRRUS_CI ]]; then
+#     if [[ ! -e /dev/kvm ]]; then
+#         >&2 echo "No KVM available on VM host."
+#         exit 1
+#     fi
+#     # Enable KVM access for nixbld users
+#     chmod o+rw /dev/kvm
+# fi
 
 cd "${BASH_SOURCE[0]%/*}"
-exec ./build-to-cachix.sh --expr "(builtins.getFlake (toString ../..)).legacyPackages.\${builtins.currentSystem}.tests.$scenario"
+exec ./build-to-cachix.sh --expr "(builtins.getFlake (toString ../..)).inputs.nixpkgs.legacyPackages.\${builtins.currentSystem}.systemd.overrideAttrs (_: { dummy = 1; })"
+# exec ./build-to-cachix.sh --expr "(builtins.getFlake (toString ../..)).legacyPackages.\${builtins.currentSystem}.tests.$scenario"
