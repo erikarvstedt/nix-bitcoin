@@ -33,7 +33,7 @@ fi
 
 if [[ $CACHIX_SIGNING_KEY ]]; then
     # Speed up task by uploading store paths as soon as they are created
-    buildCmd="cachix watch-exec $cachixCache nix-build --"
+    buildCmd="cachix watch-exec $cachixCache nix-build --debug --"
 else
     buildCmd=nix-build
 fi
