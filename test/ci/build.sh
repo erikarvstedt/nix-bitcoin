@@ -18,5 +18,9 @@ if [[ -v CIRRUS_CI ]]; then
     chmod o+rw /dev/kvm
 fi
 
+echo x1
+cachix --version
+echo
+
 cd "${BASH_SOURCE[0]%/*}"
 exec ./build-to-cachix.sh --expr "(builtins.getFlake (toString ../..)).legacyPackages.\${builtins.currentSystem}.tests.$scenario"
