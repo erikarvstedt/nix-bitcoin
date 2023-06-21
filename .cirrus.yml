@@ -35,4 +35,4 @@ task:
         # breaks the CI build
         # TODO-EXTERNAL:
         # Switch to the default version when this issue has been resolved
-        - nix shell --inputs-from . nixpkgs#{bash,coreutils} nixpkgs/eef86b8a942913a828b9ef13722835f359deef29#cachix -c ./test/ci/build.sh $scenario
+        - nix shell --inputs-from . nixpkgs#{bash,coreutils} github:nixos/nixpkgs/eef86b8a942913a828b9ef13722835f359deef29#cachix -c ./test/ci/build.sh $scenario
