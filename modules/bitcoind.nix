@@ -4,7 +4,7 @@ with lib;
 let
   options = {
     services.bitcoind = {
-      enable = mkEnableOption "Bitcoin daemon";
+      enable = mkEnableOption "Bitcoin Mutinynet daemon";
       address = mkOption {
         type = types.str;
         default = "127.0.0.1";
@@ -56,8 +56,8 @@ let
       };
       package = mkOption {
         type = types.package;
-        default = config.nix-bitcoin.pkgs.bitcoind;
-        defaultText = "config.nix-bitcoin.pkgs.bitcoind";
+        default = config.nix-bitcoin.pkgs.bitcoind-mutinynet;
+        defaultText = "config.nix-bitcoin.pkgs.bitcoind-mutinynet";
         description = mdDoc "The package providing bitcoin binaries.";
       };
       extraConfig = mkOption {
@@ -152,11 +152,11 @@ let
       };
       network = mkOption {
         readOnly = true;
-        default = if cfg.regtest then "regtest" else "mainnet";
+        default = if cfg.regtest then "regtest" else "signet";
       };
       makeNetworkName = mkOption {
         readOnly = true;
-        default = mainnet: regtest: if cfg.regtest then regtest else mainnet;
+        default = mainnet: regtest: if cfg.regtest then regtest else "signet";
       };
       proxy = mkOption {
         type = types.nullOr types.str;
@@ -288,10 +288,13 @@ let
 
     startupnotify=/run/current-system/systemd/bin/systemd-notify --ready
 
-    ${optionalString cfg.regtest ''
-      regtest=1
-      [regtest]
-    ''}
+    signet=1
+    [signet]
+    signetchallenge=512102f7561d208dd9ae99bf497273e16f389bdbd6c4742ddb8e6b216e64fa2928ad8f51ae
+    addnode=45.79.52.207:38333
+    dnsseed=0
+    signetblocktime=30
+
     ${optionalString (cfg.dbCache != null) "dbcache=${toString cfg.dbCache}"}
     prune=${toString cfg.prune}
     ${optionalString cfg.txindex "txindex=1"}
@@ -413,9 +416,8 @@ in {
 
       # Enable RPC access for group
       postStart = ''
-        chmod g=r '${cfg.dataDir}/${optionalString cfg.regtest "regtest/"}.cookie'
-      '' + (optionalString cfg.regtest) ''
-        chmod g=x '${cfg.dataDir}/regtest'
+        chmod g=r '${cfg.dataDir}/${if cfg.regtest then "regtest" else "signet"}/.cookie'
+        chmod g=x '${cfg.dataDir}/${if cfg.regtest then "regtest" else "signet"}'
       '';
 
       serviceConfig = nbLib.defaultHardening // {

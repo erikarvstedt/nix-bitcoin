@@ -80,6 +80,7 @@ in {
           ${config.nix-bitcoin.pkgs.electrs}/bin/electrs \
           --log-filters=INFO \
           --network=${bitcoind.makeNetworkName "bitcoin" "regtest"} \
+          --signet-magic cb2ddfa5 \
           --db-dir='${cfg.dataDir}' \
           --daemon-dir='${bitcoind.dataDir}' \
           --electrum-rpc-addr=${cfg.address}:${toString cfg.port} \

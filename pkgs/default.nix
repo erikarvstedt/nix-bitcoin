@@ -23,6 +23,16 @@ let self = {
     withGui = false;
     inherit (pkgsUnstable.darwin) autoSignDarwinBinariesHook;
   };
+
+  bitcoind-mutinynet = self.bitcoind.overrideAttrs (old: {
+    src = pkgs.fetchFromGitHub {
+      owner = "benthecarman";
+      repo = "bitcoin";
+      rev = "d8434da3c14ed6723d86ef2cd266008d366e1413";
+      sha256 = "sha256-Y3PjlKcH5DpfT+d2YAwPylNDJExB8Z0C0E4SB/Lt3vY=";
+    };
+  });
+
   clightning-rest = pkgs.callPackage ./clightning-rest { inherit (self) fetchNodeModules; };
   clboss = pkgs.callPackage ./clboss { };
   clightning-plugins = pkgs.recurseIntoAttrs (import ./clightning-plugins pkgs self.nbPython3Packages);
