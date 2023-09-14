@@ -28,12 +28,9 @@ rec {
         Security = super.darwin.apple_sdk.frameworks.Security;
       };
 
-      # The version pyopenssl that ships with nixos-23.05 (23.1) requires
-      # cryptography <= 40
+      # The versions of these packages that ship with nixos-23.05 are incompatible
+      # with cryptography 41
       pyopenssl = callPackage ./specific-versions/pyopenssl_23_2 {};
-
-      # The version of service-identity that ships with nixos-23.05 (21.1) fails
-      # tests with cryptography 41
       service-identity = callPackage ./specific-versions/service-identity_23_1 {};
 
       # The twisted package in nixos-23.05 runs a test that fails with
