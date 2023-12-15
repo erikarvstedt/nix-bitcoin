@@ -264,6 +264,9 @@ let
         scenarios.secureNode
         ../modules/presets/hardened-extended.nix
       ];
+      # The hardened profile slows down the system, causing the clightning plugin test
+      # to sometimes fail due to plugin handshakes timing out (hardcoded to 60 seconds)
+      test.features.clightningPlugins = mkForce false;
     };
 
     netnsBase = { config, pkgs, ... }: {
