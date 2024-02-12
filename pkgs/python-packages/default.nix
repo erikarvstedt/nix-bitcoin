@@ -30,9 +30,6 @@ rec {
       # autobahn 20.12.3, required by joinmarketclient
       autobahn = callPackage ./specific-versions/autobahn.nix {};
 
-      # werkzeug 2.3.8, required by jmclient
-      werkzeug = callPackage ./specific-versions/werkzeug.nix {};
-
       # A version of `buildPythonPackage` which checks that Python package
       # requirements are met.
       # This was the case for NixOS <= 23.05.
