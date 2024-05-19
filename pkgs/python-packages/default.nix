@@ -3,7 +3,7 @@ rec {
   pyPkgsOverrides = self: super: let
     inherit (self) callPackage;
     clightningPkg = pkg: callPackage pkg { inherit (nbPkgs.pinned) clightning; };
-    joinmarketPkg = pkg: callPackage pkg { inherit (nbPkgs.joinmarket) version src; };
+    joinmarketPkg = pkg: callPackage pkg { inherit (nbPkgs.joinmarket) version src format; };
   in
     {
       txzmq = callPackage ./txzmq {};
@@ -20,10 +20,7 @@ rec {
       runes = callPackage ./runes {};
       sha256 = callPackage ./sha256 {};
 
-      joinmarketbase = joinmarketPkg ./jmbase;
-      joinmarketclient = joinmarketPkg ./jmclient;
-      joinmarketbitcoin = joinmarketPkg ./jmbitcoin;
-      joinmarketdaemon = joinmarketPkg ./jmdaemon;
+      joinmarket = joinmarketPkg ./joinmarket;
 
       ## Specific versions of packages that already exist in nixpkgs
 
@@ -35,6 +32,8 @@ rec {
       # This was the case for NixOS <= 23.05.
       # TODO-EXTERNAL: Remove when this is resolved:
       # https://github.com/NixOS/nixpkgs/issues/253131
+
+      # TODO: issue closed? check if this can be removed
       buildPythonPackageWithDepsCheck = attrs:
         self.buildPythonPackage (attrs // {
           dontUsePypaInstall = true;

@@ -6,9 +6,10 @@ newVersion=$(curl -s "https://api.github.com/repos/joinmarket-org/joinmarket-cli
 
 # Fetch release and GPG-verify the content hash
 tmpdir=$(mktemp -d /tmp/joinmarket-verify-gpg.XXX)
-repo=$tmpdir/repo
+repo="${tmpdir}/repo"
 git clone --depth 1 --branch "${newVersion}" -c advice.detachedHead=false https://github.com/joinmarket-org/joinmarket-clientserver "$repo"
-export GNUPGHOME=$tmpdir
+export GNUPGHOME="$tmpdir"
+
 echo "Fetching Adam Gibson's key"
 gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 2B6FC204D9BF332D062B461A141001A1AF77F20B 2> /dev/null
 echo "Fetch Kristaps Kaupe's key"
