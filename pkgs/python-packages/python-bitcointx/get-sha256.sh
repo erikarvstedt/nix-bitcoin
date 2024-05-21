@@ -1,7 +1,6 @@
-#!/usr/bin/env nix-shell
-#!nix-shell -i bash -p git gnupg jq
-
+#!/usr/bin/env bash
 set -euo pipefail
+. "${BASH_SOURCE[0]%/*}/../../../helper/run-in-nix-env" "git gnupg jq" "$@"
 
 newVersion=$(curl -s "https://api.github.com/repos/Simplexum/python-bitcointx/tags" | jq -r '.[0].name')
 echo "Latest release is ${newVersion}"
