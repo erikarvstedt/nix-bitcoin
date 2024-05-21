@@ -101,7 +101,7 @@ buildPythonPackageWithDepsCheck rec {
 
   meta = with lib; {
     homepage = "https://github.com/Joinmarket-Org/joinmarket-clientserver";
-    maintainers = with maintainers; [ seberm ];
+    maintainers = with maintainers; [ seberm nixbitcoin ];
     license = licenses.gpl3;
   };
 }
