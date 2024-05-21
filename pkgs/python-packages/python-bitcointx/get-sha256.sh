@@ -16,6 +16,7 @@ echo "Fetching Dimitry Pethukov's Key"
 gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys B17A35BBA187395784E2A6B32301D26BDC15160D 2> /dev/null
 echo
 echo "Verifying commit"
+git -C "$repo" checkout -q "tags/$latest"
 git -C "$repo" verify-commit HEAD
 rm -rf "$repo"/.git
 hash=$(nix hash path "$repo")
