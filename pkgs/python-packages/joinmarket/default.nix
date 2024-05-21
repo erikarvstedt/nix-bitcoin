@@ -65,23 +65,15 @@ buildPythonPackageWithDepsCheck rec {
 
   ];
 
-  # FIXME: Try to use twisted and service-identity from nixpkgs-23.11 (there are lower stable versions)?
-  # E.g. alternative approach
-  #postPatch = ''
-  #  substituteInPlace pyproject.toml \
-  #    --replace-warn 'twisted==23.10.0' 'twisted==24.3.0' \
-  #    --replace-warn 'service-identity==21.1.0' 'service-identity==24.1.0' \
-  #    --replace-warn 'cryptography==41.0.6' 'cryptography==42.0.5'
-  #'';
-  pythonRelaxDeps = [
-    "twisted"
-    "service-identity"
-    "cryptography"
-  ];
-
-  # Modify pyproject.toml to include only specific modules. Do not include 'jmqtui'.
   postPatch = ''
-    sed -i '/^\[tool.setuptools.packages.find\]/a include = ["jmbase", "jmbitcoin", "jmclient", "jmdaemon"]' pyproject.toml
+   substituteInPlace pyproject.toml \
+     --replace-fail 'txtorcon==23.11.0' 'txtorcon==23.5.0' \
+     --replace-fail 'twisted==23.10.0' 'twisted==23.8.0' \
+     --replace-fail 'service-identity==21.1.0' 'service-identity==23.1.0' \
+     --replace-fail 'cryptography==41.0.6' 'cryptography==41.0.3'
+
+     # Modify pyproject.toml to include only specific modules. Do not include 'jmqtui'.
+     sed -i '/^\[tool.setuptools.packages.find\]/a include = ["jmbase", "jmbitcoin", "jmclient", "jmdaemon"]' pyproject.toml
   '';
 
   nativeCheckInputs = [
