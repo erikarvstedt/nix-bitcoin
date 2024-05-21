@@ -25,7 +25,7 @@ buildPythonPackageWithDepsCheck rec {
   meta = with lib; {
     description = "Interface to Bitcoin transaction data structures";
     homepage = "https://github.com/Simplexum/python-bitcointx";
-    maintainers = with maintainers; [ seberm ];
+    maintainers = with maintainers; [ seberm nixbitcoin ];
     license = licenses.gpl3;
   };
 }
