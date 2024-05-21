@@ -1,6 +1,5 @@
 { version
 , src
-, format
 , lib
 
 # TODO: Is it necessary to use this deps check?
@@ -32,7 +31,8 @@
 #buildPythonPackageWithDepsCheck rec {
 buildPythonPackage rec {
   pname = "joinmarket";
-  inherit version src format;
+  inherit version src;
+  format = "pyproject";
 
   # From v0.9.11, the Python older than v3.8 is not supported. Python v3.12 is
   # still not supported.

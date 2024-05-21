@@ -18,7 +18,6 @@ let
 in
 stdenv.mkDerivation {
   pname = "joinmarket";
-  format = "pyproject";
   inherit version src;
 
   buildInputs = [ pythonEnv ];

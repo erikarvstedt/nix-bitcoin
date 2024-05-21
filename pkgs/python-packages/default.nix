@@ -3,7 +3,7 @@ rec {
   pyPkgsOverrides = self: super: let
     inherit (self) callPackage;
     clightningPkg = pkg: callPackage pkg { inherit (nbPkgs.pinned) clightning; };
-    joinmarketPkg = pkg: callPackage pkg { inherit (nbPkgs.joinmarket) version src format; };
+    joinmarketPkg = pkg: callPackage pkg { inherit (nbPkgs.joinmarket) version src; };
   in
     {
       txzmq = callPackage ./txzmq {};
