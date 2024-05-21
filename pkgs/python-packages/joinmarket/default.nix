@@ -1,10 +1,7 @@
 { version
 , src
 , lib
-
-# TODO: Is it necessary to use this deps check?
-#, buildPythonPackageWithDepsCheck
-, buildPythonPackage
+, buildPythonPackageWithDepsCheck
 , pythonOlder
 , pythonAtLeast
 , pythonRelaxDepsHook
@@ -28,8 +25,7 @@
 , pyopenssl
 }:
 
-#buildPythonPackageWithDepsCheck rec {
-buildPythonPackage rec {
+buildPythonPackageWithDepsCheck rec {
   pname = "joinmarket";
   inherit version src;
   format = "pyproject";
