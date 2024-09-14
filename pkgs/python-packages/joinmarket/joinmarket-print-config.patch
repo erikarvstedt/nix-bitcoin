@@ -1,0 +1,30 @@
+--- a/src/jmclient/configure.py
++++ b/src/jmclient/configure.py
+@@ -6,6 +6,7 @@
+ import socket
+ import subprocess
+ import sys
++from pprint import pp
+ from configparser import ConfigParser, NoOptionError
+ from signal import SIGINT
+ from typing import Any, List, Optional, Tuple
+@@ -705,6 +706,10 @@
+         if section.startswith('MESSAGING:'):
+             config.remove_section(section)
+ 
++def config_to_dict():
++    config = global_singleton.config
++    return { section:config.items(section) for section in config.sections() }
++
+ def load_program_config(config_path: str = "", bs: Optional[str] = None,
+                         plugin_services: List[JMPluginService] = []) -> None:
+     global_singleton.config.read_file(io.StringIO(defaultconfig))
+@@ -735,6 +740,8 @@
+             "info")
+         sys.exit(EXIT_FAILURE)
+ 
++    pp(config_to_dict())
++
+     # Hack required for bitcoin-rpc-no-history and probably others
+     # (historicaly electrum); must be able to enforce a different blockchain
+     # interface even in default/new load.

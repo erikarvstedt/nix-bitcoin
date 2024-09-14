@@ -71,7 +71,10 @@ buildPythonPackage rec {
   #   File "/nix/store/...-python3-3.11.9/lib/python3.11/argparse.py", line 1460, in add_argument
   #     raise ValueError('%r is not callable' % (type_func,))
   #   ValueError: 'int' is not callable
-  patches = [ ./fix-conftest-arg-type-error.patch ];
+  patches = [
+    ./fix-conftest-arg-type-error.patch
+    ./joinmarket-print-config.patch
+  ];
 
   postPatch = ''
     substituteInPlace pyproject.toml \
