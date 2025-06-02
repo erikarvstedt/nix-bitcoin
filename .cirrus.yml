@@ -1,6 +1,6 @@
 task:
   environment:
-    CACHIX_AUTH_TOKEN: ENCRYPTED[6c935ae4954d2c504c1a77192a1b187e7b29e1282a9109441ef87125f3d0de165f7218c90167f3f7c0cb33a5dca16d4d]
+    CACHIX_AUTH_TOKEN: ENCRYPTED[9b4cc1697736a1b43342e2b918f08d8e0a7e3d4a99d3c6fa7f9e6e2fdd03eaa0bd9b4759f5484eac24c31ee75dfa4a9c]
     # Save some traffic by excluding the full git history
     CIRRUS_CLONE_DEPTH: 1
 
