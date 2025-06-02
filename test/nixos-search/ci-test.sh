@@ -6,7 +6,7 @@ cd "${BASH_SOURCE[0]%/*}"
 nbFlake=$(realpath ../..)
 
 # Use cachix to cache the `flake-info` build
-cachixCache=nix-bitcoin
+cachixCache=nix-bitcoin-ci-ea
 
 nix run .#cachix -- use "$cachixCache"
 
@@ -17,7 +17,7 @@ PATH=$(nix shell -L .#{flake-info,cachix,jq} -c sh -c 'echo $PATH')
 NIX_PATH="nixpkgs=$(nix flake metadata --json --inputs-from "$nbFlake" nixpkgs | jq -r .path)"
 export NIX_PATH
 
-if [[ ${CACHIX_SIGNING_KEY:-} ]]; then
+if [[ ${CACHIX_AUTH_TOKEN:-} ]]; then
     cachix push "$cachixCache" "$(type -P flake-info)";
 fi
 

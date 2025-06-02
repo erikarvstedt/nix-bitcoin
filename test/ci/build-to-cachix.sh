@@ -6,8 +6,8 @@
 
 set -euo pipefail
 
-CACHIX_SIGNING_KEY="${CACHIX_SIGNING_KEY:-}"
-cachixCache=nix-bitcoin
+CACHIX_AUTH_TOKEN="${CACHIX_AUTH_TOKEN:-}"
+cachixCache=nix-bitcoin-ci-ea
 
 trap 'echo "Error at ${BASH_SOURCE[0]}:$LINENO"' ERR
 
@@ -32,7 +32,7 @@ if [[ -v CIRRUS_CI ]]; then
     cachix use "$cachixCache"
 fi
 
-if [[ $CACHIX_SIGNING_KEY ]]; then
+if [[ $CACHIX_AUTH_TOKEN ]]; then
     # Speed up task by uploading store paths as soon as they are created
     buildCmd="cachix watch-exec $cachixCache nix -- build"
 else
@@ -41,7 +41,7 @@ fi
 
 $buildCmd --out-link "$tmpDir/result" --print-build-logs "$drv^*" >/dev/null
 
-if [[ $CACHIX_SIGNING_KEY ]]; then
+if [[ $CACHIX_AUTH_TOKEN ]]; then
     cachix push "$cachixCache" "$outPath"
 fi
 
